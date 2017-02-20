@@ -82,8 +82,6 @@ public class GuildContext {
                 case MUSIC_QUEUE_SHUFFLE:
                     audioPlayer.setShuffle((boolean) event.getValue());
                     break;
-                case COMMAND_PREFIX:
-                    break;
             }
         }
     }

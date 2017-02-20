@@ -42,6 +42,7 @@ public class CommandManager {
         registerCommand(DeletePlaylistCommand.class);
         registerCommand(PlayCommand.class);
         registerCommand(PauseCommand.class);
+        registerCommand(ResumeCommand.class);
         registerCommand(SkipCommand.class);
         registerCommand(SetMusicChannelCommand.class);
         registerCommand(SetPropertyCommand.class);
