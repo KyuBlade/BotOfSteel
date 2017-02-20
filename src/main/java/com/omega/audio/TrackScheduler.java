@@ -13,6 +13,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.IntStream;
 
+/**
+ * The track scheduler handle the offering of tracks to the audio player.
+ */
 public class TrackScheduler extends AudioEventAdapter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TrackScheduler.class);
@@ -21,11 +24,19 @@ public class TrackScheduler extends AudioEventAdapter {
     private final LinkedList<AudioTrack> queue;
     private boolean loop = false;
 
+    /**
+     * @param player the player that will handle this scheduler.
+     */
     public TrackScheduler(AudioPlayer player) {
         this.player = player;
         this.queue = new LinkedList<>();
     }
 
+    /**
+     * Add track(s) to the tail of the queue.
+     *
+     * @param track
+     */
     public void queue(AudioTrack track) {
         queue(track, false);
     }
@@ -49,14 +60,16 @@ public class TrackScheduler extends AudioEventAdapter {
     }
 
     /**
-     * Skip current playing track
+     * Stop and skip the current playing track.
      */
     public void skip() {
         skip(1);
     }
 
     /**
-     * Skip x tracks and stop the one playing
+     * Skip x tracks and stop the one playing.
+     *
+     * @param count the number of tracks to skip
      */
     public void skip(int count) {
         IntStream.range(0, count - 1).forEach(value -> queue.poll());
@@ -100,7 +113,7 @@ public class TrackScheduler extends AudioEventAdapter {
 
     @Override
     public void onTrackException(AudioPlayer player, AudioTrack track, FriendlyException exception) {
-        LOGGER.error("Error for track " + track.getInfo().title, exception);
+        LOGGER.error(String.format("Error for track %s (%s) " + track.getInfo().title, track.getIdentifier()), exception);
     }
 
     /**
@@ -113,18 +126,32 @@ public class TrackScheduler extends AudioEventAdapter {
         return Collections.unmodifiableList(queue);
     }
 
+    /**
+     * @return the size of the queue
+     */
     public int queueSize() {
         return queue.size();
     }
 
+    /**
+     * @return if queue is played in loop
+     */
     public boolean isLoop() {
         return loop;
     }
 
+    /**
+     * Set queue loop behavior.
+     *
+     * @param loop true to loop the queue, false otherwise
+     */
     public void setLoop(boolean loop) {
         this.loop = loop;
     }
 
+    /**
+     * @return the current playing track
+     */
     public AudioTrack getPlayingTrack() {
         return player.getPlayingTrack();
     }

@@ -6,7 +6,6 @@ import com.omega.database.DatastoreManagerSingleton;
 import com.omega.database.PlaylistRepository;
 import com.omega.exception.PlaylistAlreadyExists;
 import com.omega.exception.PlaylistNotFoundException;
-import com.omega.exception.VoiceChannelNotFoundException;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventListener;
@@ -51,7 +50,7 @@ public class GuildAudioPlayer {
     }
 
     public void addToPlaylist(String playlistName, String source, AudioLoadResultHandler callbackHandler)
-            throws PlaylistNotFoundException {
+        throws PlaylistNotFoundException {
         PlaylistRepository playlistRepository = DatastoreManagerSingleton.getInstance().getRepository(PlaylistRepository.class);
         Playlist playlist = playlistRepository.findByName(playlistName);
         if (playlist == null) {
@@ -68,7 +67,7 @@ public class GuildAudioPlayer {
             @Override
             public void trackLoaded(AudioTrack track) {
                 LOGGER.info("Loaded track : {}", track.getInfo().title);
-                scheduler.queue(track);
+                scheduler.queue(track, addHead);
                 if (callbackHandler != null) {
                     callbackHandler.trackLoaded(track);
                 }
@@ -113,7 +112,27 @@ public class GuildAudioPlayer {
     }
 
     public void play(String source) {
+        queue(source, true, new AudioLoadResultHandler() {
+            @Override
+            public void trackLoaded(AudioTrack track) {
+                skip();
+            }
 
+            @Override
+            public void playlistLoaded(AudioPlaylist playlist) {
+                skip();
+            }
+
+            @Override
+            public void noMatches() {
+
+            }
+
+            @Override
+            public void loadFailed(FriendlyException exception) {
+
+            }
+        });
     }
 
     public void pause(boolean pause) {
@@ -124,6 +143,18 @@ public class GuildAudioPlayer {
         return player.isPaused();
     }
 
+    /**
+     * Skip the current track.
+     */
+    public void skip() {
+        skip(1);
+    }
+
+    /**
+     * Skip {@code count} tracks.
+     *
+     * @param count the number of tracks to skip
+     */
     public void skip(int count) {
         scheduler.skip(count);
     }
@@ -148,8 +179,17 @@ public class GuildAudioPlayer {
         }
     }
 
+    /**
+     * Set a voice channel as music channel.
+     * Sets the bitrate to the max and disallow users to talk.
+     *
+     * @param voiceChannel voice channel to set-up
+     * @throws DiscordException
+     * @throws RateLimitException
+     * @throws MissingPermissionsException
+     */
     public void setMusicChannel(IVoiceChannel voiceChannel) throws DiscordException, RateLimitException,
-            MissingPermissionsException {
+        MissingPermissionsException {
         Set<String> roles = voiceChannel.getRoleOverrides().keySet();
         Iterator<String> it = roles.iterator();
         while (it.hasNext()) {

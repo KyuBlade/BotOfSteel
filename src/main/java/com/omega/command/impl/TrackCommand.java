@@ -1,6 +1,5 @@
 package com.omega.command.impl;
 
-import com.omega.StringUtils;
 import com.omega.audio.GuildAudioPlayer;
 import com.omega.command.AbstractCommand;
 import com.omega.command.Command;
@@ -18,9 +17,6 @@ import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.util.EmbedBuilder;
 
 import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.LocalTime;
-import java.util.Date;
 
 @Command(name = "track")
 public class TrackCommand extends AbstractCommand {
