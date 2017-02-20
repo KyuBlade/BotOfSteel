@@ -46,21 +46,22 @@ public class MessageListener {
         }
 
         String content = message.getContent();
-        if (content.startsWith(prefix) && content.length() > prefix.length()) { // Command received
-            Matcher matcher = PATTERN.matcher(content);
-            String commandName;
-            if (matcher.find()) {
-                commandName = matcher.group(1).substring(prefix.length()).toLowerCase();
-
-                List<String> args = new ArrayList<>();
-                while (matcher.find()) {
-                    args.add(matcher.group(1));
-                }
-
-                CommandExecutionEvent commandEvent = new CommandExecutionEvent(message, commandName, message.getAuthor(), args);
-                client.getDispatcher().dispatch(commandEvent);
-            }
-        } else if (content.startsWith("$")) {
+//        if (content.startsWith(prefix) && content.length() > prefix.length()) { // Command received
+//            Matcher matcher = PATTERN.matcher(content);
+//            String commandName;
+//            if (matcher.find()) {
+//                commandName = matcher.group(1).substring(prefix.length()).toLowerCase();
+//
+//                List<String> args = new ArrayList<>();
+//                while (matcher.find()) {
+//                    args.add(matcher.group(1));
+//                }
+//
+//                CommandExecutionEvent commandEvent = new CommandExecutionEvent(message, commandName, message.getAuthor(), args);
+//                client.getDispatcher().dispatch(commandEvent);
+//            }
+//        } else
+        if (content.startsWith(prefix) && content.length() > prefix.length()) {
             Matcher matcher = NEW_PATTERN.matcher(content);
             String commandName;
             if (matcher.find()) {
