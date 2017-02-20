@@ -9,7 +9,6 @@ import com.omega.command.Parameter;
 import com.omega.command.Signature;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
-import sx.blah.discord.util.DiscordException;
 
 @Command(name = "skip")
 public class SkipCommand extends AbstractCommand {
@@ -27,10 +26,10 @@ public class SkipCommand extends AbstractCommand {
     }
 
     @Signature(help = "Skip x tracks")
-    public void skipCommand(@Parameter(name = "count") Integer count) {
+    public void skipCommand(@Parameter(name = "count") Long count) {
         if (canSkip()) {
             GuildAudioPlayer audioPlayer = AudioPlayerManager.getInstance().get(message.getGuild());
-            audioPlayer.skip(count);
+            audioPlayer.skip(count.intValue());
         }
     }
 
