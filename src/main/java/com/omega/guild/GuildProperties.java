@@ -1,7 +1,7 @@
 package com.omega.guild;
 
 import com.omega.BotManager;
-import com.omega.StringUtils;
+import com.omega.util.StringUtils;
 import com.omega.database.DatastoreManagerSingleton;
 import com.omega.database.GuildPropertiesRepository;
 import com.omega.event.GuildPropertyChangedEvent;

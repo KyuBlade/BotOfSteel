@@ -1,4 +1,4 @@
-package com.omega;
+package com.omega.util;
 
 public class StringUtils {
 
