@@ -21,6 +21,9 @@ import sx.blah.discord.util.RateLimitException;
 
 import java.util.*;
 
+/**
+ * A {@code GuildAudioPlayer} handle all the audio processes and executions for one guild.
+ */
 public class GuildAudioPlayer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GuildAudioPlayer.class);
@@ -45,10 +48,23 @@ public class GuildAudioPlayer {
         this.ppTrackLoader = new PlayPlaylistTrackLoader(manager, scheduler);
     }
 
+    /**
+     * Add an audio listener to the audio player.
+     *
+     * @param listener audio listener to add
+     */
     public void addListener(AudioEventListener listener) {
         this.player.addListener(listener);
     }
 
+    /**
+     * Add tracks to a playlist.
+     *
+     * @param playlistName    playlist to add to
+     * @param source          the track(s) source to add
+     * @param callbackHandler result callback
+     * @throws PlaylistNotFoundException if playlist was not found
+     */
     public void addToPlaylist(String playlistName, String source, AudioLoadResultHandler callbackHandler)
         throws PlaylistNotFoundException {
         PlaylistRepository playlistRepository = DatastoreManagerSingleton.getInstance().getRepository(PlaylistRepository.class);
@@ -62,6 +78,13 @@ public class GuildAudioPlayer {
         loader.load(source);
     }
 
+    /**
+     * Add the source track(s) to the queue.
+     *
+     * @param source          source to add
+     * @param addHead         true to add the tracks to the head, false to add to the tail
+     * @param callbackHandler result callback
+     */
     public void queue(String source, boolean addHead, AudioLoadResultHandler callbackHandler) {
         manager.loadItem(source, new AudioLoadResultHandler() {
             @Override
@@ -101,6 +124,12 @@ public class GuildAudioPlayer {
         });
     }
 
+    /**
+     * Clear the queue, add the plalyist to it and start to play.
+     *
+     * @param playlistName playlist to play
+     * @throws PlaylistNotFoundException
+     */
     public void playPlaylist(String playlistName) throws PlaylistNotFoundException {
         PlaylistRepository playlistRepository = DatastoreManagerSingleton.getInstance().getRepository(PlaylistRepository.class);
         Playlist playlist = playlistRepository.findByName(playlistName);
@@ -111,6 +140,11 @@ public class GuildAudioPlayer {
         ppTrackLoader.load(playlist);
     }
 
+    /**
+     * Add the source to the head of the queue and play it immediately.
+     *
+     * @param source the source to play
+     */
     public void play(String source) {
         queue(source, true, new AudioLoadResultHandler() {
             @Override
@@ -135,10 +169,25 @@ public class GuildAudioPlayer {
         });
     }
 
+    /**
+     * Clear the queue.
+     */
+    public void clearQueue() {
+        scheduler.clear();
+    }
+
+    /**
+     * Pause or resume the audio player.
+     *
+     * @param pause true to pause, false to resume
+     */
     public void pause(boolean pause) {
         player.setPaused(pause);
     }
 
+    /**
+     * @return true if the player is paused, false otherwise
+     */
     public boolean isPause() {
         return player.isPaused();
     }
@@ -157,6 +206,13 @@ public class GuildAudioPlayer {
      */
     public void skip(int count) {
         scheduler.skip(count);
+    }
+
+    /**
+     * Randomize the queue.
+     */
+    public void shuffle() {
+        scheduler.shuffle();
     }
 
     /**
@@ -219,22 +275,69 @@ public class GuildAudioPlayer {
         }
     }
 
+    /**
+     * @return if queue is played in loop
+     */
+    public boolean isLoop() {
+        return scheduler.isLoop();
+    }
+
+    /**
+     * Enable or disable the queue loop mode.
+     *
+     * @param loop true to loop, false otherwise
+     */
+    public void setLoop(boolean loop) {
+        scheduler.setLoop(loop);
+    }
+
+    /**
+     * @return the state of the shuffle mode
+     */
+    public boolean isShuffle() {
+        return scheduler.isShuffle();
+    }
+
+    /**
+     * Activate or deactivate the shuddle mode.
+     *
+     * @param shuffle true to activate, false otherwise
+     */
+    public void setShuffle(boolean shuffle) {
+        scheduler.setShuffle(shuffle);
+    }
+
+    /**
+     * @return the playing track
+     */
     public AudioTrack getPlayingTrack() {
         return scheduler.getPlayingTrack();
     }
 
+    /**
+     * Cleanup the audio player.
+     */
     public void cleanup() {
         player.destroy();
     }
 
+    /**
+     * @return an immutable list of the queue
+     */
     public List<AudioTrack> getQueue() {
         return scheduler.getQueue();
     }
 
+    /**
+     * @return the audio provider providing audio frames.
+     */
     public AudioProvider getAudioProvider() {
         return new AudioProvider(player);
     }
 
+    /**
+     * @return the guild linked to this player
+     */
     public IGuild getGuild() {
         return guild;
     }

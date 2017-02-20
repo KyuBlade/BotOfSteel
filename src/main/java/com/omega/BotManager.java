@@ -73,6 +73,10 @@ public class BotManager {
         }
     }
 
+    public void registerEventListener(Object listener) {
+        client.getDispatcher().registerListener(listener);
+    }
+
     public IDiscordClient getClient() {
         return client;
     }

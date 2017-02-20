@@ -8,6 +8,8 @@ import com.omega.command.Command;
 import com.omega.command.Parameter;
 import com.omega.command.Signature;
 import com.omega.exception.PlaylistAlreadyExists;
+import com.omega.guild.GuildContext;
+import com.omega.guild.GuildManager;
 import com.omega.util.SenderUtil;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
@@ -35,7 +37,8 @@ public class PlaylistCreateCommand extends AbstractCommand {
     }
 
     private void createPlaylist(String name, Playlist.Privacy privacy) {
-        GuildAudioPlayer audioPlayer = AudioPlayerManager.getInstance().get(message.getGuild());
+        GuildContext guildContext = GuildManager.getInstance().getContext(message.getGuild());
+        GuildAudioPlayer audioPlayer = guildContext.getAudioPlayer();
         try {
             audioPlayer.createPlaylist(name, privacy, message.getGuild(), by);
             SenderUtil.reply(message, "Added playlist " + name);

@@ -7,8 +7,11 @@ import com.omega.database.GuildPropertiesRepository;
 import com.omega.event.GuildPropertyChangedEvent;
 import com.omega.exception.PropertyNotFoundException;
 import de.caluga.morphium.annotations.*;
+import de.caluga.morphium.annotations.lifecycle.Lifecycle;
 import de.caluga.morphium.annotations.lifecycle.PostLoad;
 import de.caluga.morphium.driver.bson.MorphiumId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IGuild;
 
 import java.util.Arrays;
@@ -17,12 +20,15 @@ import java.util.Map;
 
 @Entity
 @Index
-//@PartialUpdate
+@PartialUpdate
+@Lifecycle
 public class GuildProperties {
 
     public enum Fields {
         id, guildId, properties
     }
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(GuildProperties.class);
 
     @Id
     private MorphiumId id;
@@ -54,8 +60,10 @@ public class GuildProperties {
 
     @PostLoad
     public void postLoad() {
-        System.out.println("POST LOAD : properties = " + properties);
         this.guild = BotManager.getInstance().getClient().getGuildByID(guildId);
+        properties.forEach((s, o) -> guild.getClient().getDispatcher().dispatch(
+            new GuildPropertyChangedEvent(guild, propertyList.get(s), o))
+        );
     }
 
     @SuppressWarnings("unchecked")
@@ -72,29 +80,27 @@ public class GuildProperties {
     }
 
     public void setProperty(Property property, Object value) {
-        if (value == null || property.getType().isInstance(value)) {
+        if (property.getType().isInstance(value)) {
             properties.put(property.getProperty(), value);
-
             save();
 
             guild.getClient().getDispatcher().dispatch(new GuildPropertyChangedEvent(guild, property, value));
         } else {
-            throw new IllegalArgumentException(String.format("Property %s must be of type %s, provided %s",
-                    property,
-                    property.getType().getSimpleName(),
-                    value.getClass().getSimpleName()));
+            LOGGER.warn(
+                "Wrong value provided for property {}, was of type {}, must be of type {}",
+                property,
+                value.getClass().getSimpleName(),
+                property.getType().getSimpleName()
+            );
+
+            throw new IllegalArgumentException();
         }
     }
 
-    public void setProperty(String property, String value) throws PropertyNotFoundException, IllegalArgumentException {
+    public void setProperty(String property, Object value) throws PropertyNotFoundException, IllegalArgumentException {
         if (validateProperty(property)) {
             Property propertyEnum = propertyList.get(property);
-            Object castedValue = castProperty(value, propertyEnum.getType());
-            properties.put(property, castedValue);
-
-            save();
-
-            guild.getClient().getDispatcher().dispatch(new GuildPropertyChangedEvent(guild, propertyList.get(property), value));
+            setProperty(propertyEnum, value);
         } else {
             throw new PropertyNotFoundException();
         }
@@ -103,15 +109,6 @@ public class GuildProperties {
     public void save() {
         GuildPropertiesRepository propertiesRepository = DatastoreManagerSingleton.getInstance().getRepository(GuildPropertiesRepository.class);
         propertiesRepository.save(this);
-    }
-
-    private Object castProperty(String value, Class<?> type) throws IllegalArgumentException {
-        Object parsedValue = StringUtils.parse(value);
-        if (type.isInstance(parsedValue)) {
-            return parsedValue;
-        } else {
-            throw new IllegalArgumentException();
-        }
     }
 
     /**

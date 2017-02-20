@@ -32,6 +32,8 @@ public class QueueAudioLoadResultHandler implements AudioLoadResultHandler {
 
     @Override
     public void loadFailed(FriendlyException exception) {
-        SenderUtil.reply(message, "Unable to add to queue");
+        if (!exception.severity.equals(FriendlyException.Severity.COMMON)) {
+            SenderUtil.reply(message, "Unable to add to queue");
+        }
     }
 }

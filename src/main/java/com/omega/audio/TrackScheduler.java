@@ -23,6 +23,7 @@ public class TrackScheduler extends AudioEventAdapter {
     private final AudioPlayer player;
     private final LinkedList<AudioTrack> queue;
     private boolean loop = false;
+    private boolean shuffle = false;
 
     /**
      * @param player the player that will handle this scheduler.
@@ -72,13 +73,25 @@ public class TrackScheduler extends AudioEventAdapter {
      * @param count the number of tracks to skip
      */
     public void skip(int count) {
-        IntStream.range(0, count - 1).forEach(value -> queue.poll());
+        IntStream.range(0, count - 1).forEach(value -> {
+            AudioTrack track = queue.poll();
+            if (loop) {
+                queue(track);
+            }
+        });
 
         AudioTrack nextTrack = queue.poll();
         player.startTrack(nextTrack, false);
         if (loop) {
             queue.addLast(nextTrack.makeClone());
         }
+    }
+
+    /**
+     * Randomize the queue.
+     */
+    public void shuffle() {
+        Collections.shuffle(queue);
     }
 
     /**
@@ -147,6 +160,22 @@ public class TrackScheduler extends AudioEventAdapter {
      */
     public void setLoop(boolean loop) {
         this.loop = loop;
+    }
+
+    /**
+     * @return the state of the shuffle mode
+     */
+    public boolean isShuffle() {
+        return shuffle;
+    }
+
+    /**
+     * Activate or deactivate the shuddle mode.
+     *
+     * @param shuffle true to activate, false otherwise
+     */
+    public void setShuffle(boolean shuffle) {
+        this.shuffle = shuffle;
     }
 
     /**

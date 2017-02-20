@@ -31,6 +31,7 @@ public class CommandParser {
                 String id = matcher.group("id");
 
                 switch (prefix) {
+                    case "@!":
                     case "@": // User
                         IUser user = guild.getUserByID(id);
                         if (user == null) {

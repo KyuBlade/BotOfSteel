@@ -7,6 +7,8 @@ import com.omega.command.Command;
 import com.omega.command.Parameter;
 import com.omega.command.Signature;
 import com.omega.exception.PlaylistNotFoundException;
+import com.omega.guild.GuildContext;
+import com.omega.guild.GuildManager;
 import com.omega.util.SenderUtil;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
@@ -20,7 +22,8 @@ public class PlayPlaylistCommand extends AbstractCommand {
 
     @Signature(help = "Clear the queue and add the specified playlist to queue")
     public void playCommand(@Parameter(name = "playlistName") String playlistName) {
-        GuildAudioPlayer audioPlayer = AudioPlayerManager.getInstance().get(message.getGuild());
+        GuildContext guildContext = GuildManager.getInstance().getContext(message.getGuild());
+        GuildAudioPlayer audioPlayer = guildContext.getAudioPlayer();
 
         try {
             audioPlayer.playPlaylist(playlistName);

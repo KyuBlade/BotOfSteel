@@ -51,6 +51,8 @@ public class CommandManager {
         registerCommand(BanCommand.class);
         registerCommand(RipCommand.class);
         registerCommand(TrackCommand.class);
+        registerCommand(ShuffleCommand.class);
+        registerCommand(ClearQueueCommand.class);
     }
 
     @EventSubscriber
@@ -97,38 +99,38 @@ public class CommandManager {
 
         // Find correct command signature method
         Method commandMethod = Arrays.stream(commandClass.getDeclaredMethods())
-                .filter(method -> {
-                    if (method.isAnnotationPresent(Signature.class)
-                            && method.getParameterCount() == castedArgs.size()) { // Keep same arguments sized methods
+            .filter(method -> {
+                if (method.isAnnotationPresent(Signature.class)
+                    && method.getParameterCount() == castedArgs.size()) { // Keep same arguments sized methods
 
-                        if (method.getParameterCount() > 0) { // If command have arguments
+                    if (method.getParameterCount() > 0) { // If command have arguments
 
-                            Class<?>[] paramTypes = method.getParameterTypes();
-                            IntStream intStream = IntStream.range(
-                                    0, castedArgs.size()
-                            )
-                                    .filter(i -> {
-                                        Class<?> paramType = paramTypes[i];
-                                        Object castedArg = castedArgs.get(i);
+                        Class<?>[] paramTypes = method.getParameterTypes();
+                        IntStream intStream = IntStream.range(
+                            0, castedArgs.size()
+                        )
+                            .filter(i -> {
+                                Class<?> paramType = paramTypes[i];
+                                Object castedArg = castedArgs.get(i);
 
-                                        return paramType.equals(castedArg.getClass()) ||
-                                                paramType.isAssignableFrom(castedArg.getClass());
-                                    });
+                                return paramType.equals(castedArg.getClass()) ||
+                                    paramType.isAssignableFrom(castedArg.getClass());
+                            });
 
-                            if (intStream.count() == castedArgs.size()) {
-                                LOGGER.debug("Command method found");
-                                return true;
-                            }
-
-                        } else {
+                        if (intStream.count() == castedArgs.size()) {
+                            LOGGER.debug("Command method found");
                             return true;
                         }
-                    }
 
-                    return false;
-                })
-                .findFirst()
-                .orElse(null);
+                    } else {
+                        return true;
+                    }
+                }
+
+                return false;
+            })
+            .findFirst()
+            .orElse(null);
 
         if (commandMethod != null) {
             try {

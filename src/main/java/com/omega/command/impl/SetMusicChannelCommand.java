@@ -1,10 +1,13 @@
 package com.omega.command.impl;
 
 import com.omega.audio.AudioPlayerManager;
+import com.omega.audio.GuildAudioPlayer;
 import com.omega.command.AbstractCommand;
 import com.omega.command.Command;
 import com.omega.command.Parameter;
 import com.omega.command.Signature;
+import com.omega.guild.GuildContext;
+import com.omega.guild.GuildManager;
 import com.omega.util.SenderUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,9 +34,9 @@ public class SetMusicChannelCommand extends AbstractCommand {
     public void setMusicChannelCommand() {
         List<IVoiceChannel> connectedVoiceChannels = by.getConnectedVoiceChannels();
         IVoiceChannel currentVoiceChannel = connectedVoiceChannels.stream()
-                .filter(voiceChannel -> voiceChannel.getGuild().getID().equals(message.getGuild().getID()))
-                .findFirst()
-                .orElse(null);
+            .filter(voiceChannel -> voiceChannel.getGuild().getID().equals(message.getGuild().getID()))
+            .findFirst()
+            .orElse(null);
         if (currentVoiceChannel != null) {
             setMusicChannel(currentVoiceChannel);
         } else {
@@ -46,7 +49,7 @@ public class SetMusicChannelCommand extends AbstractCommand {
         message.getGuild().getVoiceChannels();
         IGuild guild = message.getGuild();
         IVoiceChannel voiceChannel = guild.getVoiceChannels().stream()
-                .filter(channel -> channel.getName().equalsIgnoreCase(voiceChannelName)).findFirst().orElse(null);
+            .filter(channel -> channel.getName().equalsIgnoreCase(voiceChannelName)).findFirst().orElse(null);
         if (voiceChannel != null) {
             setMusicChannel(voiceChannel);
         } else {
@@ -56,7 +59,9 @@ public class SetMusicChannelCommand extends AbstractCommand {
 
     private void setMusicChannel(IVoiceChannel voiceChannel) {
         try {
-            AudioPlayerManager.getInstance().get(voiceChannel.getGuild()).setMusicChannel(voiceChannel);
+            GuildContext guildContext = GuildManager.getInstance().getContext(voiceChannel.getGuild());
+            GuildAudioPlayer audioPlayer = guildContext.getAudioPlayer();
+            audioPlayer.setMusicChannel(voiceChannel);
             SenderUtil.reply(message, "Voice channel " + voiceChannel.getName() + " is now a music channel");
         } catch (DiscordException e) {
             LOGGER.error("Failed to set voice channel " + voiceChannel.getName() + " as music channel", e);

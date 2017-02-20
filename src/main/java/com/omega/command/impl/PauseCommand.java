@@ -1,11 +1,12 @@
 package com.omega.command.impl;
 
-import com.omega.audio.AudioPlayerManager;
 import com.omega.audio.GuildAudioPlayer;
 import com.omega.command.AbstractCommand;
 import com.omega.command.Command;
 import com.omega.command.Parameter;
 import com.omega.command.Signature;
+import com.omega.guild.GuildContext;
+import com.omega.guild.GuildManager;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
 
@@ -23,7 +24,8 @@ public class PauseCommand extends AbstractCommand {
 
     @Signature(help = "Pause or resume the audio player, true to pause, false to resume")
     public void pauseCommand(@Parameter(name = "pause") Boolean pause) {
-        GuildAudioPlayer audioPlayer = AudioPlayerManager.getInstance().get(message.getGuild());
+        GuildContext guildContext = GuildManager.getInstance().getContext(message.getGuild());
+        GuildAudioPlayer audioPlayer = guildContext.getAudioPlayer();
         boolean currentState = audioPlayer.isPause();
         boolean nextState = pause;
         if (currentState != nextState) {

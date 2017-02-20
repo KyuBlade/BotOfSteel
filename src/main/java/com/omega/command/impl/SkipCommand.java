@@ -1,12 +1,13 @@
 package com.omega.command.impl;
 
 import com.omega.BotManager;
-import com.omega.audio.AudioPlayerManager;
 import com.omega.audio.GuildAudioPlayer;
 import com.omega.command.AbstractCommand;
 import com.omega.command.Command;
 import com.omega.command.Parameter;
 import com.omega.command.Signature;
+import com.omega.guild.GuildContext;
+import com.omega.guild.GuildManager;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
 
@@ -19,17 +20,19 @@ public class SkipCommand extends AbstractCommand {
 
     @Signature(help = "Skip the current track")
     public void skipCommand() {
-        if (canSkip()) {
-            GuildAudioPlayer audioPlayer = AudioPlayerManager.getInstance().get(message.getGuild());
-            audioPlayer.skip(1);
-        }
+        skip(1);
     }
 
     @Signature(help = "Skip x tracks")
     public void skipCommand(@Parameter(name = "count") Long count) {
+        skip(count.intValue());
+    }
+
+    private void skip(int count) {
         if (canSkip()) {
-            GuildAudioPlayer audioPlayer = AudioPlayerManager.getInstance().get(message.getGuild());
-            audioPlayer.skip(count.intValue());
+            GuildContext guildContext = GuildManager.getInstance().getContext(message.getGuild());
+            GuildAudioPlayer audioPlayer = guildContext.getAudioPlayer();
+            audioPlayer.skip(count);
         }
     }
 

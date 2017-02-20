@@ -1,12 +1,13 @@
 package com.omega.command.impl;
 
-import com.omega.audio.AudioPlayerManager;
 import com.omega.audio.GuildAudioPlayer;
 import com.omega.audio.QueueAudioLoadResultHandler;
 import com.omega.command.AbstractCommand;
 import com.omega.command.Command;
 import com.omega.command.Parameter;
 import com.omega.command.Signature;
+import com.omega.guild.GuildContext;
+import com.omega.guild.GuildManager;
 import com.omega.util.SenderUtil;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import sx.blah.discord.handle.obj.IMessage;
@@ -25,7 +26,8 @@ public class QueueCommand extends AbstractCommand {
 
     @Signature(help = "Get list of the 10 next tracks in the queue")
     public void queueCommand() {
-        GuildAudioPlayer audioPlayer = AudioPlayerManager.getInstance().get(message.getGuild());
+        GuildContext guildContext = GuildManager.getInstance().getContext(message.getGuild());
+        GuildAudioPlayer audioPlayer = guildContext.getAudioPlayer();
 
         List<AudioTrack> queue = audioPlayer.getQueue();
         String resultMessage;
@@ -57,7 +59,8 @@ public class QueueCommand extends AbstractCommand {
 
     @Signature(help = "Add the source track(s) to the queue.")
     public void queueCommand(@Parameter(name = "source") String source) {
-        GuildAudioPlayer audioPlayer = AudioPlayerManager.getInstance().get(message.getGuild());
+        GuildContext guildContext = GuildManager.getInstance().getContext(message.getGuild());
+        GuildAudioPlayer audioPlayer = guildContext.getAudioPlayer();
         audioPlayer.queue(source, false, new QueueAudioLoadResultHandler(message));
     }
 }

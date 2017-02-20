@@ -1,9 +1,11 @@
 package com.omega.guild;
 
+import sx.blah.discord.handle.obj.IChannel;
+
 public enum Property {
 
-    MUSIC_TEXT_CHANNEL("music_channel_text", String.class, null),
-    MUSIC_VOICE_CHANNEL("music_channel_voice", String.class, null),
+    MUSIC_TEXT_CHANNEL("music_channel_text", IChannel.class, null),
+    MUSIC_VOICE_CHANNEL("music_channel_voice", IChannel.class, null),
     MUSIC_QUEUE_LOOP("music_queue_loop", Boolean.class, false),
     MUSIC_QUEUE_SHUFFLE("music_queue_shuffle", Boolean.class, false),
     COMMAND_PREFIX("command_prefix", String.class, "!");
