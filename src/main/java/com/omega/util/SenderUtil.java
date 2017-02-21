@@ -83,7 +83,7 @@ public class SenderUtil {
                 }
             }, e.getRetryDelay());
         } catch (MissingPermissionsException e) {
-            LOGGER.info("Permissions needed send message on channel " + channel.getName(), e);
+            LOGGER.info("Permissions needed to send message on channel " + channel.getName(), e);
         } catch (DiscordException e) {
             throw new RuntimeException(e);
         }
