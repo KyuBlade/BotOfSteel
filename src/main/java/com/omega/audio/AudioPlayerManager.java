@@ -1,6 +1,5 @@
 package com.omega.audio;
 
-import com.sedmelluq.discord.lavaplayer.player.AudioConfiguration;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import org.slf4j.Logger;
@@ -11,7 +10,6 @@ import sx.blah.discord.util.audio.providers.AudioInputStreamProvider;
 
 import javax.sound.sampled.AudioInputStream;
 import java.io.File;
-import java.util.concurrent.TimeUnit;
 
 public class AudioPlayerManager extends DefaultAudioPlayerManager {
 
@@ -20,8 +18,6 @@ public class AudioPlayerManager extends DefaultAudioPlayerManager {
     private AudioPlayerManager() {
         AudioSourceManagers.registerRemoteSources(this);
         AudioSourceManagers.registerLocalSource(this);
-
-        setFrameBufferDuration((int) TimeUnit.SECONDS.toMillis(10L));
     }
 
     public static AudioPlayerManager getInstance() {
