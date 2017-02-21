@@ -27,8 +27,8 @@ public class PlaylistCreateCommand extends AbstractCommand {
     }
 
     @Signature(help = "Create a new playlist with the specified privacy (0 = private, 1 = public)")
-    public void playlistCreateCommand(@Parameter(name = "playlistName") String playlistName, @Parameter(name = "privacy") Integer privacy) {
-        Playlist.Privacy resolvedPrivacy = Playlist.Privacy.findById(privacy);
+    public void playlistCreateCommand(@Parameter(name = "playlistName") String playlistName, @Parameter(name = "privacy") Long privacy) {
+        Playlist.Privacy resolvedPrivacy = Playlist.Privacy.findById(privacy.intValue());
         if (resolvedPrivacy != null) {
             createPlaylist(playlistName, resolvedPrivacy);
         } else {
