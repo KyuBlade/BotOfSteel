@@ -1,6 +1,7 @@
 package com.omega.command.impl;
 
 import com.omega.command.*;
+import com.omega.guild.Property;
 import com.omega.util.CommandExtractHelper;
 import com.omega.util.SenderUtil;
 import sx.blah.discord.handle.obj.IMessage;
@@ -25,22 +26,30 @@ public class HelpCommand extends AbstractCommand {
         StringBuilder builder = new StringBuilder();
         builder.append(MessageBuilder.Styles.CODE_WITH_LANG.getMarkdown()).append("Commands list : \n\n");
 
-        Map<String, Class<? extends AbstractCommand>> commandMap = CommandManager.getInstance().getCommands();
-        Collection<Class<? extends AbstractCommand>> commands = commandMap.values();
-        Iterator<Class<? extends AbstractCommand>> it = commands.stream().iterator();
-        while (it.hasNext()) {
-            Class<? extends AbstractCommand> command = it.next();
-            CommandExtractHelper.CommandInfo info = CommandExtractHelper.getCommandInfo(command);
-            builder.append(info.getName());
+        Map<String, CommandExtractHelper.CommandInfo> commandMap = CommandManager.getInstance().getCommands();
+        Collection<CommandExtractHelper.CommandInfo> commands = commandMap.values();
+        Iterator<CommandExtractHelper.CommandInfo> it = commands.stream().iterator();
 
-            String[] aliases = info.getAliases();
+        while (it.hasNext()) {
+            CommandExtractHelper.CommandInfo cmdInfo = it.next();
+            if (cmdInfo instanceof CommandExtractHelper.AliasCommandInfo) {
+                continue;
+            }
+
+            builder.append(cmdInfo.getName());
+
+            if (!(cmdInfo instanceof CommandExtractHelper.MainCommandInfo)) {
+                throw new IllegalStateException("Command info should be of type MainCommandInfo");
+            }
+
+            String[] aliases = ((CommandExtractHelper.MainCommandInfo) cmdInfo).getAliases();
             Iterator<String> aIt = Arrays.stream(aliases).iterator();
             while (aIt.hasNext()) {
                 String alias = aIt.next();
 
                 builder.append(", ").append(alias);
             }
-            if(it.hasNext()) {
+            if (it.hasNext()) {
                 builder.append('\n');
             }
         }
@@ -51,9 +60,8 @@ public class HelpCommand extends AbstractCommand {
 
     @Signature(help = "Get help for the specified method")
     public void helpCommand(@Parameter(name = "commandName") String commandName) {
-        Class<? extends AbstractCommand> commandClass = CommandManager.getInstance().getCommand(commandName.toLowerCase());
-        CommandExtractHelper.CommandInfo commandInfo = CommandExtractHelper.getCommandInfo(commandClass);
-        List<CommandExtractHelper.CommandSignatureInfo> signatureInfos = CommandExtractHelper.getCommandSignatureInfos(commandClass);
+        CommandExtractHelper.CommandInfo commandInfo = CommandManager.getInstance().getCommand(commandName.toLowerCase());
+        List<CommandExtractHelper.CommandSignatureInfo> signatureInfos = CommandExtractHelper.getCommandSignatureInfos(commandInfo.getType());
 
         StringBuilder builder = new StringBuilder();
         builder.append(MessageBuilder.Styles.CODE_WITH_LANG.getMarkdown());
@@ -62,13 +70,13 @@ public class HelpCommand extends AbstractCommand {
             CommandExtractHelper.CommandSignatureInfo signatureInfo = signatureInfos.get(i);
             builder.append(commandInfo.getName()).append(' ');
             signatureInfo.getParameters().forEach(parameter ->
-                    builder.append(parameter.getName())
-                            .append('(')
-                            .append(parameter.getType().getSimpleName())
-                            .append(")")
+                builder.append(parameter.getName())
+                    .append('(')
+                    .append(parameter.getType().getSimpleName())
+                    .append(")")
             );
             builder.append(" - ")
-                    .append(signatureInfo.getHelp());
+                .append(signatureInfo.getHelp());
             if (i < signatureInfos.size()) {
                 builder.append('\n');
             }

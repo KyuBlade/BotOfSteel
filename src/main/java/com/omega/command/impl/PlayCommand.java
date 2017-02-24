@@ -1,6 +1,8 @@
 package com.omega.command.impl;
 
 import com.omega.audio.GuildAudioPlayer;
+import com.omega.audio.callback.PlayAudioLoadCallback;
+import com.omega.audio.callback.QueueAudioLoadCallback;
 import com.omega.command.AbstractCommand;
 import com.omega.command.Command;
 import com.omega.command.Parameter;
@@ -21,6 +23,6 @@ public class PlayCommand extends AbstractCommand {
     public void playCommand(@Parameter(name = "source") String source) {
         GuildContext guildContext = GuildManager.getInstance().getContext(message.getGuild());
         GuildAudioPlayer audioPlayer = guildContext.getAudioPlayer();
-        audioPlayer.play(source);
+        audioPlayer.play(source, new PlayAudioLoadCallback(message));
     }
 }

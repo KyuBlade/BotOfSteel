@@ -9,24 +9,48 @@ import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class CommandExtractHelper {
 
     public static class CommandInfo {
+        private final Class<? extends AbstractCommand> type;
         private final String name;
-        private final String[] aliases;
 
-        public CommandInfo(String name, String[] aliases) {
+
+        public CommandInfo(Class<? extends AbstractCommand> type, String name) {
+            this.type = type;
             this.name = name;
-            this.aliases = aliases;
+        }
+
+        public Class<? extends AbstractCommand> getType() {
+            return type;
         }
 
         public String getName() {
             return name;
         }
+    }
+
+    public static class MainCommandInfo extends CommandInfo {
+
+        private final String[] aliases;
+
+        public MainCommandInfo(Class<? extends AbstractCommand> type, String name, String[] aliases) {
+            super(type, name);
+
+            this.aliases = aliases;
+        }
 
         public String[] getAliases() {
             return aliases;
+        }
+    }
+
+    public static class AliasCommandInfo extends CommandInfo {
+
+        public AliasCommandInfo(Class<? extends AbstractCommand> type, String name) {
+            super(type, name);
         }
     }
 
@@ -69,17 +93,21 @@ public class CommandExtractHelper {
         }
     }
 
-    public static CommandInfo getCommandInfo(Class<? extends AbstractCommand> commandType) {
-        CommandInfo info = null;
+    public static CommandInfo[] getCommandInfos(Class<? extends AbstractCommand> commandType) {
         Command commandAnnot = commandType.getAnnotation(Command.class);
         if (commandAnnot != null) {
             String commandName = commandAnnot.name();
             String[] aliases = commandAnnot.aliases();
 
-            info = new CommandInfo(commandName, aliases);
-        }
+            CommandInfo[] cmdInfos = new CommandInfo[aliases.length + 1];
+            cmdInfos[0] = new MainCommandInfo(commandType, commandName, aliases);
 
-        return info;
+            IntStream.range(0, aliases.length).forEach(i -> cmdInfos[i + 1] = new AliasCommandInfo(commandType, aliases[i]));
+
+            return cmdInfos;
+        } else {
+            throw new IllegalStateException("No Command annotation found for class " + commandType.getSimpleName());
+        }
     }
 
     public static List<CommandSignatureInfo> getCommandSignatureInfos(Class<? extends AbstractCommand> commandType) {

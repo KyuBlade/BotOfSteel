@@ -25,8 +25,12 @@ public abstract class TrackLoader {
         this.callbackHandler = callbackHandler;
     }
 
+    public void loadOrdered(Object orderingKey, String source) {
+        this.tasks.add(new TrackLoaderExecutor(orderingKey, manager, this, source));
+    }
+
     public void load(String source) {
-        this.tasks.add(new TrackLoaderExecutor(manager, this, source));
+        loadOrdered(null, source);
     }
 
     /**
@@ -85,10 +89,14 @@ public abstract class TrackLoader {
         private final CancellableAudioLoadResult handler;
         private Future<Void> future;
 
-        public TrackLoaderExecutor(AudioPlayerManager manager, TrackLoader loader, String source) {
+        public TrackLoaderExecutor(Object orderingKey, AudioPlayerManager manager, TrackLoader loader, String source) {
             this.loader = loader;
             this.handler = new CancellableAudioLoadResult(loader);
-            this.future = manager.loadItem(source, handler);
+            if (orderingKey == null) {
+                this.future = manager.loadItem(source, handler);
+            } else {
+                this.future = manager.loadItemOrdered(orderingKey, source, handler);
+            }
         }
 
         public void cancel() {

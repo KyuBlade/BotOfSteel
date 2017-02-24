@@ -61,8 +61,9 @@ public class GuildProperties {
     @PostLoad
     public void postLoad() {
         this.guild = BotManager.getInstance().getClient().getGuildByID(guildId);
+        LOGGER.debug("Retrieve guild {}", guild.getName());
         properties.forEach((s, o) -> guild.getClient().getDispatcher().dispatch(
-            new GuildPropertyChangedEvent(guild, propertyList.get(s), o))
+            new GuildPropertyChangedEvent(guild, propertyList.get(s), o, true))
         );
     }
 
@@ -80,7 +81,7 @@ public class GuildProperties {
     }
 
     public void setProperty(Property property, Object value) {
-        if (property.getType().isInstance(value)) {
+        if (value == null || property.getType().isInstance(value)) {
             properties.put(property.getProperty(), value);
             save();
 
@@ -89,7 +90,7 @@ public class GuildProperties {
             LOGGER.warn(
                 "Wrong value provided for property {}, was of type {}, must be of type {}",
                 property,
-                value.getClass().getSimpleName(),
+                (value == null) ? "undefined" : value.getClass().getSimpleName(),
                 property.getType().getSimpleName()
             );
 

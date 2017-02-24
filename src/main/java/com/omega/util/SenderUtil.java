@@ -30,7 +30,7 @@ public class SenderUtil {
         } catch (MissingPermissionsException e) {
             LOGGER.info("Permissions needed to reply", e);
         } catch (DiscordException e) {
-            throw new RuntimeException(e);
+            LOGGER.warn("Unable to send message", e);
         }
     }
 
@@ -48,7 +48,7 @@ public class SenderUtil {
         } catch (MissingPermissionsException e) {
             LOGGER.info("Permissions needed to reply", e);
         } catch (DiscordException e) {
-            throw new RuntimeException(e);
+            LOGGER.warn("Unable to send message", e);
         }
     }
 
@@ -67,7 +67,7 @@ public class SenderUtil {
         } catch (MissingPermissionsException e) {
             LOGGER.info("Permissions needed to send private message", e);
         } catch (DiscordException e) {
-            throw new RuntimeException(e);
+            LOGGER.warn("Unable to send message", e);
         }
     }
 

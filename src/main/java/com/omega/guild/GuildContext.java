@@ -11,9 +11,13 @@ import com.omega.event.GuildPropertyChangedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.events.EventSubscriber;
+import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IGuild;
+import sx.blah.discord.handle.obj.IUser;
+import sx.blah.discord.handle.obj.Permissions;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class GuildContext {
 
@@ -65,12 +69,24 @@ public class GuildContext {
     @EventSubscriber
     public void onGuildPropertyChange(GuildPropertyChangedEvent event) {
         if (event.getGuild().getID().equals(guild.getID())) {
+            LOGGER.debug("Property change for guild {}({}), {} = {} isInit = {}, listenerGuild = {}",
+                event.getGuild().getName(), event.getGuild().getID(),
+                event.getProperty(), event.getValue(), event.isInit(), guild.getName());
+
             Property property = event.getProperty();
             switch (property) {
                 case MUSIC_TEXT_CHANNEL:
                     if (event.isInit()) {
                         if (event.getValue() == null) {
-                            properties.setProperty(Property.MUSIC_TEXT_CHANNEL, guild.getChannels().get(0));
+                            LOGGER.debug("Init music_text_channel property for guild {}", guild.getName());
+                            List<IChannel> channels = guild.getChannels();
+                            IUser botUser = guild.getClient().getOurUser();
+                            IChannel writableChannel = channels.stream()
+                                .filter(channel -> channel.getModifiedPermissions(botUser).contains(Permissions.SEND_MESSAGES))
+                                .findFirst()
+                                .orElse(null);
+                            LOGGER.debug("Writable channel found : {}", writableChannel.getName());
+                            properties.setProperty(Property.MUSIC_TEXT_CHANNEL, writableChannel);
                         }
                     }
                     break;

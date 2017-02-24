@@ -75,7 +75,7 @@ public class GuildAudioPlayer {
 
         AddToPlaylistTrackLoader loader = new AddToPlaylistTrackLoader(manager, playlist);
         loader.setCallbackHandler(callbackHandler);
-        loader.load(source);
+        loader.loadOrdered(playlistName, source);
     }
 
     /**
@@ -143,28 +143,45 @@ public class GuildAudioPlayer {
     /**
      * Add the source to the head of the queue and play it immediately.
      *
-     * @param source the source to play
+     * @param source          the source to play
+     * @param callbackHandler result callback
      */
-    public void play(String source) {
+    public void play(String source, AudioLoadResultHandler callbackHandler) {
         queue(source, true, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack track) {
-                skip();
+                if (scheduler.queueSize() > 0) {
+                    skip();
+                }
+
+                if (callbackHandler != null) {
+                    callbackHandler.trackLoaded(track);
+                }
             }
 
             @Override
             public void playlistLoaded(AudioPlaylist playlist) {
-                skip();
+                if (scheduler.queueSize() > 0) {
+                    skip();
+                }
+
+                if (callbackHandler != null) {
+                    callbackHandler.playlistLoaded(playlist);
+                }
             }
 
             @Override
             public void noMatches() {
-
+                if (callbackHandler != null) {
+                    callbackHandler.noMatches();
+                }
             }
 
             @Override
             public void loadFailed(FriendlyException exception) {
-
+                if (callbackHandler != null) {
+                    callbackHandler.loadFailed(exception);
+                }
             }
         });
     }
@@ -206,6 +223,15 @@ public class GuildAudioPlayer {
      */
     public void skip(int count) {
         scheduler.skip(count);
+    }
+
+    /**
+     * Seek to the given position.
+     *
+     * @param position position to seek to
+     */
+    public void seek(long position) {
+        scheduler.seek(position);
     }
 
     /**

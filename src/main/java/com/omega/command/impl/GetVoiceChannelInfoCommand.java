@@ -30,9 +30,9 @@ public class GetVoiceChannelInfoCommand extends AbstractCommand {
         IUser botUser = message.getClient().getOurUser();
         List<IVoiceChannel> voiceChannels = botUser.getConnectedVoiceChannels();
         IVoiceChannel connectedVoiceChannel = voiceChannels.stream()
-                .filter(voiceChannel -> voiceChannel.getConnectedUsers().contains(botUser))
-                .findFirst()
-                .orElse(null);
+            .filter(voiceChannel -> voiceChannel.getGuild().equals(message.getGuild()))
+            .findFirst()
+            .orElse(null);
         if (connectedVoiceChannel != null) {
             SenderUtil.reply(message, printChannelInfo(connectedVoiceChannel));
         } else {
@@ -43,12 +43,12 @@ public class GetVoiceChannelInfoCommand extends AbstractCommand {
     private String printChannelInfo(IVoiceChannel voiceChannel) {
         StringBuilder builder = new StringBuilder();
         builder.append(MessageBuilder.Styles.CODE_WITH_LANG.getMarkdown())
-                .append("Name : ").append(voiceChannel.getName()).append('\n')
-                .append("Topic : ").append(voiceChannel.getTopic()).append('\n')
-                .append("Creation date : ").append(voiceChannel.getCreationDate().toString()).append('\n')
-                .append("User limits : ").append(voiceChannel.getUserLimit()).append('\n')
-                .append("Connected users : ").append(voiceChannel.getConnectedUsers().size()).append('\n')
-                .append("Bitrate : ").append(voiceChannel.getBitrate()).append('\n');
+            .append("Name : ").append(voiceChannel.getName()).append('\n')
+            .append("Topic : ").append(voiceChannel.getTopic()).append('\n')
+            .append("Creation date : ").append(voiceChannel.getCreationDate().toString()).append('\n')
+            .append("User limits : ").append(voiceChannel.getUserLimit()).append('\n')
+            .append("Connected users : ").append(voiceChannel.getConnectedUsers().size()).append('\n')
+            .append("Bitrate : ").append(voiceChannel.getBitrate()).append('\n');
 
         String invitesCount = "N/A";
         try {
@@ -65,7 +65,7 @@ public class GetVoiceChannelInfoCommand extends AbstractCommand {
             LOGGER.warn("Unable to get invite count", e);
         }
         builder.append("Current invites : ").append(invitesCount)
-                .append(MessageBuilder.Styles.CODE_WITH_LANG.getReverseMarkdown());
+            .append(MessageBuilder.Styles.CODE_WITH_LANG.getReverseMarkdown());
         return builder.toString();
     }
 }

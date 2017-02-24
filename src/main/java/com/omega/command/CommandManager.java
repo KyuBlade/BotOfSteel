@@ -21,7 +21,7 @@ public class CommandManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CommandManager.class);
 
-    private Map<String, Class<? extends AbstractCommand>> commands = new HashMap<>();
+    private Map<String, CommandExtractHelper.CommandInfo> commands = new HashMap<>();
 
     private ExecutorService executorService;
 
@@ -54,6 +54,8 @@ public class CommandManager {
         registerCommand(TrackCommand.class);
         registerCommand(ShuffleCommand.class);
         registerCommand(ClearQueueCommand.class);
+        registerCommand(UserInfoCommand.class);
+        registerCommand(SeekCommand.class);
     }
 
     @EventSubscriber
@@ -67,18 +69,19 @@ public class CommandManager {
         }
 
         LOGGER.debug("Command : {}, Arguments : {}", commandName, args.toString());
-        Class<? extends AbstractCommand> commandClass = commands.get(commandName);
+        CommandExtractHelper.CommandInfo cmdInfo = commands.get(commandName);
 
         // Instantiate command
         AbstractCommand commandInstance;
+        Class<? extends AbstractCommand> cmdType = cmdInfo.getType();
         try {
-            Constructor<? extends AbstractCommand> constructor = commandClass.getConstructor(IUser.class, IMessage.class);
+            Constructor<? extends AbstractCommand> constructor = cmdType.getConstructor(IUser.class, IMessage.class);
             commandInstance = constructor.newInstance(by, message);
         } catch (NoSuchMethodException e) {
-            LOGGER.error("Command class " + commandClass.getName() + " need a (IUser, IMessage) constructor");
+            LOGGER.error("Command class " + cmdType.getName() + " need a (IUser, IMessage) constructor");
             return;
         } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
-            LOGGER.error("Unable to create new instance for command " + commandClass.getName());
+            LOGGER.error("Unable to create new instance for command " + cmdType.getName());
             return;
         }
 
@@ -99,7 +102,7 @@ public class CommandManager {
         }
 
         // Find correct command signature method
-        Method commandMethod = Arrays.stream(commandClass.getDeclaredMethods())
+        Method commandMethod = Arrays.stream(cmdType.getDeclaredMethods())
             .filter(method -> {
                 if (method.isAnnotationPresent(Signature.class)
                     && method.getParameterCount() == castedArgs.size()) { // Keep same arguments sized methods
@@ -138,27 +141,25 @@ public class CommandManager {
                 LOGGER.debug("Invoke method {}", commandMethod);
                 commandMethod.invoke(commandInstance, castedArgs.toArray());
             } catch (IllegalAccessException | InvocationTargetException e) {
-                LOGGER.error("Unable to invoke method " + commandMethod.toGenericString() + " of class " + commandClass.getName(), e);
+                LOGGER.error("Unable to invoke method " + commandMethod.toGenericString() + " of class " + cmdType.getName(), e);
             }
         }
     }
 
     private <T extends AbstractCommand> void registerCommand(Class<T> clazz) {
-        CommandExtractHelper.CommandInfo commandInfo = CommandExtractHelper.getCommandInfo(clazz);
-        if (commandInfo != null) {
-            commands.put(commandInfo.getName().toLowerCase(), clazz);
-            Arrays.stream(commandInfo.getAliases()).forEach(alias -> commands.put(alias.toLowerCase(), clazz));
-        } else {
-            throw new NullPointerException("No command annotation found for class " + clazz.getName());
+        try {
+            CommandExtractHelper.CommandInfo[] cmdInfos = CommandExtractHelper.getCommandInfos(clazz);
+            Arrays.stream(cmdInfos).forEach(commandInfo -> commands.put(commandInfo.getName().toLowerCase(), commandInfo));
+        } catch (IllegalStateException e) {
+            LOGGER.warn("Unable to register command {}", clazz.getSimpleName(), e);
         }
-
     }
 
-    public Class<? extends AbstractCommand> getCommand(String commandName) {
+    public CommandExtractHelper.CommandInfo getCommand(String commandName) {
         return commands.get(commandName);
     }
 
-    public Map<String, Class<? extends AbstractCommand>> getCommands() {
+    public Map<String, CommandExtractHelper.CommandInfo> getCommands() {
         return commands;
     }
 

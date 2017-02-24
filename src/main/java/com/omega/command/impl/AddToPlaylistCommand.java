@@ -1,7 +1,6 @@
 package com.omega.command.impl;
 
-import com.omega.audio.AddToPlaylistAudioLoadResultHandler;
-import com.omega.audio.AudioPlayerManager;
+import com.omega.audio.callback.AddToPlaylistAudioLoadCallback;
 import com.omega.audio.GuildAudioPlayer;
 import com.omega.command.AbstractCommand;
 import com.omega.command.Command;
@@ -27,7 +26,7 @@ public class AddToPlaylistCommand extends AbstractCommand {
 
         try {
             audioPlayer.addToPlaylist(playlistName, source,
-                new AddToPlaylistAudioLoadResultHandler(message, playlistName));
+                new AddToPlaylistAudioLoadCallback(message, playlistName));
         } catch (PlaylistNotFoundException e) {
             SenderUtil.reply(message, "Playlist " + playlistName + " not found");
         }

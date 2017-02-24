@@ -33,7 +33,7 @@ public class PlayPlaylistTrackLoader extends TrackLoader {
         }
 
         this.needSkip = scheduler.getPlayingTrack() != null;
-        playlist.getTracks().forEach(track -> load(track.getSource()));
+        playlist.getTracks().forEach(track -> loadOrdered(playlist, track.getSource()));
     }
 
     @Override

@@ -1,7 +1,7 @@
 package com.omega.command.impl;
 
 import com.omega.audio.GuildAudioPlayer;
-import com.omega.audio.QueueAudioLoadResultHandler;
+import com.omega.audio.callback.QueueAudioLoadCallback;
 import com.omega.command.AbstractCommand;
 import com.omega.command.Command;
 import com.omega.command.Parameter;
@@ -10,9 +10,11 @@ import com.omega.guild.GuildContext;
 import com.omega.guild.GuildManager;
 import com.omega.util.SenderUtil;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
-import sx.blah.discord.util.MessageBuilder;
+import sx.blah.discord.util.*;
 
 import java.util.List;
 import java.util.stream.IntStream;
@@ -34,7 +36,7 @@ public class QueueCommand extends AbstractCommand {
         if (!queue.isEmpty()) {
             StringBuilder sb = new StringBuilder(128);
             sb.append(MessageBuilder.Styles.CODE)
-                    .append("Tracks in queue : \n\n");
+                .append("Tracks in queue : \n\n");
 
             final int TRACK_TO_DISPLAY = 10;
             IntStream.range(0, Math.min(TRACK_TO_DISPLAY, queue.size())).forEach(i -> {
@@ -45,7 +47,7 @@ public class QueueCommand extends AbstractCommand {
             int notShownTrackCount = queue.size() - 10;
             if (notShownTrackCount > 0) {
                 sb.append("...").append('\n')
-                        .append(notShownTrackCount).append(" more");
+                    .append(notShownTrackCount).append(" more");
             }
 
             sb.append(MessageBuilder.Styles.CODE);
@@ -61,6 +63,6 @@ public class QueueCommand extends AbstractCommand {
     public void queueCommand(@Parameter(name = "source") String source) {
         GuildContext guildContext = GuildManager.getInstance().getContext(message.getGuild());
         GuildAudioPlayer audioPlayer = guildContext.getAudioPlayer();
-        audioPlayer.queue(source, false, new QueueAudioLoadResultHandler(message));
+        audioPlayer.queue(source, false, new QueueAudioLoadCallback(message));
     }
 }

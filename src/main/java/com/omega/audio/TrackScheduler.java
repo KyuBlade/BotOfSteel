@@ -3,6 +3,7 @@ package com.omega.audio;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
+import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import org.slf4j.Logger;
@@ -45,19 +46,37 @@ public class TrackScheduler extends AudioEventAdapter {
     /**
      * Add the next track to queue or play right away if nothing is in the queue.
      *
-     * @param track    The track to play or add to queue.
-     * @param addFirst True to put it at the start of the queue
+     * @param track   The track to play or add to queue.
+     * @param addHead True to put it at the start of the queue
      */
-    public void queue(AudioTrack track, boolean addFirst) {
+    public void queue(AudioTrack track, boolean addHead) {
         boolean interupt = false;
         if (player.isPaused() || !(interupt = player.startTrack(track, true)) || loop) {
             AudioTrack queueTrack = (interupt) ? track.makeClone() : track;
-            if (addFirst) {
+            if (addHead) {
                 queue.addFirst(queueTrack);
             } else {
                 queue.addLast(queueTrack);
             }
         }
+    }
+
+    /**
+     *
+     */
+    public void queue(AudioPlaylist playlist) {
+        queue(playlist, false);
+    }
+
+    /**
+     *
+     * @param playlist
+     * @param addHead
+     */
+    public void queue(AudioPlaylist playlist, boolean addHead) {
+        playlist.getTracks().forEach(track -> {
+            queue(track, addHead);
+        });
     }
 
     /**
@@ -84,6 +103,21 @@ public class TrackScheduler extends AudioEventAdapter {
         player.startTrack(nextTrack, false);
         if (loop) {
             queue.addLast(nextTrack.makeClone());
+        }
+    }
+
+    /**
+     * Seek to the given position.
+     *
+     * @param position position to seek to
+     * @throws IllegalStateException if trying to seek while no track playing
+     */
+    public void seek(long position) {
+        AudioTrack currentTrack = getPlayingTrack();
+        if (currentTrack != null) {
+            currentTrack.setPosition(position);
+        } else {
+            throw new IllegalStateException("No track playing");
         }
     }
 
