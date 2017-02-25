@@ -1,4 +1,4 @@
-package com.omega.audio;
+package com.omega.audio.callback;
 
 import com.omega.util.SenderUtil;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
@@ -7,12 +7,12 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import sx.blah.discord.handle.obj.IMessage;
 
-public class AddToPlaylistAudioLoadResultHandler implements AudioLoadResultHandler {
+public class AddToPlaylistAudioLoadCallback implements AudioLoadResultHandler {
 
     private final IMessage message;
     private final String playlistName;
 
-    public AddToPlaylistAudioLoadResultHandler(IMessage message, String playlistName) {
+    public AddToPlaylistAudioLoadCallback(IMessage message, String playlistName) {
         this.message = message;
         this.playlistName = playlistName;
     }
