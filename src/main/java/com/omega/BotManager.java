@@ -40,13 +40,15 @@ public class BotManager {
         try {
             LOGGER.info("Load configuration file");
             ConfigurationManager.getInstance().load();
-            LOGGER.debug("Config {}", BotConfig.getInstance().toString());
         } catch (ParserConfigurationException | XPathFactoryConfigurationException | SAXException | IOException | XPathExpressionException e) {
             throw new Exception("Unable to load bot configuration", e);
         }
 
+        BotConfig config = BotConfig.getInstance();
+
         clientBuilder = new ClientBuilder();
-        clientBuilder.withToken(BotConfig.getInstance().getBotToken());
+        clientBuilder.withToken(config.getBotToken())
+            .withShards(config.getShards());
     }
 
     public void connect() {

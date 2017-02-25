@@ -13,11 +13,12 @@ public class BotConfigWriter extends AbstractConfigWriter<BotConfig> {
 
     @Override
     protected void save(Document document)
-            throws TransformerException {
+        throws TransformerException {
         Element rootEle = document.createElement("Config");
 
         appendEntry(rootEle, "BotToken", config.getBotToken());
         appendEntry(rootEle, "ClientId", config.getClientId());
+        appendEntry(rootEle, "Shards", config.getShards());
 
         document.appendChild(rootEle);
     }

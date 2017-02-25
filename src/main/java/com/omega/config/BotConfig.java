@@ -8,6 +8,7 @@ public class BotConfig extends BaseConfig<BotConfig> {
 
     private String botToken;
     private String clientId;
+    private int shards;
 
     private BotConfig() {
         super();
@@ -41,7 +42,8 @@ public class BotConfig extends BaseConfig<BotConfig> {
     public String toString() {
         StringBuilder sb = new StringBuilder(64);
         sb.append("botToken = ").append(botToken).append('\n')
-                .append("clientId = ").append(clientId);
+            .append("clientId = ").append(clientId).append('\n')
+            .append("shards = ").append(shards);
 
         return sb.toString();
     }
@@ -60,6 +62,14 @@ public class BotConfig extends BaseConfig<BotConfig> {
 
     public void setClientId(String clientId) {
         this.clientId = clientId;
+    }
+
+    public int getShards() {
+        return shards;
+    }
+
+    public void setShards(int shards) {
+        this.shards = shards;
     }
 
     private static class SingletonHolder {

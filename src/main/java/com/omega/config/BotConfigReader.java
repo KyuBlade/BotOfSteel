@@ -13,8 +13,9 @@ public class BotConfigReader extends AbstractConfigReader<BotConfig> {
 
     @Override
     protected void read(Document document)
-            throws XPathFactoryConfigurationException, XPathExpressionException {
+        throws XPathFactoryConfigurationException, XPathExpressionException {
         config.setBotToken(readString(document, "//BotToken"));
         config.setClientId(readString(document, "//ClientId"));
+        config.setShards(readNumber(document, "//Shards").intValue());
     }
 }

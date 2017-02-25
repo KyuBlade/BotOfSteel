@@ -25,27 +25,31 @@ public abstract class AbstractConfigReader<T extends BaseConfig> {
     }
 
     public final void read() throws ParserConfigurationException, IOException, SAXException,
-            XPathFactoryConfigurationException, XPathExpressionException {
+        XPathFactoryConfigurationException, XPathExpressionException {
         if (!config.getConfigFile().exists()) {
             throw new FileNotFoundException(
-                    "Configuration file " + config.getConfigFile().getAbsolutePath() + " not found");
+                "Configuration file " + config.getConfigFile().getAbsolutePath() + " not found");
         }
         if (!config.getConfigFile().isFile()) {
             throw new FileNotFoundException(
-                    "Configuration file " + config.getConfigFile().getAbsolutePath() +
-                            " should not be a directory");
+                "Configuration file " + config.getConfigFile().getAbsolutePath() +
+                    " should not be a directory");
         }
 
         Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder()
-                .parse(config.getConfigFile());
+            .parse(config.getConfigFile());
         read(document);
     }
 
     protected abstract void read(Document document)
-            throws XPathFactoryConfigurationException, XPathExpressionException;
+        throws XPathFactoryConfigurationException, XPathExpressionException;
 
     protected String readString(Document document, String expression) throws XPathExpressionException {
         return (String) pathFactory.newXPath().compile(expression).evaluate(document, XPathConstants.STRING);
+    }
+
+    protected Double readNumber(Document document, String expression) throws XPathExpressionException {
+        return (Double) pathFactory.newXPath().compile(expression).evaluate(document, XPathConstants.NUMBER);
     }
 
     protected boolean readBoolean(Document document, String expression) throws XPathExpressionException {
