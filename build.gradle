@@ -22,12 +22,10 @@ task dist(type: Jar) {
 apply from: 'deploy.gradle'
 
 repositories {
-    mavenLocal()
     jcenter()
     maven {
         url "https://jitpack.io"
     }
-    maven { url "http://maven.sedmelluq.com" }
 }
 
 dependencies {
