@@ -3,6 +3,7 @@ package com.omega.command;
 import com.omega.command.impl.*;
 import com.omega.event.CommandExecutionEvent;
 import com.omega.util.CommandExtractHelper;
+import com.omega.util.MessageUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.events.EventSubscriber;
@@ -31,6 +32,7 @@ public class CommandManager {
         registerCommand(PingCommand.class);
         registerCommand(HelpCommand.class);
         registerCommand(RandomCommand.class);
+        registerCommand(RollCommand.class);
         registerCommand(InviteCommand.class);
         registerCommand(JoinCommand.class);
         registerCommand(LeaveCommand.class);
