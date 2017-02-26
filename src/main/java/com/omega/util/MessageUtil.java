@@ -70,6 +70,25 @@ public class MessageUtil {
     }
 
     /**
+     * Send a private message with an embed object.
+     *
+     * @param by      user to message
+     * @param content message content
+     * @param embed   the embed object to send
+     */
+    public static void sendPrivateMessage(IUser by, String content, EmbedObject embed) {
+        RequestBuffer.request(() -> {
+            try {
+                by.getOrCreatePMChannel().sendMessage(content, embed, false);
+            } catch (MissingPermissionsException e) {
+                LOGGER.info("Permissions needed to send private message", e);
+            } catch (DiscordException e) {
+                LOGGER.warn("Unable to send message", e);
+            }
+        });
+    }
+
+    /**
      * Send a message in a channel.
      *
      * @param channel channel to send to
@@ -79,6 +98,25 @@ public class MessageUtil {
         RequestBuffer.request(() -> {
             try {
                 channel.sendMessage(content);
+            } catch (MissingPermissionsException e) {
+                LOGGER.info("Permissions needed to send message on channel " + channel.getName(), e);
+            } catch (DiscordException e) {
+                LOGGER.warn("Unable to send message", e);
+            }
+        });
+    }
+
+    /**
+     * Send a message in a channel with an embed object.
+     *
+     * @param channel channel to send to
+     * @param content message content
+     * @param embed   the embed object to send
+     */
+    public static void sendMessage(IChannel channel, String content, EmbedObject embed) {
+        RequestBuffer.request(() -> {
+            try {
+                channel.sendMessage(content, embed, false);
             } catch (MissingPermissionsException e) {
                 LOGGER.info("Permissions needed to send message on channel " + channel.getName(), e);
             } catch (DiscordException e) {
