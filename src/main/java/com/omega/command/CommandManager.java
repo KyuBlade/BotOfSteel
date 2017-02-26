@@ -140,6 +140,7 @@ public class CommandManager {
 
         if (commandMethod != null) {
             try {
+                MessageUtil.deleteMessage(message);
                 LOGGER.debug("Invoke method {}", commandMethod);
                 commandMethod.invoke(commandInstance, castedArgs.toArray());
             } catch (IllegalAccessException | InvocationTargetException e) {
