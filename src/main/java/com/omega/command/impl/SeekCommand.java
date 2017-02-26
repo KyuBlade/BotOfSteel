@@ -7,7 +7,7 @@ import com.omega.command.Parameter;
 import com.omega.command.Signature;
 import com.omega.guild.GuildContext;
 import com.omega.guild.GuildManager;
-import com.omega.util.SenderUtil;
+import com.omega.util.MessageUtil;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.slf4j.Logger;
@@ -55,7 +55,7 @@ public class SeekCommand extends AbstractCommand {
 
             seekCommand(hours, minutes, seconds);
         } catch (NumberFormatException e) {
-            SenderUtil.reply(message, "Malformed time");
+            MessageUtil.reply(message, "Malformed time");
         }
 
     }
@@ -83,13 +83,13 @@ public class SeekCommand extends AbstractCommand {
         seekTime *= 1000L;
 
         if (seekTime < 0) {
-            SenderUtil.reply(message, "Seek time must not be negative");
+            MessageUtil.reply(message, "Seek time must not be negative");
         } else {
             try {
                 audioPlayer.seek(seekTime);
-                SenderUtil.reply(message, DurationFormatUtils.formatDuration(seekTime, "HH:mm:ss"));
+                MessageUtil.reply(message, DurationFormatUtils.formatDuration(seekTime, "HH:mm:ss"));
             } catch (IllegalStateException e) {
-                SenderUtil.reply(message, "No track playing");
+                MessageUtil.reply(message, "No track playing");
             }
         }
     }

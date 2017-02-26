@@ -1,6 +1,5 @@
 package com.omega.command.impl;
 
-import com.omega.audio.AudioPlayerManager;
 import com.omega.audio.GuildAudioPlayer;
 import com.omega.command.AbstractCommand;
 import com.omega.command.Command;
@@ -8,7 +7,7 @@ import com.omega.command.Parameter;
 import com.omega.command.Signature;
 import com.omega.guild.GuildContext;
 import com.omega.guild.GuildManager;
-import com.omega.util.SenderUtil;
+import com.omega.util.MessageUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IGuild;
@@ -40,7 +39,7 @@ public class SetMusicChannelCommand extends AbstractCommand {
         if (currentVoiceChannel != null) {
             setMusicChannel(currentVoiceChannel);
         } else {
-            SenderUtil.reply(message, "You are not in a voice channel");
+            MessageUtil.reply(message, "You are not in a voice channel");
         }
     }
 
@@ -53,7 +52,7 @@ public class SetMusicChannelCommand extends AbstractCommand {
         if (voiceChannel != null) {
             setMusicChannel(voiceChannel);
         } else {
-            SenderUtil.reply(message, "Voice channel " + voiceChannelName + " not found");
+            MessageUtil.reply(message, "Voice channel " + voiceChannelName + " not found");
         }
     }
 
@@ -62,12 +61,12 @@ public class SetMusicChannelCommand extends AbstractCommand {
             GuildContext guildContext = GuildManager.getInstance().getContext(voiceChannel.getGuild());
             GuildAudioPlayer audioPlayer = guildContext.getAudioPlayer();
             audioPlayer.setMusicChannel(voiceChannel);
-            SenderUtil.reply(message, "Voice channel " + voiceChannel.getName() + " is now a music channel");
+            MessageUtil.reply(message, "Voice channel " + voiceChannel.getName() + " is now a music channel");
         } catch (DiscordException e) {
             LOGGER.error("Failed to set voice channel " + voiceChannel.getName() + " as music channel", e);
         } catch (MissingPermissionsException e) {
             LOGGER.warn("Missing permissions", e);
-            SenderUtil.reply(message, "Permissions needed");
+            MessageUtil.reply(message, "Permissions needed");
         } catch (RateLimitException e) {
             LOGGER.warn("Rate limit exceeded", e);
         }

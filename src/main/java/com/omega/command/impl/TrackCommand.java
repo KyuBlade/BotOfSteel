@@ -6,7 +6,7 @@ import com.omega.command.Command;
 import com.omega.command.Signature;
 import com.omega.guild.GuildContext;
 import com.omega.guild.GuildManager;
-import com.omega.util.SenderUtil;
+import com.omega.util.MessageUtil;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
@@ -37,15 +37,15 @@ public class TrackCommand extends AbstractCommand {
             if (playingTrack != null) {
                 EmbedObject trackEmbed = getTrackEmbbed(playingTrack);
                 if (trackEmbed != null) {
-                    SenderUtil.reply(message, "Playing track : ", trackEmbed);
+                    MessageUtil.reply(message, "Playing track : ", trackEmbed);
                 } else {
-                    SenderUtil.reply(message, "Audio source still not supported");
+                    MessageUtil.reply(message, "Audio source still not supported");
                 }
             }
             return;
         }
 
-        SenderUtil.reply(message, "No tracks playing actually");
+        MessageUtil.reply(message, "No tracks playing actually");
     }
 
     private EmbedObject getTrackEmbbed(AudioTrack track) {

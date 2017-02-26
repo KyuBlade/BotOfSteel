@@ -6,7 +6,7 @@ import com.omega.command.Command;
 import com.omega.command.Signature;
 import com.omega.guild.GuildContext;
 import com.omega.guild.GuildManager;
-import com.omega.util.SenderUtil;
+import com.omega.util.MessageUtil;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
 
@@ -23,6 +23,6 @@ public class ShuffleCommand extends AbstractCommand {
         GuildAudioPlayer audioPlayer = guildContext.getAudioPlayer();
 
         audioPlayer.shuffle();
-        SenderUtil.reply(message, "Queue as been shuffled");
+        MessageUtil.reply(message, "Queue as been shuffled");
     }
 }

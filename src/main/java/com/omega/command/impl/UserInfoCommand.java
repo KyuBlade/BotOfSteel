@@ -4,7 +4,7 @@ import com.omega.command.AbstractCommand;
 import com.omega.command.Command;
 import com.omega.command.Parameter;
 import com.omega.command.Signature;
-import com.omega.util.SenderUtil;
+import com.omega.util.MessageUtil;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
 
@@ -25,6 +25,6 @@ public class UserInfoCommand extends AbstractCommand {
         String message = String.format(TEMPLATE, user.getAvatarURL(),
             user.getName(), user.getPresence());
 
-        SenderUtil.sendPrivateMessage(by, message);
+        MessageUtil.sendPrivateMessage(by, message);
     }
 }

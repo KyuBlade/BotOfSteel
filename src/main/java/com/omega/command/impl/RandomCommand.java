@@ -4,7 +4,7 @@ import com.omega.command.AbstractCommand;
 import com.omega.command.Command;
 import com.omega.command.Parameter;
 import com.omega.command.Signature;
-import com.omega.util.SenderUtil;
+import com.omega.util.MessageUtil;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.util.DiscordException;
@@ -44,7 +44,7 @@ public class RandomCommand extends AbstractCommand {
             resultMessage = "The random number is " + randomNumber;
         }
 
-        SenderUtil.reply(message, resultMessage);
+        MessageUtil.reply(message, resultMessage);
     }
 
     @Signature(help = "Pick a random decimal number in the given range")
@@ -65,6 +65,6 @@ public class RandomCommand extends AbstractCommand {
             resultMessage = "The random number is " + randomNumber;
         }
 
-        SenderUtil.reply(message, resultMessage);
+        MessageUtil.reply(message, resultMessage);
     }
 }

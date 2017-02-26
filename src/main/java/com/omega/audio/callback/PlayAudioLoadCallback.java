@@ -1,6 +1,6 @@
 package com.omega.audio.callback;
 
-import com.omega.util.SenderUtil;
+import com.omega.util.MessageUtil;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
@@ -29,19 +29,19 @@ public class PlayAudioLoadCallback implements AudioLoadResultHandler {
 
     @Override
     public void playlistLoaded(AudioPlaylist playlist) {
-        SenderUtil.reply(message, "Will play playlist {}({} tracks).");
+        MessageUtil.reply(message, "Will play playlist {}({} tracks).");
         deleteMessage();
     }
 
     @Override
     public void noMatches() {
-        SenderUtil.reply(message, "No tracks found.");
+        MessageUtil.reply(message, "No tracks found.");
         deleteMessage();
     }
 
     @Override
     public void loadFailed(FriendlyException exception) {
-        SenderUtil.reply(message, "Everything exploded, try again or not.");
+        MessageUtil.reply(message, "Everything exploded, try again or not.");
         deleteMessage();
     }
 

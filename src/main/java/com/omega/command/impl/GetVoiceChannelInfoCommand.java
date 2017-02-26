@@ -3,7 +3,7 @@ package com.omega.command.impl;
 import com.omega.command.AbstractCommand;
 import com.omega.command.Command;
 import com.omega.command.Signature;
-import com.omega.util.SenderUtil;
+import com.omega.util.MessageUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
@@ -34,9 +34,9 @@ public class GetVoiceChannelInfoCommand extends AbstractCommand {
             .findFirst()
             .orElse(null);
         if (connectedVoiceChannel != null) {
-            SenderUtil.reply(message, printChannelInfo(connectedVoiceChannel));
+            MessageUtil.reply(message, printChannelInfo(connectedVoiceChannel));
         } else {
-            SenderUtil.reply(message, "Not connected to a voice channel");
+            MessageUtil.reply(message, "Not connected to a voice channel");
         }
     }
 

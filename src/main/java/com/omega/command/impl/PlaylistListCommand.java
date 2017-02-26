@@ -7,7 +7,7 @@ import com.omega.command.Parameter;
 import com.omega.command.Signature;
 import com.omega.database.DatastoreManagerSingleton;
 import com.omega.database.PlaylistRepository;
-import com.omega.util.SenderUtil;
+import com.omega.util.MessageUtil;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.util.DiscordException;
@@ -39,12 +39,12 @@ public class PlaylistListCommand extends AbstractCommand {
 
         builder.append(MessageBuilder.Styles.CODE.getReverseMarkdown());
 
-        SenderUtil.sendPrivateMessage(by, builder.toString());
+        MessageUtil.sendPrivateMessage(by, builder.toString());
     }
 
     @Signature(help = "Show playlist for the mentionned user")
     public void playlistListCommand(@Parameter(name = "user") IUser user) {
-        SenderUtil.reply(message, "Not for you");
+        MessageUtil.reply(message, "Not for you");
     }
 
     private void printPlaylistsCategory(StringBuilder builder, String categoryName, List<Playlist> playlists) {

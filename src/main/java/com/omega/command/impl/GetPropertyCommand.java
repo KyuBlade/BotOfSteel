@@ -8,7 +8,7 @@ import com.omega.exception.PropertyNotFoundException;
 import com.omega.guild.GuildContext;
 import com.omega.guild.GuildManager;
 import com.omega.guild.GuildProperties;
-import com.omega.util.SenderUtil;
+import com.omega.util.MessageUtil;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.util.MessageBuilder;
@@ -43,7 +43,7 @@ public class GetPropertyCommand extends AbstractCommand {
 
         builder.append(MessageBuilder.Styles.CODE_WITH_LANG.getReverseMarkdown());
 
-        SenderUtil.sendPrivateMessage(by, builder.toString());
+        MessageUtil.sendPrivateMessage(by, builder.toString());
     }
 
     @Signature(help = "Get the property for the given property")
@@ -53,9 +53,9 @@ public class GetPropertyCommand extends AbstractCommand {
 
         try {
             Object value = properties.getProperty(property);
-            SenderUtil.sendPrivateMessage(by, String.format("Property %s = %s", property, value));
+            MessageUtil.sendPrivateMessage(by, String.format("Property %s = %s", property, value));
         } catch (PropertyNotFoundException e) {
-            SenderUtil.sendPrivateMessage(by, "Property " + property + " not found");
+            MessageUtil.sendPrivateMessage(by, "Property " + property + " not found");
         }
     }
 }

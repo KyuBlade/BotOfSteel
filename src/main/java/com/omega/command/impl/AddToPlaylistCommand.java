@@ -8,7 +8,7 @@ import com.omega.command.Signature;
 import com.omega.exception.PlaylistNotFoundException;
 import com.omega.guild.GuildContext;
 import com.omega.guild.GuildManager;
-import com.omega.util.SenderUtil;
+import com.omega.util.MessageUtil;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
 
@@ -28,7 +28,7 @@ public class AddToPlaylistCommand extends AbstractCommand {
             audioPlayer.addToPlaylist(playlistName, source,
                 new AddToPlaylistAudioLoadCallback(message, playlistName));
         } catch (PlaylistNotFoundException e) {
-            SenderUtil.reply(message, "Playlist " + playlistName + " not found");
+            MessageUtil.reply(message, "Playlist " + playlistName + " not found");
         }
     }
 }

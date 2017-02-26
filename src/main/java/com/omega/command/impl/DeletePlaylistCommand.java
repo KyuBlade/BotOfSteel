@@ -6,7 +6,7 @@ import com.omega.command.Command;
 import com.omega.command.Signature;
 import com.omega.database.DatastoreManagerSingleton;
 import com.omega.database.PlaylistRepository;
-import com.omega.util.SenderUtil;
+import com.omega.util.MessageUtil;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
@@ -38,9 +38,9 @@ public class DeletePlaylistCommand extends AbstractCommand {
 
         if (canDelete) {
             repository.deleteByName(playlistName);
-            SenderUtil.reply(message, "Deleted playlist " + playlistName);
+            MessageUtil.reply(message, "Deleted playlist " + playlistName);
         } else {
-            SenderUtil.reply(message, "Playlist " + playlistName + " not found");
+            MessageUtil.reply(message, "Playlist " + playlistName + " not found");
         }
     }
 }

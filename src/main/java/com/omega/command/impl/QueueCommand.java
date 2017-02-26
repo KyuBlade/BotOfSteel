@@ -8,10 +8,8 @@ import com.omega.command.Parameter;
 import com.omega.command.Signature;
 import com.omega.guild.GuildContext;
 import com.omega.guild.GuildManager;
-import com.omega.util.SenderUtil;
+import com.omega.util.MessageUtil;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.util.*;
@@ -56,7 +54,7 @@ public class QueueCommand extends AbstractCommand {
             resultMessage = "No tracks in queue";
         }
 
-        SenderUtil.reply(message, resultMessage);
+        MessageUtil.reply(message, resultMessage);
     }
 
     @Signature(help = "Add the source track(s) to the queue.")

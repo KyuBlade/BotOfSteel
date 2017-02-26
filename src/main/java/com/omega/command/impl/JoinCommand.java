@@ -4,7 +4,7 @@ import com.omega.command.AbstractCommand;
 import com.omega.command.Command;
 import com.omega.command.Parameter;
 import com.omega.command.Signature;
-import com.omega.util.SenderUtil;
+import com.omega.util.MessageUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IGuild;
@@ -35,7 +35,7 @@ public class JoinCommand extends AbstractCommand {
         if (connectedVoiceChannel != null) {
             join(connectedVoiceChannel);
         } else {
-            SenderUtil.reply(message, "You are not connected to a voice channel");
+            MessageUtil.reply(message, "You are not connected to a voice channel");
         }
     }
 
@@ -47,7 +47,7 @@ public class JoinCommand extends AbstractCommand {
         if (voiceChannel != null) {
             join(voiceChannel);
         } else {
-            SenderUtil.reply(message, "I don't see voice channel with name " + voiceChannelName);
+            MessageUtil.reply(message, "I don't see voice channel with name " + voiceChannelName);
         }
     }
 
@@ -66,6 +66,6 @@ public class JoinCommand extends AbstractCommand {
             }
         }
 
-        SenderUtil.reply(message, resultMessage);
+        MessageUtil.reply(message, resultMessage);
     }
 }

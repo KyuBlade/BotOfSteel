@@ -5,12 +5,11 @@ import com.omega.command.AbstractCommand;
 import com.omega.command.Command;
 import com.omega.command.Parameter;
 import com.omega.command.Signature;
-import com.omega.util.SenderUtil;
+import com.omega.util.MessageUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
-import sx.blah.discord.util.DiscordException;
 
 import java.util.List;
 
@@ -30,7 +29,7 @@ public class BanCommand extends AbstractCommand {
             IUser user = foundUsers.get(0);
             ban(user);
         } else {
-            SenderUtil.reply(message, "User with username " + username + " not found");
+            MessageUtil.reply(message, "User with username " + username + " not found");
         }
     }
 
@@ -55,6 +54,6 @@ public class BanCommand extends AbstractCommand {
             }
         }
 
-        SenderUtil.reply(message, reply);
+        MessageUtil.reply(message, reply);
     }
 }

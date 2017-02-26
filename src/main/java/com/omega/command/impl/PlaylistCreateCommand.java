@@ -1,6 +1,5 @@
 package com.omega.command.impl;
 
-import com.omega.audio.AudioPlayerManager;
 import com.omega.audio.GuildAudioPlayer;
 import com.omega.audio.Playlist;
 import com.omega.command.AbstractCommand;
@@ -10,7 +9,7 @@ import com.omega.command.Signature;
 import com.omega.exception.PlaylistAlreadyExists;
 import com.omega.guild.GuildContext;
 import com.omega.guild.GuildManager;
-import com.omega.util.SenderUtil;
+import com.omega.util.MessageUtil;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
 
@@ -32,7 +31,7 @@ public class PlaylistCreateCommand extends AbstractCommand {
         if (resolvedPrivacy != null) {
             createPlaylist(playlistName, resolvedPrivacy);
         } else {
-            SenderUtil.reply(message, "Wrong privacy");
+            MessageUtil.reply(message, "Wrong privacy");
         }
     }
 
@@ -41,9 +40,9 @@ public class PlaylistCreateCommand extends AbstractCommand {
         GuildAudioPlayer audioPlayer = guildContext.getAudioPlayer();
         try {
             audioPlayer.createPlaylist(name, privacy, message.getGuild(), by);
-            SenderUtil.reply(message, "Added playlist " + name);
+            MessageUtil.reply(message, "Added playlist " + name);
         } catch (PlaylistAlreadyExists e) {
-            SenderUtil.reply(message, "Playlist " + name + " already exists");
+            MessageUtil.reply(message, "Playlist " + name + " already exists");
         }
     }
 }

@@ -3,7 +3,7 @@ package com.omega.command.impl;
 import com.omega.command.AbstractCommand;
 import com.omega.command.Command;
 import com.omega.command.Signature;
-import com.omega.util.SenderUtil;
+import com.omega.util.MessageUtil;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.util.DiscordException;
@@ -33,7 +33,7 @@ public class RipCommand extends AbstractCommand {
                 }
             }
 
-            SenderUtil.reply(message, builder.toString());
+            MessageUtil.reply(message, builder.toString());
         } catch (RateLimitException e) {
             e.printStackTrace();
         } catch (DiscordException e) {

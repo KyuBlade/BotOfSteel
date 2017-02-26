@@ -1,15 +1,11 @@
 package com.omega.command.impl;
 
 import com.omega.command.*;
-import com.omega.guild.Property;
 import com.omega.util.CommandExtractHelper;
-import com.omega.util.SenderUtil;
+import com.omega.util.MessageUtil;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
-import sx.blah.discord.util.DiscordException;
-import sx.blah.discord.util.MessageBuilder;
-import sx.blah.discord.util.MissingPermissionsException;
-import sx.blah.discord.util.RateLimitException;
+import sx.blah.discord.util.*;
 
 import java.util.*;
 import java.util.stream.IntStream;
@@ -55,7 +51,8 @@ public class HelpCommand extends AbstractCommand {
         }
         builder.append(MessageBuilder.Styles.CODE_WITH_LANG.getReverseMarkdown());
 
-        SenderUtil.sendPrivateMessage(by, builder.toString());
+        MessageUtil.deleteMessage(message);
+        MessageUtil.sendPrivateMessage(by, builder.toString());
     }
 
     @Signature(help = "Get help for the specified method")
@@ -83,6 +80,6 @@ public class HelpCommand extends AbstractCommand {
         });
 
         builder.append(MessageBuilder.Styles.CODE_WITH_LANG.getReverseMarkdown());
-        SenderUtil.sendPrivateMessage(by, builder.toString());
+        MessageUtil.sendPrivateMessage(by, builder.toString());
     }
 }

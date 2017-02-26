@@ -1,6 +1,6 @@
 package com.omega.audio.callback;
 
-import com.omega.util.SenderUtil;
+import com.omega.util.MessageUtil;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
@@ -24,26 +24,26 @@ public class QueueAudioLoadCallback implements AudioLoadResultHandler {
 
     @Override
     public void trackLoaded(AudioTrack track) {
-        SenderUtil.reply(message, "Track " + track.getInfo().title + " added to queue");
+        MessageUtil.reply(message, "Track " + track.getInfo().title + " added to queue");
         deleteMessage();
     }
 
     @Override
     public void playlistLoaded(AudioPlaylist playlist) {
-        SenderUtil.reply(message, "Playlist " + playlist.getName() + " (" + playlist.getTracks().size() + " tracks) added to queue");
+        MessageUtil.reply(message, "Playlist " + playlist.getName() + " (" + playlist.getTracks().size() + " tracks) added to queue");
         deleteMessage();
     }
 
     @Override
     public void noMatches() {
-        SenderUtil.reply(message, "The provided source may not be supported");
+        MessageUtil.reply(message, "The provided source may not be supported");
         deleteMessage();
     }
 
     @Override
     public void loadFailed(FriendlyException exception) {
         if (!exception.severity.equals(FriendlyException.Severity.COMMON)) {
-            SenderUtil.reply(message, "Unable to add to queue");
+            MessageUtil.reply(message, "Unable to add to queue");
             deleteMessage();
         }
     }
