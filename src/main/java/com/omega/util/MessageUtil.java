@@ -131,14 +131,16 @@ public class MessageUtil {
      * @param message message to delete
      */
     public static void deleteMessage(IMessage message) {
-        RequestBuffer.request(() -> {
-            try {
-                message.delete();
-            } catch (MissingPermissionsException e) {
-                LOGGER.info("Missing permissions", e);
-            } catch (DiscordException e) {
-                LOGGER.info("Error while deleting message", e);
-            }
-        });
+        if (!message.getChannel().isPrivate()) {
+            RequestBuffer.request(() -> {
+                try {
+                    message.delete();
+                } catch (MissingPermissionsException e) {
+                    LOGGER.info("Missing permissions", e);
+                } catch (DiscordException e) {
+                    LOGGER.info("Error while deleting message", e);
+                }
+            });
+        }
     }
 }
