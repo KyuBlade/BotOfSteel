@@ -17,75 +17,50 @@ public class SenderUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(SenderUtil.class);
 
     public static void reply(IMessage messageToReply, String messageToSend) {
-        try {
-            messageToReply.reply(messageToSend);
-        } catch (RateLimitException e) {
-            LOGGER.warn("Rate limit exceeded, will try again in {}ms", e.getRetryDelay());
-            new Timer().schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    reply(messageToReply, messageToSend);
-                }
-            }, e.getRetryDelay());
-        } catch (MissingPermissionsException e) {
-            LOGGER.info("Permissions needed to reply", e);
-        } catch (DiscordException e) {
-            LOGGER.warn("Unable to send message", e);
-        }
+        RequestBuffer.request(() -> {
+            try {
+                messageToReply.reply(messageToSend);
+            } catch (MissingPermissionsException e) {
+                LOGGER.info("Permissions needed to reply", e);
+            } catch (DiscordException e) {
+                LOGGER.warn("Unable to send message", e);
+            }
+        });
     }
 
-    public static void reply(IMessage messageToReply, String message, EmbedObject embedObject) {
-        try {
-            messageToReply.reply(message, embedObject);
-        } catch (RateLimitException e) {
-            LOGGER.warn("Rate limit exceeded, will try again in {}ms", e.getRetryDelay());
-            new Timer().schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    reply(messageToReply, message, embedObject);
-                }
-            }, e.getRetryDelay());
-        } catch (MissingPermissionsException e) {
-            LOGGER.info("Permissions needed to reply", e);
-        } catch (DiscordException e) {
-            LOGGER.warn("Unable to send message", e);
-        }
+    public static void reply(IMessage messageToReply, String messageToSend, EmbedObject embedObject) {
+        RequestBuffer.request(() -> {
+            try {
+                messageToReply.reply(messageToSend, embedObject);
+            } catch (MissingPermissionsException e) {
+                LOGGER.info("Permissions needed to reply", e);
+            } catch (DiscordException e) {
+                LOGGER.warn("Unable to send message", e);
+            }
+        });
     }
 
     public static void sendPrivateMessage(IUser by, String message) {
-        try {
-            by.getOrCreatePMChannel().sendMessage(message);
-        } catch (RateLimitException e) {
-            LOGGER.warn("Rate limit exceeded, will try again in {}ms", e.getRetryDelay());
-            new Timer().schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    LOGGER.warn("Failed to send message, retry in {}", e.getRetryDelay());
-                    sendPrivateMessage(by, message);
-                }
-            }, e.getRetryDelay());
-        } catch (MissingPermissionsException e) {
-            LOGGER.info("Permissions needed to send private message", e);
-        } catch (DiscordException e) {
-            LOGGER.warn("Unable to send message", e);
-        }
+        RequestBuffer.request(() -> {
+            try {
+                by.getOrCreatePMChannel().sendMessage(message);
+            } catch (MissingPermissionsException e) {
+                LOGGER.info("Permissions needed to send private message", e);
+            } catch (DiscordException e) {
+                LOGGER.warn("Unable to send message", e);
+            }
+        });
     }
 
     public static void sendMessage(IChannel channel, String message) {
-        try {
-            channel.sendMessage(message);
-        } catch (RateLimitException e) {
-            LOGGER.warn("Rate limit exceeded, will try again in {}ms", e.getRetryDelay());
-            new Timer().schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    sendMessage(channel, message);
-                }
-            }, e.getRetryDelay());
-        } catch (MissingPermissionsException e) {
-            LOGGER.info("Permissions needed to send message on channel " + channel.getName(), e);
-        } catch (DiscordException e) {
-            throw new RuntimeException(e);
-        }
+        RequestBuffer.request(() -> {
+            try {
+                channel.sendMessage(message);
+            } catch (MissingPermissionsException e) {
+                LOGGER.info("Permissions needed to send message on channel " + channel.getName(), e);
+            } catch (DiscordException e) {
+                LOGGER.warn("Unable to send message", e);
+            }
+        });
     }
 }
