@@ -58,6 +58,7 @@ public class CommandManager {
         registerCommand(ClearQueueCommand.class);
         registerCommand(UserInfoCommand.class);
         registerCommand(SeekCommand.class);
+        registerCommand(BotInfoCommand.class);
     }
 
     @EventSubscriber
