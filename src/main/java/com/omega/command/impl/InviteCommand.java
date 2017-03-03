@@ -28,7 +28,15 @@ public class InviteCommand extends AbstractCommand {
         IDiscordClient client = BotManager.getInstance().getClient();
         BotInviteBuilder builder = new BotInviteBuilder(client);
         String link = builder.withClientID(BotConfig.getInstance().getClientId())
-                .withPermissions(EnumSet.of(Permissions.ADMINISTRATOR)).build();
+            .withPermissions(
+                EnumSet.of(
+                    Permissions.EMBED_LINKS, Permissions.MANAGE_CHANNELS,
+                    Permissions.READ_MESSAGES, Permissions.READ_MESSAGE_HISTORY,
+                    Permissions.MANAGE_ROLES, Permissions.SEND_MESSAGES,
+                    Permissions.MANAGE_MESSAGES, Permissions.VOICE_CONNECT,
+                    Permissions.VOICE_MUTE_MEMBERS, Permissions.VOICE_SPEAK
+                )
+            ).build();
         by.getOrCreatePMChannel().sendMessage("Invitation link : " + link);
     }
 }
