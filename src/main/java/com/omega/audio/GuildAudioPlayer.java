@@ -342,6 +342,22 @@ public class GuildAudioPlayer {
     }
 
     /**
+     * @return the audio player volume
+     */
+    public int getVolume() {
+        return player.getVolume();
+    }
+
+    /**
+     * Set audio player volume.
+     *
+     * @param volume volume in range 0 to 150
+     */
+    public void setVolume(int volume) {
+        player.setVolume(volume);
+    }
+
+    /**
      * Cleanup the audio player.
      */
     public void cleanup() {

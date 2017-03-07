@@ -51,6 +51,7 @@ public class BotInfoCommand extends AbstractCommand {
 
         GuildContext guildContext = GuildManager.getInstance().getContext(guild);
         GuildAudioPlayer audioPlayer = guildContext.getAudioPlayer();
+        int volume = audioPlayer.getVolume();
         AudioTrack currentTrack = audioPlayer.getPlayingTrack();
         String trackTitle = null;
         String trackPosition = null;
@@ -94,6 +95,7 @@ public class BotInfoCommand extends AbstractCommand {
             descBuilder.append("Pause : ").append(pauseState).append('\n')
                 .append("Loop : ").append(loopState).append('\n')
                 .append("Shuffle : ").append(shuffleState).append('\n')
+                .append("Volume : ").append(volume).append('\n')
                 .append("\n\n");
         }
 

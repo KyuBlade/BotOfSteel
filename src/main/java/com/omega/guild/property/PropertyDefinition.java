@@ -1,9 +1,6 @@
 package com.omega.guild.property;
 
-import com.omega.database.entity.property.BooleanProperty;
-import com.omega.database.entity.property.ChannelProperty;
-import com.omega.database.entity.property.Property;
-import com.omega.database.entity.property.StringProperty;
+import com.omega.database.entity.property.*;
 
 public enum PropertyDefinition {
 
@@ -11,7 +8,8 @@ public enum PropertyDefinition {
     MUSIC_VOICE_CHANNEL("music_channel_voice", new ChannelProperty(null), new MusicVoiceChannelPropertyChangeTask()),
     MUSIC_QUEUE_LOOP("music_queue_loop", new BooleanProperty(false), new MusicQueueLoopPropertyChangeTask()),
     MUSIC_QUEUE_SHUFFLE("music_queue_shuffle", new BooleanProperty(false), new MusicQueueShufflePropertyChangeTask()),
-    COMMAND_PREFIX("command_prefix", new StringProperty("!"), new CommandPrefixPropertyChangeTask());
+    COMMAND_PREFIX("command_prefix", new StringProperty("!"), new CommandPrefixPropertyChangeTask()),
+    MUSIC_VOLUME("music_volume", new LongProperty(50L), new MusicVolumePropertyChangeTask());
 
     private final String propertyKey;
     private final Property defaultProperty;
