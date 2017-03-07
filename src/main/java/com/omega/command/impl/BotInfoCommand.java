@@ -72,7 +72,9 @@ public class BotInfoCommand extends AbstractCommand {
 
         StringBuilder descBuilder = new StringBuilder();
         descBuilder
-            .append("General information : ").append("\n\n")
+            .append(MessageBuilder.Styles.BOLD.getMarkdown())
+            .append("General information : ")
+            .append(MessageBuilder.Styles.BOLD.getReverseMarkdown()).append("\n\n")
             .append("Connected servers : ").append(client.getGuilds().size()).append('\n')
             .append("Uptime : ").append(DurationFormatUtils.formatDuration(runtimeMXBean.getUptime(), "HH:mm:ss")).append('\n')
             .append("Memory usage : ").append(StringUtils.formatBinarySize(usedMemory)).append('/')
