@@ -1,6 +1,6 @@
 package com.omega.audio.loader;
 
-import com.omega.audio.Playlist;
+import com.omega.database.entity.Playlist;
 import com.omega.audio.TrackScheduler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;

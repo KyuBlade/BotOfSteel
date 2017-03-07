@@ -1,6 +1,6 @@
 package com.omega.command.impl;
 
-import com.omega.audio.Playlist;
+import com.omega.database.entity.Playlist;
 import com.omega.command.AbstractCommand;
 import com.omega.command.Command;
 import com.omega.command.Parameter;
@@ -30,11 +30,11 @@ public class PlaylistListCommand extends AbstractCommand {
         builder.append(MessageBuilder.Styles.CODE.getMarkdown()).append('\n');
 
         PlaylistRepository playlistRepository = DatastoreManagerSingleton.getInstance().getRepository(PlaylistRepository.class);
-        List<Playlist> userPlaylists = playlistRepository.findByUserPrivacy(by);
+        List<? extends Playlist> userPlaylists = playlistRepository.findByUserPrivacy(by);
         printPlaylistsCategory(builder, "Private", userPlaylists);
         builder.append('\n');
 
-        List<Playlist> guildPlaylists = playlistRepository.findByGuildPrivacy(message.getGuild());
+        List<? extends Playlist> guildPlaylists = playlistRepository.findByGuildPrivacy(message.getGuild());
         printPlaylistsCategory(builder, "Guild", guildPlaylists);
 
         builder.append(MessageBuilder.Styles.CODE.getReverseMarkdown());
@@ -47,7 +47,7 @@ public class PlaylistListCommand extends AbstractCommand {
         MessageUtil.reply(message, "Not for you");
     }
 
-    private void printPlaylistsCategory(StringBuilder builder, String categoryName, List<Playlist> playlists) {
+    private void printPlaylistsCategory(StringBuilder builder, String categoryName, List<? extends Playlist> playlists) {
         builder.append(categoryName).append(" :").append('\n').append('\n');
         if (!playlists.isEmpty()) {
             playlists.forEach(playlist -> builder.append(playlist.getName()).append('(').append(playlist.getSize()).append(")\n"));

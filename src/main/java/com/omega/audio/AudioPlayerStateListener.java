@@ -1,7 +1,7 @@
 package com.omega.audio;
 
 import com.omega.guild.GuildContext;
-import com.omega.guild.Property;
+import com.omega.guild.property.PropertyDefinition;
 import com.omega.util.MessageUtil;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import sx.blah.discord.handle.obj.IChannel;
@@ -16,25 +16,25 @@ public class AudioPlayerStateListener extends AudioEventAdapter {
 
     @Override
     public void onTrackStart(com.sedmelluq.discord.lavaplayer.player.AudioPlayer player, com.sedmelluq.discord.lavaplayer.track.AudioTrack track) {
-        IChannel textChannel = guildContext.getProperties().getProperty(Property.MUSIC_TEXT_CHANNEL, IChannel.class);
+        IChannel textChannel = guildContext.getProperties().getProperty(PropertyDefinition.MUSIC_TEXT_CHANNEL, IChannel.class);
         MessageUtil.sendMessage(textChannel, "Playing track " + track.getInfo().title);
     }
 
     @Override
     public void onTrackStuck(com.sedmelluq.discord.lavaplayer.player.AudioPlayer player, com.sedmelluq.discord.lavaplayer.track.AudioTrack track, long thresholdMs) {
-        IChannel textChannel = guildContext.getProperties().getProperty(Property.MUSIC_TEXT_CHANNEL, IChannel.class);
+        IChannel textChannel = guildContext.getProperties().getProperty(PropertyDefinition.MUSIC_TEXT_CHANNEL, IChannel.class);
         MessageUtil.sendMessage(textChannel, "Track is stuck, skipping to next track");
     }
 
     @Override
     public void onPlayerPause(com.sedmelluq.discord.lavaplayer.player.AudioPlayer player) {
-        IChannel textChannel = guildContext.getProperties().getProperty(Property.MUSIC_TEXT_CHANNEL, IChannel.class);
+        IChannel textChannel = guildContext.getProperties().getProperty(PropertyDefinition.MUSIC_TEXT_CHANNEL, IChannel.class);
         MessageUtil.sendMessage(textChannel, "Audio player paused");
     }
 
     @Override
     public void onPlayerResume(com.sedmelluq.discord.lavaplayer.player.AudioPlayer player) {
-        IChannel textChannel = guildContext.getProperties().getProperty(Property.MUSIC_TEXT_CHANNEL, IChannel.class);
+        IChannel textChannel = guildContext.getProperties().getProperty(PropertyDefinition.MUSIC_TEXT_CHANNEL, IChannel.class);
         MessageUtil.sendMessage(textChannel, "Audio player resumed");
     }
 }

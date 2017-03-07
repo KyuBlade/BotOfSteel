@@ -4,10 +4,11 @@ import com.omega.command.AbstractCommand;
 import com.omega.command.Command;
 import com.omega.command.Parameter;
 import com.omega.command.Signature;
+import com.omega.database.entity.GuildProperties;
+import com.omega.database.entity.property.*;
 import com.omega.exception.PropertyNotFoundException;
 import com.omega.guild.GuildContext;
 import com.omega.guild.GuildManager;
-import com.omega.guild.GuildProperties;
 import com.omega.util.MessageUtil;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IMessage;
@@ -23,40 +24,40 @@ public class SetPropertyCommand extends AbstractCommand {
 
     @Signature(help = "Set a bot property")
     public void setPropertyCommand(@Parameter(name = "property") String property, @Parameter(name = "value") String value) {
-        setProperty(property, value);
+        setProperty(property, new StringProperty(value));
     }
 
     @Signature(help = "Set a bot property")
     public void setPropertyCommand(@Parameter(name = "property") String property, @Parameter(name = "value") Long value) {
-        setProperty(property, value);
+        setProperty(property, new LongProperty(value));
     }
 
     @Signature(help = "Set a bot property")
     public void setPropertyCommand(@Parameter(name = "property") String property, @Parameter(name = "value") Double value) {
-        setProperty(property, value);
+        setProperty(property, new DoubleProperty(value));
     }
 
     @Signature(help = "Set a bot property")
     public void setPropertyCommand(@Parameter(name = "property") String property, @Parameter(name = "value") Boolean value) {
-        setProperty(property, value);
+        setProperty(property, new BooleanProperty(value));
     }
 
     @Signature(help = "Set a bot property")
     public void setPropertyCommand(@Parameter(name = "property") String property, @Parameter(name = "value") IUser value) {
-        setProperty(property, value);
+        setProperty(property, new UserProperty(value));
     }
 
     @Signature(help = "Set a bot property")
     public void setPropertyCommand(@Parameter(name = "property") String property, @Parameter(name = "value") IRole value) {
-        setProperty(property, value);
+        setProperty(property, new RoleProperty(value));
     }
 
     @Signature(help = "Set a bot property")
     public void setPropertyCommand(@Parameter(name = "property") String property, @Parameter(name = "value") IChannel value) {
-        setProperty(property, value);
+        setProperty(property, new ChannelProperty(value));
     }
 
-    private void setProperty(String property, Object value) {
+    private void setProperty(String property, Property value) {
         GuildContext guildContext = GuildManager.getInstance().getContext(message.getGuild());
         GuildProperties properties = guildContext.getProperties();
         try {

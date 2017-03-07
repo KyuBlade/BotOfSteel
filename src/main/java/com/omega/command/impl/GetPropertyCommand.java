@@ -4,10 +4,11 @@ import com.omega.command.AbstractCommand;
 import com.omega.command.Command;
 import com.omega.command.Parameter;
 import com.omega.command.Signature;
+import com.omega.database.entity.GuildProperties;
+import com.omega.database.entity.property.Property;
 import com.omega.exception.PropertyNotFoundException;
 import com.omega.guild.GuildContext;
 import com.omega.guild.GuildManager;
-import com.omega.guild.GuildProperties;
 import com.omega.util.MessageUtil;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
@@ -27,14 +28,14 @@ public class GetPropertyCommand extends AbstractCommand {
     public void getProperty() {
         GuildContext guildContext = GuildManager.getInstance().getContext(message.getGuild());
         GuildProperties guildProperties = guildContext.getProperties();
-        Map<String, Object> properties = guildProperties.getProperties();
+        Map<String, Property> properties = guildProperties.getProperties();
 
         StringBuilder builder = new StringBuilder(512);
         builder.append(MessageBuilder.Styles.CODE_WITH_LANG.getMarkdown());
 
-        Iterator<Map.Entry<String, Object>> it = properties.entrySet().iterator();
+        Iterator<Map.Entry<String, Property>> it = properties.entrySet().iterator();
         while (it.hasNext()) {
-            Map.Entry<String, Object> entry = it.next();
+            Map.Entry<String, Property> entry = it.next();
             builder.append(entry.getKey()).append(" = ").append(entry.getValue());
             if (it.hasNext()) {
                 builder.append('\n');

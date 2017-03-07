@@ -1,8 +1,9 @@
 package com.omega.audio.loader;
 
-import com.omega.audio.Playlist;
+import com.omega.database.AudioTrackRepository;
 import com.omega.database.DatastoreManagerSingleton;
 import com.omega.database.PlaylistRepository;
+import com.omega.database.entity.Playlist;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
@@ -25,8 +26,12 @@ public class AddToPlaylistTrackLoader extends TrackLoader {
     @Override
     void trackLoaded(AudioTrack track) {
         LOGGER.info("Loaded track : {}", track.getInfo().title);
-        playlist.addTrack(new com.omega.audio.AudioTrack(track));
-        DatastoreManagerSingleton.getInstance().getRepository(PlaylistRepository.class).save(playlist);
+        com.omega.database.entity.AudioTrack audioTrack = DatastoreManagerSingleton.getInstance()
+            .getRepository(AudioTrackRepository.class)
+            .create(track);
+        playlist.addTrack(audioTrack);
+        DatastoreManagerSingleton.getInstance().getRepository(PlaylistRepository.class)
+            .save(playlist);
     }
 
     @Override
@@ -34,10 +39,14 @@ public class AddToPlaylistTrackLoader extends TrackLoader {
         LOGGER.info("Loaded playlist : {} ({} tracks)", playlist.getName(), playlist.getTracks().size());
 
         playlist.getTracks().forEach(track -> {
-            this.playlist.addTrack(new com.omega.audio.AudioTrack(track));
+            com.omega.database.entity.AudioTrack audioTrack = DatastoreManagerSingleton.getInstance()
+                .getRepository(AudioTrackRepository.class)
+                .create(track);
+            this.playlist.addTrack(audioTrack);
         });
 
-        DatastoreManagerSingleton.getInstance().getRepository(PlaylistRepository.class).save(this.playlist);
+        DatastoreManagerSingleton.getInstance().getRepository(PlaylistRepository.class)
+            .save(this.playlist);
     }
 
     @Override

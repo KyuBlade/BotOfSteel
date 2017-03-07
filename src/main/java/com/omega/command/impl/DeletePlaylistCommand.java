@@ -1,18 +1,22 @@
 package com.omega.command.impl;
 
-import com.omega.audio.Playlist;
 import com.omega.command.AbstractCommand;
 import com.omega.command.Command;
 import com.omega.command.Signature;
 import com.omega.database.DatastoreManagerSingleton;
 import com.omega.database.PlaylistRepository;
+import com.omega.database.entity.Playlist;
 import com.omega.util.MessageUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
 
 @Command(name = "deletePlaylist", aliases = "dp")
 public class DeletePlaylistCommand extends AbstractCommand {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DeletePlaylistCommand.class);
 
     public DeletePlaylistCommand(IUser by, IMessage message) {
         super(by, message);
@@ -23,24 +27,26 @@ public class DeletePlaylistCommand extends AbstractCommand {
         PlaylistRepository repository = DatastoreManagerSingleton.getInstance().getRepository(PlaylistRepository.class);
         Playlist playlist = repository.findByName(playlistName);
 
-        boolean canDelete = false;
         if (playlist != null) {
             Playlist.Privacy privacy = playlist.getPrivacy();
-            if (privacy.equals(Playlist.Privacy.USER) && by.getID().equals(playlist.getUserId())) {
-                canDelete = true;
-            } else if (privacy.equals(Playlist.Privacy.GUILD)) {
-                IGuild guild = by.getClient().getGuildByID(playlist.getGuildId());
-                if (guild.getOwnerID().equals(by.getID())) {
-                    canDelete = true;
+
+            if (privacy.equals(Playlist.Privacy.USER) && by.equals(playlist.getUser())) { // Requested by the owner of the playlist
+                repository.delete(playlist);
+                MessageUtil.sendPrivateMessage(by, "Deleted playlist named " + playlist.getName());
+            } else if (privacy.equals(Playlist.Privacy.GUILD)) { // Requested by anyone in the guild
+                IGuild guild = playlist.getGuild();
+
+                if (guild == null) {
+                    LOGGER.warn("Playlist {} doesn't have a guild bound to it", playlist.getName());
+                } else if (guild.getOwnerID().equals(by.getID())) { // Requested by the owner of the playlist
+                    repository.delete(playlist);
+                    MessageUtil.reply(message, "Deleted playlist named " + playlist.getName());
+                } else {
+                    MessageUtil.reply(message, "You are not the owner of the playlist named " + playlist.getName());
                 }
             }
-        }
-
-        if (canDelete) {
-            repository.deleteByName(playlistName);
-            MessageUtil.reply(message, "Deleted playlist " + playlistName);
         } else {
-            MessageUtil.reply(message, "Playlist " + playlistName + " not found");
+            MessageUtil.reply(message, "Playlist with name " + playlistName + " not found");
         }
     }
 }

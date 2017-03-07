@@ -3,11 +3,11 @@ package com.omega.listener;
 import com.omega.event.CommandExecutionEvent;
 import com.omega.guild.GuildContext;
 import com.omega.guild.GuildManager;
-import com.omega.guild.Property;
+import com.omega.guild.property.PropertyDefinition;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.api.events.EventSubscriber;
-import sx.blah.discord.handle.impl.events.MessageReceivedEvent;
+import sx.blah.discord.handle.impl.events.guild.channel.message.MessageReceivedEvent;
 import sx.blah.discord.handle.obj.IMessage;
 
 import java.util.ArrayList;
@@ -40,27 +40,12 @@ public class MessageListener {
         GuildContext guildContext = GuildManager.getInstance().getContext(event.getMessage().getGuild());
         String prefix;
         if (guildContext != null) {
-            prefix = guildContext.getProperties().getProperty(Property.COMMAND_PREFIX, String.class);
+            prefix = guildContext.getProperties().getProperty(PropertyDefinition.COMMAND_PREFIX, String.class);
         } else {
-            prefix = (String) Property.COMMAND_PREFIX.getDefaultValue();
+            prefix = (String) PropertyDefinition.COMMAND_PREFIX.getDefaultProperty().getValue();
         }
 
         String content = message.getContent();
-//        if (content.startsWith(prefix) && content.length() > prefix.length()) { // Command received
-//            Matcher matcher = PATTERN.matcher(content);
-//            String commandName;
-//            if (matcher.find()) {
-//                commandName = matcher.group(1).substring(prefix.length()).toLowerCase();
-//
-//                List<String> args = new ArrayList<>();
-//                while (matcher.find()) {
-//                    args.add(matcher.group(1));
-//                }
-//
-//                CommandExecutionEvent commandEvent = new CommandExecutionEvent(message, commandName, message.getAuthor(), args);
-//                client.getDispatcher().dispatch(commandEvent);
-//            }
-//        } else
         if (content.startsWith(prefix) && content.length() > prefix.length()) {
             Matcher matcher = NEW_PATTERN.matcher(content);
             String commandName;

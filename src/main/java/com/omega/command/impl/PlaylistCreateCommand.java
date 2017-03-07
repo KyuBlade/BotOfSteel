@@ -1,7 +1,7 @@
 package com.omega.command.impl;
 
 import com.omega.audio.GuildAudioPlayer;
-import com.omega.audio.Playlist;
+import com.omega.database.entity.Playlist;
 import com.omega.command.AbstractCommand;
 import com.omega.command.Command;
 import com.omega.command.Parameter;

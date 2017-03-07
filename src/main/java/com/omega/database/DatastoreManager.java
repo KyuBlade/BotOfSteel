@@ -21,9 +21,9 @@ public class DatastoreManager {
     protected void addRepository(Repository repository) {
         Class<?> repositoryClass = repository.getClass();
         Class<?> repositoryInterface = Arrays.stream(repositoryClass.getInterfaces())
-                .filter(aInterface -> aInterface.isInstance(repository))
-                .findFirst()
-                .orElse(null);
+            .filter(aInterface -> aInterface.isInstance(repository))
+            .findFirst()
+            .orElse(null);
         if (repositoryInterface != null) {
             repositories.put(repositoryInterface, repository);
         }

@@ -4,6 +4,7 @@ import com.omega.audio.loader.AddToPlaylistTrackLoader;
 import com.omega.audio.loader.PlayPlaylistTrackLoader;
 import com.omega.database.DatastoreManagerSingleton;
 import com.omega.database.PlaylistRepository;
+import com.omega.database.entity.Playlist;
 import com.omega.exception.PlaylistAlreadyExists;
 import com.omega.exception.PlaylistNotFoundException;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
@@ -252,7 +253,7 @@ public class GuildAudioPlayer {
         PlaylistRepository playlistRepository = DatastoreManagerSingleton.getInstance().getRepository(PlaylistRepository.class);
         boolean exists = playlistRepository.exists(playlistName);
         if (!exists) {
-            Playlist playlist = new Playlist(playlistName, privacy, guild, user);
+            Playlist playlist = playlistRepository.create(playlistName, privacy, guild, user);
             playlistRepository.save(playlist);
 
             return playlist;

@@ -1,14 +1,9 @@
 package com.omega.database;
 
 import com.mongodb.MongoClient;
-import com.omega.database.morphia.MorphiaDatastoreManager;
-import com.omega.database.morphium.MorphiumDatastoreManager;
-import de.caluga.morphium.Morphium;
-import de.caluga.morphium.MorphiumConfig;
+import com.omega.database.impl.morphia.MorphiaDatastoreManager;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
-
-import java.util.Properties;
 
 public class DatastoreManagerSingleton {
 
@@ -18,25 +13,13 @@ public class DatastoreManagerSingleton {
     }
 
     private DatastoreManager createDatastoreManager() {
-        return createMorphiumDatastoreManager();
-    }
-
-    private MorphiumDatastoreManager createMorphiumDatastoreManager() {
-        try {
-            Properties morphiumProps = new Properties();
-            morphiumProps.load(DatastoreManagerSingleton.class.getResourceAsStream("/morphium.properties"));
-            MorphiumConfig cfg = MorphiumConfig.fromProperties(morphiumProps);
-
-            return new MorphiumDatastoreManager(cfg);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        return createMorphiaDatastoreManager();
     }
 
     private MorphiaDatastoreManager createMorphiaDatastoreManager() {
         Morphia morphia = new Morphia();
         Datastore datastore = morphia.createDatastore(new MongoClient("localhost:27017"), "discord_bot");
-        return new MorphiaDatastoreManager(datastore);
+        return new MorphiaDatastoreManager(morphia, datastore);
     }
 
     public static DatastoreManager getInstance() {
