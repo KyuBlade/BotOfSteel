@@ -49,27 +49,6 @@ public class BotInfoCommand extends AbstractCommand {
             guildPerms = botUser.getPermissionsForGuild(guild);
         }
 
-        GuildContext guildContext = GuildManager.getInstance().getContext(guild);
-        GuildAudioPlayer audioPlayer = guildContext.getAudioPlayer();
-        int volume = audioPlayer.getVolume();
-        AudioTrack currentTrack = audioPlayer.getPlayingTrack();
-        String trackTitle = null;
-        String trackPosition = null;
-        String trackState = null;
-        boolean trackSeekable = false;
-        boolean trackStream = false;
-        if (currentTrack != null) {
-            trackTitle = currentTrack.getInfo().title;
-            trackPosition = DurationFormatUtils.formatDuration(currentTrack.getPosition(), "HH:mm:ss") + " / "
-                + DurationFormatUtils.formatDuration(currentTrack.getDuration(), "HH:mm:ss");
-            trackState = currentTrack.getState().name();
-            trackSeekable = currentTrack.isSeekable();
-            trackStream = currentTrack.getInfo().isStream;
-        }
-        boolean pauseState = audioPlayer.isPause();
-        boolean loopState = audioPlayer.isLoop();
-        boolean shuffleState = audioPlayer.isShuffle();
-
         StringBuilder descBuilder = new StringBuilder();
         descBuilder
             .append(MessageBuilder.Styles.BOLD.getMarkdown())
@@ -81,6 +60,28 @@ public class BotInfoCommand extends AbstractCommand {
             .append(StringUtils.formatBinarySize(totalMemory)).append("\n\n");
 
         if (!privateChannel) {
+            GuildContext guildContext = GuildManager.getInstance().getContext(guild);
+            GuildAudioPlayer audioPlayer = guildContext.getAudioPlayer();
+            int volume = audioPlayer.getVolume();
+            AudioTrack currentTrack = audioPlayer.getPlayingTrack();
+            String trackTitle = null;
+            String trackPosition = null;
+            String trackState = null;
+            boolean trackSeekable = false;
+            boolean trackStream = false;
+            if (currentTrack != null) {
+                trackTitle = currentTrack.getInfo().title;
+                trackPosition = DurationFormatUtils.formatDuration(currentTrack.getPosition(), "HH:mm:ss") + " / "
+                    + DurationFormatUtils.formatDuration(currentTrack.getDuration(), "HH:mm:ss");
+                trackState = currentTrack.getState().name();
+                trackSeekable = currentTrack.isSeekable();
+                trackStream = currentTrack.getInfo().isStream;
+            }
+            boolean pauseState = audioPlayer.isPause();
+            boolean loopState = audioPlayer.isLoop();
+            boolean shuffleState = audioPlayer.isShuffle();
+
+            // Audio player
             descBuilder
                 .append(MessageBuilder.Styles.BOLD.getMarkdown())
                 .append("Audio player : ")
@@ -101,6 +102,7 @@ public class BotInfoCommand extends AbstractCommand {
                 .append("\n\n");
         }
 
+        // Guild perms
         if (!privateChannel) {
             descBuilder
                 .append(MessageBuilder.Styles.BOLD.getMarkdown())
@@ -109,6 +111,7 @@ public class BotInfoCommand extends AbstractCommand {
                 .append(guildPerms).append("\n\n");
         }
 
+        // Channel perms
         descBuilder
             .append(MessageBuilder.Styles.BOLD.getMarkdown())
             .append("Channel permissions : ")
@@ -122,6 +125,7 @@ public class BotInfoCommand extends AbstractCommand {
             .withAuthorName(botUser.getName())
             .withAuthorUrl("https://github.com/KyuBlade/BotOfSteel")
             .withAuthorIcon(botUser.getAvatarURL())
+            .withThumbnail(botUser.getAvatarURL())
             .withDescription(descBuilder.toString())
             .withFooterIcon(ownerUser.getAvatarURL())
             .withFooterText(ownerUser.getName());
