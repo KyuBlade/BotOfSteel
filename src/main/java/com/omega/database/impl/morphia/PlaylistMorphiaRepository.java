@@ -4,6 +4,7 @@ import com.omega.database.PlaylistRepository;
 import com.omega.database.entity.Playlist;
 import com.omega.database.impl.morphia.entity.MorphiaPlaylist;
 import org.mongodb.morphia.Datastore;
+import org.mongodb.morphia.query.Query;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IUser;
 
@@ -64,17 +65,18 @@ public class PlaylistMorphiaRepository extends MorphiaBaseRepository implements 
     }
 
     @Override
-    public List<MorphiaPlaylist> findByUserPrivacy(IUser user) {
-        return datastore.createQuery(MorphiaPlaylist.class).field(Playlist.Fields.user.name()).equal(user.getID())
-            .field(Playlist.Fields.privacy.name()).equal(Playlist.Privacy.USER.name())
-            .asList();
+    public List<MorphiaPlaylist> findBasicByUserPrivacy(IUser user) {
+        Query<MorphiaPlaylist> query = datastore.createQuery(MorphiaPlaylist.class).field(Playlist.Fields.user.name()).equal(user)
+            .field(Playlist.Fields.privacy.name()).equal(Playlist.Privacy.USER);
+        query.project(Playlist.Fields.tracks.name(), false);
+        return query.asList();
     }
 
     @Override
-    public List<MorphiaPlaylist> findByGuildPrivacy(IGuild guild) {
+    public List<MorphiaPlaylist> findBasicByGuildPrivacy(IGuild guild) {
         return datastore.createQuery(MorphiaPlaylist.class)
             .field(Playlist.Fields.guild.name()).equal(guild)
-            .field(Playlist.Fields.privacy.name()).equal(Playlist.Privacy.GUILD.name())
+            .field(Playlist.Fields.privacy.name()).equal(Playlist.Privacy.GUILD)
             .asList();
     }
 }

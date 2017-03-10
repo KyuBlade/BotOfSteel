@@ -30,11 +30,11 @@ public class PlaylistListCommand extends AbstractCommand {
         builder.append(MessageBuilder.Styles.CODE.getMarkdown()).append('\n');
 
         PlaylistRepository playlistRepository = DatastoreManagerSingleton.getInstance().getRepository(PlaylistRepository.class);
-        List<? extends Playlist> userPlaylists = playlistRepository.findByUserPrivacy(by);
+        List<? extends Playlist> userPlaylists = playlistRepository.findBasicByUserPrivacy(by);
         printPlaylistsCategory(builder, "Private", userPlaylists);
         builder.append('\n');
 
-        List<? extends Playlist> guildPlaylists = playlistRepository.findByGuildPrivacy(message.getGuild());
+        List<? extends Playlist> guildPlaylists = playlistRepository.findBasicByGuildPrivacy(message.getGuild());
         printPlaylistsCategory(builder, "Guild", guildPlaylists);
 
         builder.append(MessageBuilder.Styles.CODE.getReverseMarkdown());

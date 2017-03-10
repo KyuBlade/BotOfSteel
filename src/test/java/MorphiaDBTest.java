@@ -6,7 +6,6 @@ import com.omega.database.entity.AudioTrack;
 import com.omega.database.entity.GuildProperties;
 import com.omega.database.entity.Playlist;
 import com.omega.database.impl.morphia.MorphiaDatastoreManager;
-import de.caluga.morphium.MorphiumConfig;
 import de.flapdoodle.embed.mongo.MongodExecutable;
 import de.flapdoodle.embed.mongo.MongodProcess;
 import de.flapdoodle.embed.mongo.MongodStarter;
@@ -60,10 +59,6 @@ public class MorphiaDBTest {
             .build());
         mongod = mongodExe.start();
         mongo = new MongoClient("localhost", PORT);
-
-        MorphiumConfig cfg = new MorphiumConfig();
-        cfg.setDatabase("discord_bot_test");
-        cfg.addHostToSeed("localhost", PORT);
 
         Morphia morphia = new Morphia();
         datastoreManager = new MorphiaDatastoreManager(morphia, morphia.createDatastore(mongo, "discord_bot_test"));

@@ -18,7 +18,15 @@ public interface PlaylistRepository extends Repository<Playlist> {
 
     Playlist findByName(String playlistName);
 
-    List<? extends Playlist> findByUserPrivacy(IUser user);
+    /**
+     * @param user the playlist owner
+     * @return the playlists(without loading tracks) whose owner is {@code user}
+     */
+    List<? extends Playlist> findBasicByUserPrivacy(IUser user);
 
-    List<? extends Playlist> findByGuildPrivacy(IGuild guild);
+    /**
+     * @param guild the playlist guild ownership
+     * @return the playlists(without loading tracks) whose guild ownership is {@code guild}
+     */
+    List<? extends Playlist> findBasicByGuildPrivacy(IGuild guild);
 }

@@ -4,10 +4,7 @@ import com.omega.database.entity.AudioTrack;
 import com.omega.database.entity.Playlist;
 import com.omega.database.impl.morphia.converter.GuildTypeConverter;
 import org.bson.types.ObjectId;
-import org.mongodb.morphia.annotations.Converters;
-import org.mongodb.morphia.annotations.Embedded;
-import org.mongodb.morphia.annotations.Entity;
-import org.mongodb.morphia.annotations.Id;
+import org.mongodb.morphia.annotations.*;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IUser;
 
@@ -26,22 +23,27 @@ public class MorphiaPlaylist extends Playlist {
     private String normalizedName;
 
     @Embedded
-    private List<AudioTrack> tracks;
+    private List<MorphiaAudioTrack> tracks;
+
     private int size;
 
+    @Embedded
     private IUser user;
+
+    @Embedded
     private IGuild guild;
 
     private Privacy privacy;
 
     public MorphiaPlaylist() {
+        this.tracks = new ArrayList<>();
     }
 
     public MorphiaPlaylist(String name, Privacy privacy, IGuild guild, IUser user) {
+        this();
+
         this.name = name;
         this.normalizedName = name.toLowerCase();
-
-        this.tracks = new ArrayList<>();
         this.guild = guild;
         this.user = user;
         this.privacy = privacy;
@@ -73,12 +75,15 @@ public class MorphiaPlaylist extends Playlist {
 
     @Override
     public void addTrack(AudioTrack audioTrack) {
-        this.tracks.add(audioTrack);
+        this.tracks.add((MorphiaAudioTrack) audioTrack);
+        size++;
     }
 
+    @SuppressWarnings("SuspiciousMethodCalls")
     @Override
     public void removeTrack(AudioTrack audioTrack) {
         this.tracks.remove(audioTrack);
+        size--;
     }
 
     @Override

@@ -29,9 +29,4 @@ public class GuildTypeConverter extends TypeConverter implements SimpleValueConv
 
         return ((IGuild) value).getID();
     }
-
-    @Override
-    protected boolean isSupported(Class<?> c, MappedField optionalExtraInfo) {
-        return true;
-    }
 }
