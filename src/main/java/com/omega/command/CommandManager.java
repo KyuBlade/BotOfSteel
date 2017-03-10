@@ -59,6 +59,7 @@ public class CommandManager {
         registerCommand(UserInfoCommand.class);
         registerCommand(SeekCommand.class);
         registerCommand(BotInfoCommand.class);
+        registerCommand(LyricsCommand.class);
     }
 
     @EventSubscriber

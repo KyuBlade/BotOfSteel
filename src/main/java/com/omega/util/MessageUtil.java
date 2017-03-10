@@ -20,8 +20,8 @@ public class MessageUtil {
      * @param messageToReply the message you want to reply to
      * @param content        the message content
      */
-    public static void reply(IMessage messageToReply, String content) {
-        RequestBuffer.request(() -> {
+    public static RequestBuffer.RequestFuture<Void> reply(IMessage messageToReply, String content) {
+        return RequestBuffer.request(() -> {
             try {
                 messageToReply.reply(content);
             } catch (MissingPermissionsException e) {
@@ -39,8 +39,8 @@ public class MessageUtil {
      * @param content        the message content
      * @param embedObject    the embed object to send
      */
-    public static void reply(IMessage messageToReply, String content, EmbedObject embedObject) {
-        RequestBuffer.request(() -> {
+    public static RequestBuffer.RequestFuture<Void> reply(IMessage messageToReply, String content, EmbedObject embedObject) {
+        return RequestBuffer.request(() -> {
             try {
                 messageToReply.reply(content, embedObject);
             } catch (MissingPermissionsException e) {
@@ -57,8 +57,8 @@ public class MessageUtil {
      * @param by      user to message
      * @param content message content
      */
-    public static void sendPrivateMessage(IUser by, String content) {
-        RequestBuffer.request(() -> {
+    public static RequestBuffer.RequestFuture<Void> sendPrivateMessage(IUser by, String content) {
+        return RequestBuffer.request(() -> {
             try {
                 by.getOrCreatePMChannel().sendMessage(content);
             } catch (MissingPermissionsException e) {
@@ -76,8 +76,8 @@ public class MessageUtil {
      * @param content message content
      * @param embed   the embed object to send
      */
-    public static void sendPrivateMessage(IUser by, String content, EmbedObject embed) {
-        RequestBuffer.request(() -> {
+    public static RequestBuffer.RequestFuture<Void> sendPrivateMessage(IUser by, String content, EmbedObject embed) {
+        return RequestBuffer.request(() -> {
             try {
                 by.getOrCreatePMChannel().sendMessage(content, embed, false);
             } catch (MissingPermissionsException e) {
@@ -94,8 +94,8 @@ public class MessageUtil {
      * @param channel channel to send to
      * @param content message content
      */
-    public static void sendMessage(IChannel channel, String content) {
-        RequestBuffer.request(() -> {
+    public static RequestBuffer.RequestFuture<Void> sendMessage(IChannel channel, String content) {
+        return RequestBuffer.request(() -> {
             try {
                 channel.sendMessage(content);
             } catch (MissingPermissionsException e) {
@@ -113,8 +113,8 @@ public class MessageUtil {
      * @param content message content
      * @param embed   the embed object to send
      */
-    public static void sendMessage(IChannel channel, String content, EmbedObject embed) {
-        RequestBuffer.request(() -> {
+    public static RequestBuffer.RequestFuture<Void> sendMessage(IChannel channel, String content, EmbedObject embed) {
+        return RequestBuffer.request(() -> {
             try {
                 channel.sendMessage(content, embed, false);
             } catch (MissingPermissionsException e) {
