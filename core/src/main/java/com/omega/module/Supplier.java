@@ -1,4 +1,4 @@
-package com.omega;
+package com.omega.module;
 
 public interface Supplier<T> {
 

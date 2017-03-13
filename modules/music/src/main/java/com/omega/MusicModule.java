@@ -15,6 +15,7 @@ import com.omega.event.GuildContextDestroyedEvent;
 import com.omega.guild.GuildContext;
 import com.omega.guild.GuildManager;
 import com.omega.guild.property.MusicPropertySupplier;
+import com.omega.module.Module;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
@@ -24,11 +25,10 @@ import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.obj.IGuild;
-import sx.blah.discord.modules.IModule;
 
 import java.util.Collection;
 
-public class MusicModule implements IModule {
+public class MusicModule extends Module {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MusicModule.class);
 
@@ -37,7 +37,7 @@ public class MusicModule implements IModule {
     private AudioPlayerManager audioManager;
 
     @Override
-    public boolean enable(IDiscordClient iDiscordClient) {
+    protected boolean load(IDiscordClient iDiscordClient) {
         LOGGER.info("Enable music module");
         DatastoreManager datastoreManager = DatastoreManagerSingleton.getInstance();
         if (datastoreManager instanceof MorphiaDatastoreManager) {
@@ -61,7 +61,7 @@ public class MusicModule implements IModule {
     }
 
     @Override
-    public void disable() {
+    protected void unload() {
         LOGGER.info("Disable music module");
         CommandManager.getInstance().unsupply(new MusicCommandSupplier());
 

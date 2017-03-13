@@ -1,6 +1,6 @@
 package com.omega.guild.property;
 
-import com.omega.Supplier;
+import com.omega.module.Supplier;
 
 public interface PropertySupplier extends Supplier<PropertyDefinition> {
 
