@@ -1,0 +1,13 @@
+version '0.3.0'
+
+dependencies {
+    testCompile group: 'de.flapdoodle.embed', name: 'de.flapdoodle.embed.mongo', version: '2.0.0'
+
+    compile fileTree(dir: 'libs', include: '*.jar')
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
+
+    compile "ch.qos.logback:logback-classic:1.1.7"
+    compile 'com.sedmelluq:lavaplayer:1.2.22'
+    compile 'org.mongodb.morphia:morphia:1.3.2'
+    compile group: 'org.mongodb', name: 'mongo-java-driver', version: '3.4.2'
+}

@@ -1,0 +1,7 @@
+version '0.3.0'
+
+dependencies {
+    compile project(':core')
+
+    compile 'org.jsoup:jsoup:1.10.2'
+}
