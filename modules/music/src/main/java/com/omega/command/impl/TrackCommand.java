@@ -17,12 +17,8 @@ import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.util.EmbedBuilder;
 
-import java.text.SimpleDateFormat;
-
 @Command(name = "track")
 public class TrackCommand extends AbstractCommand {
-
-    private static final SimpleDateFormat timeFormatter = new SimpleDateFormat("mm:ss");
 
     public TrackCommand(IUser by, IMessage message) {
         super(by, message);
@@ -34,7 +30,6 @@ public class TrackCommand extends AbstractCommand {
         GuildAudioPlayer audioPlayer = (GuildAudioPlayer) guildContext.getModuleComponent(MusicModule.AUDIO_PLAYER_COMPONENT);
         if (audioPlayer != null) {
             AudioTrack playingTrack = audioPlayer.getPlayingTrack();
-
             if (playingTrack != null) {
                 EmbedObject trackEmbed = getTrackEmbbed(playingTrack);
                 if (trackEmbed != null) {
@@ -42,11 +37,10 @@ public class TrackCommand extends AbstractCommand {
                 } else {
                     MessageUtil.reply(message, "Audio source still not supported");
                 }
+            } else {
+                MessageUtil.reply(message, "No tracks playing actually");
             }
-            return;
         }
-
-        MessageUtil.reply(message, "No tracks playing actually");
     }
 
     private EmbedObject getTrackEmbbed(AudioTrack track) {
@@ -64,11 +58,11 @@ public class TrackCommand extends AbstractCommand {
     private EmbedObject getYoutubeEmbbed(AudioTrack track) {
         EmbedBuilder builder = new EmbedBuilder();
         builder.withTitle(track.getInfo().title)
-                .withAuthorName(track.getInfo().author)
-                .withUrl("https://youtube.com/watch?v=" + track.getIdentifier())
-                .withDescription(
-                        DurationFormatUtils.formatDuration(track.getPosition(), "HH:mm:ss") + " / "
-                                + DurationFormatUtils.formatDuration(track.getDuration(), "HH:mm:ss"));
+            .withAuthorName(track.getInfo().author)
+            .withUrl("https://youtube.com/watch?v=" + track.getIdentifier())
+            .withDescription(
+                DurationFormatUtils.formatDuration(track.getPosition(), "HH:mm:ss") + " / "
+                    + DurationFormatUtils.formatDuration(track.getDuration(), "HH:mm:ss"));
 
         return builder.build();
     }
