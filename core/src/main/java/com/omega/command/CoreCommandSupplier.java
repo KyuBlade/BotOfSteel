@@ -7,7 +7,8 @@ public class CoreCommandSupplier implements CommandSupplier {
     private static final Class[] COMMANDS = new Class[]{
         PingCommand.class, HelpCommand.class, RandomCommand.class, RollCommand.class, InviteCommand.class,
         SetPropertyCommand.class, GetPropertyCommand.class, GetVoiceChannelInfoCommand.class,
-        KickCommand.class, BanCommand.class, RipCommand.class, UserInfoCommand.class, BotInfoCommand.class
+        KickCommand.class, BanCommand.class, RipCommand.class, UserInfoCommand.class, BotInfoCommand.class,
+        ModuleCommand.class
     };
 
     public CoreCommandSupplier() {
