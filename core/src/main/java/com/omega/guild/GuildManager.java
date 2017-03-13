@@ -2,6 +2,7 @@ package com.omega.guild;
 
 import sx.blah.discord.handle.obj.IGuild;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,6 +30,10 @@ public class GuildManager {
 
             return context;
         }
+    }
+
+    public Collection<GuildContext> getGuildContexts() {
+        return guilds.values();
     }
 
     private static class SingletonHolder {

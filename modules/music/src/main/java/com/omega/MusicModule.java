@@ -1,6 +1,5 @@
 package com.omega;
 
-import com.omega.audio.AudioPlayerManager;
 import com.omega.audio.AudioPlayerStateListener;
 import com.omega.audio.GuildAudioPlayer;
 import com.omega.command.CommandManager;
@@ -14,7 +13,11 @@ import com.omega.database.impl.morphia.PlaylistMorphiaRepository;
 import com.omega.event.GuildContextCreatedEvent;
 import com.omega.event.GuildContextDestroyedEvent;
 import com.omega.guild.GuildContext;
+import com.omega.guild.GuildManager;
 import com.omega.guild.property.MusicPropertySupplier;
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import org.mongodb.morphia.Datastore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,11 +26,15 @@ import sx.blah.discord.api.events.EventSubscriber;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.modules.IModule;
 
+import java.util.Collection;
+
 public class MusicModule implements IModule {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MusicModule.class);
 
     public static final String AUDIO_PLAYER_COMPONENT = "audioPlayer";
+
+    private AudioPlayerManager audioManager;
 
     @Override
     public boolean enable(IDiscordClient iDiscordClient) {
@@ -41,8 +48,14 @@ public class MusicModule implements IModule {
             );
         }
 
+        audioManager = new DefaultAudioPlayerManager();
+        AudioSourceManagers.registerRemoteSources(audioManager);
+
         CommandManager.getInstance().supply(new MusicCommandSupplier());
         GuildProperties.supply(new MusicPropertySupplier());
+
+        Collection<GuildContext> guildContexts = GuildManager.getInstance().getGuildContexts();
+        guildContexts.forEach(this::initializeAudioPlayer);
 
         return true;
     }
@@ -60,12 +73,19 @@ public class MusicModule implements IModule {
             );
         }
 
+        audioManager.shutdown();
+        Collection<GuildContext> guildContexts = GuildManager.getInstance().getGuildContexts();
+        guildContexts.forEach(guildContext -> {
+            GuildAudioPlayer audioPlayer = (GuildAudioPlayer) guildContext.removeModuleComponent(AUDIO_PLAYER_COMPONENT);
+            audioPlayer.cleanup();
+        });
+
         GuildProperties.unsupply(new MusicPropertySupplier());
     }
 
     @Override
     public String getName() {
-        return "Music module";
+        return "music";
     }
 
     @Override
@@ -101,7 +121,7 @@ public class MusicModule implements IModule {
 
     private void initializeAudioPlayer(GuildContext guildContext) {
         IGuild guild = guildContext.getGuild();
-        GuildAudioPlayer audioPlayer = new GuildAudioPlayer(AudioPlayerManager.getInstance(), guild);
+        GuildAudioPlayer audioPlayer = new GuildAudioPlayer(audioManager, guild);
 
         guild.getAudioManager().setAudioProvider(audioPlayer.getAudioProvider());
         audioPlayer.addListener(new AudioPlayerStateListener(guildContext));
