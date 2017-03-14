@@ -1,2 +1,6 @@
 rootProject.name = 'BotOfSteel'
+include 'music'
+include 'core'
+
+project(":music").projectDir = file('modules/music')
 
