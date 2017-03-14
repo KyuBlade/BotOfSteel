@@ -99,7 +99,6 @@ public class CommandManager {
                             LOGGER.debug("Command method found");
                             return true;
                         }
-
                     } else {
                         return true;
                     }

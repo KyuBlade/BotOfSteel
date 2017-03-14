@@ -56,10 +56,8 @@ public class CommandParser {
             }
 
             // Definitely a string
-            System.out.println("Pure string");
             char startChar = arg.charAt(0);
             if (startChar == '\'' || startChar == '"') {
-                System.out.println("Start char = " + startChar);
                 return arg.replaceAll("^\"|\"$", "");
             }
 
