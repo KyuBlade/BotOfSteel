@@ -22,7 +22,8 @@ public class PlayAudioLoadCallback implements AudioLoadResultHandler {
 
     @Override
     public void playlistLoaded(AudioPlaylist playlist) {
-        MessageUtil.reply(message, "Will play playlist {}({} tracks).");
+        MessageUtil.reply(message, "Will play playlist " + playlist.getName() +
+            "(" + playlist.getTracks().size() + " tracks).");
     }
 
     @Override
