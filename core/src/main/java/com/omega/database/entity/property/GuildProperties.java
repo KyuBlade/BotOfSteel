@@ -1,11 +1,9 @@
-package com.omega.database.entity;
+package com.omega.database.entity.property;
 
 import com.omega.database.DatastoreManagerSingleton;
 import com.omega.database.GuildPropertiesRepository;
-import com.omega.database.entity.property.Property;
 import com.omega.exception.PropertyNotFoundException;
 import com.omega.guild.GuildContext;
-import com.omega.guild.property.CorePropertySupplier;
 import com.omega.guild.property.PropertyDefinition;
 import com.omega.guild.property.PropertySupplier;
 import org.slf4j.Logger;
@@ -26,10 +24,6 @@ public abstract class GuildProperties {
 
     private static final Map<String, PropertyDefinition> PROPERTY_DEFINITIONS = new HashMap<>();
 
-    static {
-        supply(new CorePropertySupplier());
-    }
-
     public GuildProperties() {
     }
 
@@ -47,8 +41,14 @@ public abstract class GuildProperties {
     public void initLoad(GuildContext guildContext) {
         setGuildContext(guildContext);
 
-        getProperties().forEach((propertyName, property) ->
-            PROPERTY_DEFINITIONS.get(propertyName).getTask().execute(guildContext, property, false)
+        getProperties().forEach((propertyName, property) -> {
+                PropertyDefinition propertyDefinition = PROPERTY_DEFINITIONS.get(propertyName);
+                if (propertyDefinition != null) {
+                    propertyDefinition.getTask().execute(guildContext, property, false);
+                } else {
+                    LOGGER.debug("Property {} not found", propertyName);
+                }
+            }
         );
     }
 
