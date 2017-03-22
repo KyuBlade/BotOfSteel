@@ -11,12 +11,11 @@ import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.handle.obj.IVoiceChannel;
+import sx.blah.discord.handle.obj.IVoiceState;
 import sx.blah.discord.util.DiscordException;
 import sx.blah.discord.util.MessageBuilder;
 import sx.blah.discord.util.MissingPermissionsException;
 import sx.blah.discord.util.RateLimitException;
-
-import java.util.List;
 
 @Command(name = "getChannelInfo", aliases = "gci")
 public class GetVoiceChannelInfoCommand extends AbstractCommand {
@@ -28,16 +27,12 @@ public class GetVoiceChannelInfoCommand extends AbstractCommand {
     }
 
     @Permission(permission = CorePermissionSupplier.COMMAND_GETVOICECHANNELINFO)
-    @Signature(help = "Get the current voice channel info")
+    @Signature(help = "Get the connected voice channel info")
     public void getChannelInfo() {
-        IUser botUser = message.getClient().getOurUser();
-        List<IVoiceChannel> voiceChannels = botUser.getConnectedVoiceChannels();
-        IVoiceChannel connectedVoiceChannel = voiceChannels.stream()
-            .filter(voiceChannel -> voiceChannel.getGuild().equals(message.getGuild()))
-            .findFirst()
-            .orElse(null);
-        if (connectedVoiceChannel != null) {
-            MessageUtil.reply(message, printChannelInfo(connectedVoiceChannel));
+        IVoiceState voiceState = by.getVoiceStateForGuild(message.getGuild());
+        IVoiceChannel voiceChannel = voiceState.getChannel();
+        if (voiceChannel != null) {
+            MessageUtil.reply(message, printChannelInfo(voiceChannel));
         } else {
             MessageUtil.reply(message, "Not connected to a voice channel");
         }

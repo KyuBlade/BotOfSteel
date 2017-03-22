@@ -1,11 +1,11 @@
 allprojects {
     group 'com.omega'
-    version '0.3.0-SNAPSHOT'
 }
 
 subprojects {
     apply plugin: 'java'
     apply plugin: 'idea'
+    apply plugin: 'distribution'
 
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
