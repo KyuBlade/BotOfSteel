@@ -3,6 +3,7 @@ package com.omega.database.impl.morphia;
 import com.omega.database.PlaylistRepository;
 import com.omega.database.entity.Playlist;
 import com.omega.database.impl.morphia.entity.MorphiaPlaylist;
+import com.omega.database.impl.morphia.repository.MorphiaBaseRepository;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.query.Query;
 import sx.blah.discord.handle.obj.IGuild;
@@ -17,7 +18,7 @@ public class PlaylistMorphiaRepository extends MorphiaBaseRepository implements 
     }
 
     @Override
-    public Playlist create() throws IllegalAccessException, InstantiationException {
+    public Playlist create() {
         return new MorphiaPlaylist();
     }
 

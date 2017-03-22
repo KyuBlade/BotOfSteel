@@ -3,6 +3,7 @@ package com.omega.database.impl.morphia;
 import com.omega.database.AudioTrackRepository;
 import com.omega.database.entity.AudioTrack;
 import com.omega.database.impl.morphia.entity.MorphiaAudioTrack;
+import com.omega.database.impl.morphia.repository.MorphiaBaseRepository;
 import org.mongodb.morphia.Datastore;
 
 public class AudioTrackMorphiaRepository extends MorphiaBaseRepository implements AudioTrackRepository {
@@ -12,7 +13,7 @@ public class AudioTrackMorphiaRepository extends MorphiaBaseRepository implement
     }
 
     @Override
-    public AudioTrack create() throws IllegalAccessException, InstantiationException {
+    public AudioTrack create() {
         return new MorphiaAudioTrack();
     }
 

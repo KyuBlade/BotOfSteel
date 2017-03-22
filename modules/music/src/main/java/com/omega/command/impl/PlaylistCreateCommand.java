@@ -1,12 +1,10 @@
 package com.omega.command.impl;
 
 import com.omega.MusicModule;
+import com.omega.MusicPermissionSupplier;
 import com.omega.audio.GuildAudioPlayer;
+import com.omega.command.*;
 import com.omega.database.entity.Playlist;
-import com.omega.command.AbstractCommand;
-import com.omega.command.Command;
-import com.omega.command.Parameter;
-import com.omega.command.Signature;
 import com.omega.exception.PlaylistAlreadyExists;
 import com.omega.guild.GuildContext;
 import com.omega.guild.GuildManager;
@@ -21,11 +19,13 @@ public class PlaylistCreateCommand extends AbstractCommand {
         super(by, message);
     }
 
+    @Permission(permission = MusicPermissionSupplier.COMMAND_PLAYLIST_CREATE)
     @Signature(help = "Create a new private playlist")
     public void playlistCreateCommand(@Parameter(name = "playlistName") String playlistName) {
         createPlaylist(playlistName, Playlist.Privacy.USER);
     }
 
+    @Permission(permission = MusicPermissionSupplier.COMMAND_PLAYLIST_CREATE)
     @Signature(help = "Create a new playlist with the specified privacy (0 = private, 1 = public)")
     public void playlistCreateCommand(@Parameter(name = "playlistName") String playlistName, @Parameter(name = "privacy") Long privacy) {
         Playlist.Privacy resolvedPrivacy = Playlist.Privacy.findById(privacy.intValue());

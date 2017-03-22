@@ -1,19 +1,19 @@
-package com.omega.database.impl.morphia;
+package com.omega.database.impl.morphia.repository;
 
-import com.omega.database.GuildPropertiesRepository;
-import com.omega.database.entity.GuildProperties;
+import com.omega.database.repository.GuildPropertiesRepository;
+import com.omega.database.entity.property.GuildProperties;
 import com.omega.database.impl.morphia.entity.MorphiaGuildProperties;
 import org.mongodb.morphia.Datastore;
 import sx.blah.discord.handle.obj.IGuild;
 
-public class GuildPropertiesMorphiaRepository extends MorphiaBaseRepository implements GuildPropertiesRepository {
+public class MorphiaGuildPropertiesRepository extends MorphiaBaseRepository implements GuildPropertiesRepository {
 
-    public GuildPropertiesMorphiaRepository(Datastore datastore) {
+    public MorphiaGuildPropertiesRepository(Datastore datastore) {
         super(datastore);
     }
 
     @Override
-    public GuildProperties create() throws IllegalAccessException, InstantiationException {
+    public GuildProperties create() {
         return new MorphiaGuildProperties();
     }
 
@@ -28,6 +28,13 @@ public class GuildPropertiesMorphiaRepository extends MorphiaBaseRepository impl
     }
 
     @Override
+    public MorphiaGuildProperties findByGuild(IGuild guild) {
+        return datastore.createQuery(MorphiaGuildProperties.class)
+            .field(MorphiaGuildProperties.Fields.guild.name()).equal(guild)
+            .get();
+    }
+
+    @Override
     public void save(GuildProperties entity) {
         datastore.save(entity);
     }
@@ -35,12 +42,5 @@ public class GuildPropertiesMorphiaRepository extends MorphiaBaseRepository impl
     @Override
     public void delete(GuildProperties entity) {
         datastore.delete(entity);
-    }
-
-    @Override
-    public MorphiaGuildProperties findByGuild(IGuild guild) {
-        return datastore.createQuery(MorphiaGuildProperties.class)
-            .field(MorphiaGuildProperties.Fields.guild.name()).equal(guild)
-            .get();
     }
 }

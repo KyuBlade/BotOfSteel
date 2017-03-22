@@ -1,6 +1,6 @@
 package com.omega.database.impl.morphia.entity;
 
-import com.omega.database.entity.GuildProperties;
+import com.omega.database.entity.property.GuildProperties;
 import com.omega.database.entity.property.Property;
 import com.omega.guild.GuildContext;
 import org.bson.types.ObjectId;
@@ -56,7 +56,6 @@ public class MorphiaGuildProperties extends GuildProperties {
         this.guildContext = guildContext;
     }
 
-    @Override
     public Map<String, Property> getProperties() {
         return properties;
     }

@@ -1,11 +1,9 @@
 package com.omega.command.impl;
 
 import com.omega.MusicModule;
+import com.omega.MusicPermissionSupplier;
 import com.omega.audio.GuildAudioPlayer;
-import com.omega.command.AbstractCommand;
-import com.omega.command.Command;
-import com.omega.command.Parameter;
-import com.omega.command.Signature;
+import com.omega.command.*;
 import com.omega.guild.GuildContext;
 import com.omega.guild.GuildManager;
 import com.omega.util.MessageUtil;
@@ -24,6 +22,7 @@ public class SeekCommand extends AbstractCommand {
         super(by, message);
     }
 
+    @Permission(permission = MusicPermissionSupplier.COMMAND_SEEK)
     @Signature(help = "Seek to the given position. Joint hours, minutes and seconds by a ':'. eg. 10:54:37 or 1:30 or just 45")
     public void seekCommand(@Parameter(name = "time") String time) {
         String[] split = time.split(":");
@@ -58,16 +57,19 @@ public class SeekCommand extends AbstractCommand {
 
     }
 
+    @Permission(permission = MusicPermissionSupplier.COMMAND_SEEK)
     @Signature(help = "Seek the at given seconds")
     public void seekCommand(@Parameter(name = "seconds") Long seconds) {
         seekCommand(0L, 0L, seconds);
     }
 
+    @Permission(permission = MusicPermissionSupplier.COMMAND_SEEK)
     @Signature(help = "Seek at the given minutes and seconds")
     public void seekCommand(@Parameter(name = "minutes") Long minutes, @Parameter(name = "seconds") Long seconds) {
         seekCommand(0L, minutes, seconds);
     }
 
+    @Permission(permission = MusicPermissionSupplier.COMMAND_SEEK)
     @Signature(help = "Seek at the given hours, minutes and seconds")
     public void seekCommand(@Parameter(name = "hours") Long hours, @Parameter(name = "minutes") Long minutes, @Parameter(name = "seconds") Long seconds) {
         GuildContext guildContext = GuildManager.getInstance().getContext(message.getGuild());

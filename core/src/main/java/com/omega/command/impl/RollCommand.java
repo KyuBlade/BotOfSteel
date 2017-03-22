@@ -1,9 +1,7 @@
 package com.omega.command.impl;
 
-import com.omega.command.AbstractCommand;
-import com.omega.command.Command;
-import com.omega.command.Parameter;
-import com.omega.command.Signature;
+import com.omega.command.*;
+import com.omega.database.entity.permission.CorePermissionSupplier;
 import com.omega.util.MessageUtil;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
@@ -22,6 +20,7 @@ public class RollCommand extends AbstractCommand {
         super(by, message);
     }
 
+    @Permission(permission = CorePermissionSupplier.COMMAND_ROLL)
     @Signature(help = "Get a random number after x rolls. Format : %count%d%range% or %count%D%range%")
     public void rollCommand(@Parameter(name = "rollLiteral") String rollLiteral) {
         String[] split = rollLiteral.split("d|D");
@@ -38,6 +37,7 @@ public class RollCommand extends AbstractCommand {
         }
     }
 
+    @Permission(permission = CorePermissionSupplier.COMMAND_ROLL)
     @Signature(help = "Get a random number after x rolls")
     public void rollCommand(@Parameter(name = "count") Long count, @Parameter(name = "range") Long range) {
         if (count > MAX_ROLL_COUNT) {

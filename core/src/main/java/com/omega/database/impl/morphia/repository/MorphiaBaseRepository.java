@@ -1,4 +1,4 @@
-package com.omega.database.impl.morphia;
+package com.omega.database.impl.morphia.repository;
 
 import org.mongodb.morphia.Datastore;
 

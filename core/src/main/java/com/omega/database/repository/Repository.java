@@ -1,4 +1,4 @@
-package com.omega.database;
+package com.omega.database.repository;
 
 public interface Repository<T> {
 
@@ -7,7 +7,7 @@ public interface Repository<T> {
      *
      * @return new entity
      */
-    T create() throws IllegalAccessException, InstantiationException;
+    T create();
 
     /**
      * Get an entity from its id.

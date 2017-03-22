@@ -1,6 +1,7 @@
 package com.omega.command.impl;
 
 import com.omega.command.*;
+import com.omega.database.entity.permission.CorePermissionSupplier;
 import com.omega.util.CommandExtractHelper;
 import com.omega.util.MessageUtil;
 import sx.blah.discord.handle.obj.IMessage;
@@ -17,6 +18,7 @@ public class HelpCommand extends AbstractCommand {
         super(by, message);
     }
 
+    @Permission(permission = CorePermissionSupplier.COMMAND_HELP)
     @Signature(help = "Get the list of available commands")
     public void helpCommand() throws RateLimitException, DiscordException, MissingPermissionsException {
         StringBuilder builder = new StringBuilder();
@@ -55,6 +57,7 @@ public class HelpCommand extends AbstractCommand {
         MessageUtil.sendPrivateMessage(by, builder.toString());
     }
 
+    @Permission(permission = CorePermissionSupplier.COMMAND_HELP)
     @Signature(help = "Get help for the specified method")
     public void helpCommand(@Parameter(name = "commandName") String commandName) {
         CommandExtractHelper.CommandInfo commandInfo = CommandManager.getInstance().getCommand(commandName.toLowerCase());
@@ -70,12 +73,13 @@ public class HelpCommand extends AbstractCommand {
                 builder.append(parameter.getName())
                     .append('(')
                     .append(parameter.getType().getSimpleName())
-                    .append(")")
+                    .append(") ")
             );
-            builder.append(" - ")
+            builder.append("- ")
                 .append(signatureInfo.getHelp());
+
             if (i < signatureInfos.size()) {
-                builder.append('\n');
+                builder.append("\n\n");
             }
         });
 

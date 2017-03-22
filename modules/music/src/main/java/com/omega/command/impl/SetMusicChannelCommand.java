@@ -1,11 +1,9 @@
 package com.omega.command.impl;
 
 import com.omega.MusicModule;
+import com.omega.MusicPermissionSupplier;
 import com.omega.audio.GuildAudioPlayer;
-import com.omega.command.AbstractCommand;
-import com.omega.command.Command;
-import com.omega.command.Parameter;
-import com.omega.command.Signature;
+import com.omega.command.*;
 import com.omega.guild.GuildContext;
 import com.omega.guild.GuildManager;
 import com.omega.util.MessageUtil;
@@ -30,6 +28,7 @@ public class SetMusicChannelCommand extends AbstractCommand {
         super(by, message);
     }
 
+    @Permission(permission = MusicPermissionSupplier.COMMAND_SETMUSICCHANNEL)
     @Signature(help = "Set your current voice channel as a music channel")
     public void setMusicChannelCommand() {
         List<IVoiceChannel> connectedVoiceChannels = by.getConnectedVoiceChannels();
@@ -44,6 +43,7 @@ public class SetMusicChannelCommand extends AbstractCommand {
         }
     }
 
+    @Permission(permission = MusicPermissionSupplier.COMMAND_SETMUSICCHANNEL)
     @Signature(help = "Set the specified voice channel as a music channel")
     public void setMusicChannelCommand(@Parameter(name = "voiceChannelName") String voiceChannelName) {
         message.getGuild().getVoiceChannels();

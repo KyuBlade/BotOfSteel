@@ -1,6 +1,8 @@
+package com.omega;
+
 import com.mongodb.MongoClient;
-import com.omega.database.GuildPropertiesRepository;
-import com.omega.database.entity.GuildProperties;
+import com.omega.database.repository.GuildPropertiesRepository;
+import com.omega.database.entity.property.GuildProperties;
 import com.omega.database.impl.morphia.MorphiaDatastoreManager;
 import de.flapdoodle.embed.mongo.MongodExecutable;
 import de.flapdoodle.embed.mongo.MongodProcess;

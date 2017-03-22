@@ -1,10 +1,8 @@
 package com.omega.command.impl;
 
+import com.omega.MusicPermissionSupplier;
+import com.omega.command.*;
 import com.omega.database.entity.Playlist;
-import com.omega.command.AbstractCommand;
-import com.omega.command.Command;
-import com.omega.command.Parameter;
-import com.omega.command.Signature;
 import com.omega.database.DatastoreManagerSingleton;
 import com.omega.database.PlaylistRepository;
 import com.omega.util.MessageUtil;
@@ -24,6 +22,7 @@ public class PlaylistListCommand extends AbstractCommand {
         super(by, message);
     }
 
+    @Permission(permission = MusicPermissionSupplier.COMMAND_PLAYLIST_LIST)
     @Signature(help = "Get the list of playlists")
     public void playlistListCommand() throws RateLimitException, DiscordException, MissingPermissionsException {
         StringBuilder builder = new StringBuilder();
@@ -42,7 +41,8 @@ public class PlaylistListCommand extends AbstractCommand {
         MessageUtil.sendPrivateMessage(by, builder.toString());
     }
 
-    @Signature(help = "Show playlist for the mentionned user")
+    @Permission(permission = MusicPermissionSupplier.COMMAND_PLAYLIST_LIST)
+    @Signature(help = "Show playlist for the mentioned user")
     public void playlistListCommand(@Parameter(name = "user") IUser user) {
         MessageUtil.reply(message, "Not for you");
     }

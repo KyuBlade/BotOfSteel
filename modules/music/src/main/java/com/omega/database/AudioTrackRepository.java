@@ -1,6 +1,7 @@
 package com.omega.database;
 
 import com.omega.database.entity.AudioTrack;
+import com.omega.database.repository.Repository;
 
 public interface AudioTrackRepository extends Repository<AudioTrack> {
 

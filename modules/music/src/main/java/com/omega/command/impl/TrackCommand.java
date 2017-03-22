@@ -1,9 +1,11 @@
 package com.omega.command.impl;
 
 import com.omega.MusicModule;
+import com.omega.MusicPermissionSupplier;
 import com.omega.audio.GuildAudioPlayer;
 import com.omega.command.AbstractCommand;
 import com.omega.command.Command;
+import com.omega.command.Permission;
 import com.omega.command.Signature;
 import com.omega.guild.GuildContext;
 import com.omega.guild.GuildManager;
@@ -24,6 +26,7 @@ public class TrackCommand extends AbstractCommand {
         super(by, message);
     }
 
+    @Permission(permission = MusicPermissionSupplier.COMMAND_TRACK)
     @Signature(help = "Get the current playing track")
     public void trackCommand() {
         GuildContext guildContext = GuildManager.getInstance().getContext(message.getGuild());

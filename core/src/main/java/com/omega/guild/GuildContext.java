@@ -2,8 +2,8 @@ package com.omega.guild;
 
 
 import com.omega.database.DatastoreManagerSingleton;
-import com.omega.database.GuildPropertiesRepository;
-import com.omega.database.entity.GuildProperties;
+import com.omega.database.repository.GuildPropertiesRepository;
+import com.omega.database.entity.property.GuildProperties;
 import com.omega.event.GuildContextCreatedEvent;
 import com.omega.event.GuildContextDestroyedEvent;
 import org.slf4j.Logger;
@@ -18,7 +18,6 @@ public class GuildContext {
     private static final Logger LOGGER = LoggerFactory.getLogger(GuildContext.class);
 
     private final IGuild guild;
-
     private GuildProperties properties;
 
     private Map<String, GuildModuleComponent> moduleComponents;

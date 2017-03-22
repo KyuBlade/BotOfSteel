@@ -1,9 +1,7 @@
 package com.omega.command.impl;
 
-import com.omega.command.AbstractCommand;
-import com.omega.command.Command;
-import com.omega.command.Parameter;
-import com.omega.command.Signature;
+import com.omega.command.*;
+import com.omega.database.entity.permission.CorePermissionSupplier;
 import com.omega.module.Module;
 import com.omega.util.MessageUtil;
 import org.slf4j.Logger;
@@ -27,6 +25,7 @@ public class ModuleCommand extends AbstractCommand {
         super(by, message);
     }
 
+    @Permission(permission = CorePermissionSupplier.COMMAND_MODULE)
     @Signature(help = "Get the list of loaded modules")
     public void moduleCommand() {
         StringBuilder builder = new StringBuilder();
@@ -62,6 +61,7 @@ public class ModuleCommand extends AbstractCommand {
         MessageUtil.sendMessage(message.getChannel(), "", embBuilder.build());
     }
 
+    @Permission(permission = CorePermissionSupplier.COMMAND_MODULE)
     @Signature(help = "Perform actions on modules, actions can be enable, disable or reload")
     public void moduleCommand(@Parameter(name = "moduleName") String moduleName, @Parameter(name = "action") String action) {
         ModuleLoader moduleLoader = by.getClient().getModuleLoader();

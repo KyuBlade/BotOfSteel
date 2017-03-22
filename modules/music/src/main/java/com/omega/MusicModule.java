@@ -6,7 +6,7 @@ import com.omega.command.CommandManager;
 import com.omega.command.impl.MusicCommandSupplier;
 import com.omega.database.DatastoreManager;
 import com.omega.database.DatastoreManagerSingleton;
-import com.omega.database.entity.GuildProperties;
+import com.omega.database.entity.property.GuildProperties;
 import com.omega.database.impl.morphia.AudioTrackMorphiaRepository;
 import com.omega.database.impl.morphia.MorphiaDatastoreManager;
 import com.omega.database.impl.morphia.PlaylistMorphiaRepository;
@@ -51,6 +51,7 @@ public class MusicModule extends Module {
         audioManager = new DefaultAudioPlayerManager();
         AudioSourceManagers.registerRemoteSources(audioManager);
 
+        PermissionManager.getInstance().supply(new MusicPermissionSupplier());
         CommandManager.getInstance().supply(new MusicCommandSupplier());
         GuildProperties.supply(new MusicPropertySupplier());
 
@@ -81,6 +82,7 @@ public class MusicModule extends Module {
         });
 
         GuildProperties.unsupply(new MusicPropertySupplier());
+        PermissionManager.getInstance().unsupply(new MusicPermissionSupplier());
     }
 
     @Override

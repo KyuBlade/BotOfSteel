@@ -1,9 +1,11 @@
 package com.omega.command.impl;
 
 import com.omega.MusicModule;
+import com.omega.MusicPermissionSupplier;
 import com.omega.audio.GuildAudioPlayer;
 import com.omega.command.AbstractCommand;
 import com.omega.command.Command;
+import com.omega.command.Permission;
 import com.omega.command.Signature;
 import com.omega.guild.GuildContext;
 import com.omega.guild.GuildManager;
@@ -18,6 +20,7 @@ public class ClearQueueCommand extends AbstractCommand {
         super(by, message);
     }
 
+    @Permission(permission = MusicPermissionSupplier.COMMAND_QUEUE_CLEAR)
     @Signature(help = "Clear the queue")
     public void clearQueueCommand() {
         GuildContext guildContext = GuildManager.getInstance().getContext(message.getGuild());

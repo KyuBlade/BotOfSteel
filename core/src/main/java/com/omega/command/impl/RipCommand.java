@@ -2,12 +2,13 @@ package com.omega.command.impl;
 
 import com.omega.command.AbstractCommand;
 import com.omega.command.Command;
+import com.omega.command.Permission;
 import com.omega.command.Signature;
+import com.omega.database.entity.permission.CorePermissionSupplier;
 import com.omega.util.MessageUtil;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
-import sx.blah.discord.util.DiscordException;
-import sx.blah.discord.util.RateLimitException;
+import sx.blah.discord.util.RequestBuffer;
 
 import java.util.List;
 
@@ -18,26 +19,26 @@ public class RipCommand extends AbstractCommand {
         super(by, message);
     }
 
+    @Permission(permission = CorePermissionSupplier.COMMAND_RIP)
     @Signature(help = "Print the list of banned users")
     public void ripCommand() {
-        try {
-            List<IUser> bannedUsers = message.getGuild().getBannedUsers();
-            StringBuilder builder = new StringBuilder();
-            builder.append("Rest In Peace").append('\n').append('\n');
-            for (int i = 0; i < bannedUsers.size(); i++) {
-                IUser bannedUser = bannedUsers.get(i);
-                builder.append(":skull_crossbones: ").append(bannedUser.getName()).append(" :skull_crossbones:");
+        if (!message.getChannel().isPrivate()) {
+            final StringBuilder builder = new StringBuilder();
+            RequestBuffer.request(() -> {
+                List<IUser> bannedUsers = message.getGuild().getBannedUsers();
+                builder.append("Rest In Peace").append('\n').append('\n');
+                for (int i = 0; i < bannedUsers.size(); i++) {
+                    IUser bannedUser = bannedUsers.get(i);
+                    builder.append(":skull_crossbones: ").append(bannedUser.getName()).append(" :skull_crossbones:");
 
-                if (i < bannedUsers.size()) {
-                    builder.append('\n');
+                    if (i < bannedUsers.size()) {
+                        builder.append('\n');
+                    }
                 }
-            }
-
-            MessageUtil.reply(message, builder.toString());
-        } catch (RateLimitException e) {
-            e.printStackTrace();
-        } catch (DiscordException e) {
-            e.printStackTrace();
+            }).get();
+            RequestBuffer.request(() -> MessageUtil.reply(message, builder.toString()));
+        } else {
+            MessageUtil.reply(message, "Unavailable in private channel");
         }
     }
 }

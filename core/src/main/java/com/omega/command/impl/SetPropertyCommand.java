@@ -4,7 +4,7 @@ import com.omega.command.AbstractCommand;
 import com.omega.command.Command;
 import com.omega.command.Parameter;
 import com.omega.command.Signature;
-import com.omega.database.entity.GuildProperties;
+import com.omega.database.entity.property.GuildProperties;
 import com.omega.database.entity.property.*;
 import com.omega.exception.PropertyNotFoundException;
 import com.omega.guild.GuildContext;

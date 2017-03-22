@@ -1,3 +1,5 @@
+package com.omega;
+
 import com.omega.util.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;

@@ -1,5 +1,7 @@
 package com.omega.database;
 
+import com.omega.database.repository.Repository;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;

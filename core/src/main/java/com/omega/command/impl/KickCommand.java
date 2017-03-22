@@ -1,10 +1,8 @@
 package com.omega.command.impl;
 
 import com.omega.BotManager;
-import com.omega.command.AbstractCommand;
-import com.omega.command.Command;
-import com.omega.command.Parameter;
-import com.omega.command.Signature;
+import com.omega.command.*;
+import com.omega.database.entity.permission.CorePermissionSupplier;
 import com.omega.util.MessageUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +20,7 @@ public class KickCommand extends AbstractCommand {
         super(by, message);
     }
 
+    @Permission(permission = CorePermissionSupplier.COMMAND_KICK)
     @Signature(help = "Kick a motherfucker from his username")
     public void kickCommand(@Parameter(name = "username") String username) {
         List<IUser> foundUsers = message.getGuild().getUsersByName(username);
@@ -34,6 +33,7 @@ public class KickCommand extends AbstractCommand {
     }
 
 
+    @Permission(permission = CorePermissionSupplier.COMMAND_KICK)
     @Signature(help = "Kick a motherfucker from a mention")
     public void kickCommand(@Parameter(name = "user") IUser user) {
         kick(user);

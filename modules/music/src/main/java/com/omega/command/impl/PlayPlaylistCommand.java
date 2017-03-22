@@ -1,11 +1,9 @@
 package com.omega.command.impl;
 
 import com.omega.MusicModule;
+import com.omega.MusicPermissionSupplier;
 import com.omega.audio.GuildAudioPlayer;
-import com.omega.command.AbstractCommand;
-import com.omega.command.Command;
-import com.omega.command.Parameter;
-import com.omega.command.Signature;
+import com.omega.command.*;
 import com.omega.exception.PlaylistNotFoundException;
 import com.omega.guild.GuildContext;
 import com.omega.guild.GuildManager;
@@ -20,6 +18,7 @@ public class PlayPlaylistCommand extends AbstractCommand {
         super(by, message);
     }
 
+    @Permission(permission = MusicPermissionSupplier.COMMAND_PLAYLIST_PLAY)
     @Signature(help = "Clear the queue and add the specified playlist to queue")
     public void playCommand(@Parameter(name = "playlistName") String playlistName) {
         GuildContext guildContext = GuildManager.getInstance().getContext(message.getGuild());

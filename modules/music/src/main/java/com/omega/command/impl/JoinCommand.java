@@ -1,9 +1,7 @@
 package com.omega.command.impl;
 
-import com.omega.command.AbstractCommand;
-import com.omega.command.Command;
-import com.omega.command.Parameter;
-import com.omega.command.Signature;
+import com.omega.MusicPermissionSupplier;
+import com.omega.command.*;
 import com.omega.util.MessageUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,13 +22,14 @@ public class JoinCommand extends AbstractCommand {
         super(by, message);
     }
 
+    @Permission(permission = MusicPermissionSupplier.COMMAND_JOIN)
     @Signature(help = "The bot will join your current voice channel")
     public void joinCommand() {
         List<IVoiceChannel> connectedVoiceChannels = by.getConnectedVoiceChannels();
         IVoiceChannel connectedVoiceChannel = connectedVoiceChannels.stream()
-                .filter(voiceChannel -> voiceChannel.getGuild().getID().equals(message.getGuild().getID()))
-                .findAny()
-                .orElse(null);
+            .filter(voiceChannel -> voiceChannel.getGuild().getID().equals(message.getGuild().getID()))
+            .findAny()
+            .orElse(null);
 
         if (connectedVoiceChannel != null) {
             join(connectedVoiceChannel);
@@ -39,11 +38,12 @@ public class JoinCommand extends AbstractCommand {
         }
     }
 
+    @Permission(permission = MusicPermissionSupplier.COMMAND_JOIN)
     @Signature(help = "Bot will join the specified voice channel")
     public void joinCommand(@Parameter(name = "voiceChannelName") String voiceChannelName) {
         final IGuild guild = message.getGuild();
         IVoiceChannel voiceChannel = guild.getVoiceChannels().stream()
-                .filter(channel -> channel.getName().equalsIgnoreCase(voiceChannelName)).findFirst().orElse(null);
+            .filter(channel -> channel.getName().equalsIgnoreCase(voiceChannelName)).findFirst().orElse(null);
         if (voiceChannel != null) {
             join(voiceChannel);
         } else {

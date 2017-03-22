@@ -1,7 +1,11 @@
 package com.omega.command;
 
+import com.omega.BotManager;
+import com.omega.PermissionManager;
 import com.omega.command.impl.*;
 import com.omega.event.CommandExecutionEvent;
+import com.omega.exception.PermissionNotFoundException;
+import com.omega.module.Suppliable;
 import com.omega.util.CommandExtractHelper;
 import com.omega.util.MessageUtil;
 import org.slf4j.Logger;
@@ -18,7 +22,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.IntStream;
 
-public class CommandManager {
+public class CommandManager implements Suppliable<CommandSupplier> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CommandManager.class);
 
@@ -28,8 +32,6 @@ public class CommandManager {
 
     private CommandManager() {
         this.executorService = Executors.newCachedThreadPool();
-
-        supply(new CoreCommandSupplier());
     }
 
     @EventSubscriber
@@ -110,12 +112,40 @@ public class CommandManager {
             .orElse(null);
 
         if (commandMethod != null) {
-            try {
-                MessageUtil.deleteMessage(message);
-                LOGGER.debug("Invoke method {}", commandMethod);
-                commandMethod.invoke(commandInstance, castedArgs.toArray());
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                LOGGER.error("Unable to invoke method " + commandMethod.toGenericString() + " of class " + cmdType.getName(), e);
+            // Check permissions
+            boolean canExecute = false;
+            if (commandMethod.isAnnotationPresent(Permission.class)) {
+                Permission permissionAnnot = commandMethod.getAnnotation(Permission.class);
+                String permission = permissionAnnot.permission();
+                if ((permissionAnnot.botOwnerOnly() && BotManager.getInstance().getApplicationOwner().equals(by)) ||
+                    (!permissionAnnot.botOwnerOnly() && permission.isEmpty())) {
+                    canExecute = true;
+                } else {
+                    PermissionManager permMgr = PermissionManager.getInstance();
+                    try {
+                        if (message.getChannel().isPrivate()) {
+                            canExecute = permMgr.hasPermission(by, permission);
+                        } else {
+                            canExecute = permMgr.hasPermission(message.getGuild(), by, permission);
+                        }
+                    } catch (PermissionNotFoundException e) {
+                        LOGGER.warn("Permission {} not found for command {}", permission, commandInstance.getClass().getName());
+                    }
+                }
+            } else {
+                canExecute = true;
+            }
+
+            if (canExecute) {
+                try {
+                    MessageUtil.deleteMessage(message);
+                    LOGGER.debug("Invoke method {}", commandMethod);
+                    commandMethod.invoke(commandInstance, castedArgs.toArray());
+                } catch (IllegalAccessException | InvocationTargetException e) {
+                    LOGGER.error("Unable to invoke method " + commandMethod.toGenericString() + " of class " + cmdType.getName(), e);
+                }
+            } else {
+                LOGGER.info("User {} don't have permission to use command {}", by.getName(), commandName);
             }
         }
     }
@@ -125,6 +155,7 @@ public class CommandManager {
      *
      * @param supplier command supplier with commands to add
      */
+    @Override
     public void supply(CommandSupplier supplier) {
         Class<AbstractCommand>[] commands = supplier.supply();
         Arrays.stream(commands).forEach(this::registerCommand);
@@ -135,6 +166,7 @@ public class CommandManager {
      *
      * @param supplier command supplier with commands to remove
      */
+    @Override
     public void unsupply(CommandSupplier supplier) {
         Class<AbstractCommand>[] commands = supplier.supply();
         Arrays.stream(commands).forEach(this::unregisterCommand);

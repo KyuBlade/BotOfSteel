@@ -1,6 +1,7 @@
 package com.omega.database;
 
 import com.omega.database.entity.Playlist;
+import com.omega.database.repository.Repository;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IUser;
 

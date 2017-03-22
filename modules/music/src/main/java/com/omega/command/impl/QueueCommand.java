@@ -1,12 +1,10 @@
 package com.omega.command.impl;
 
 import com.omega.MusicModule;
+import com.omega.MusicPermissionSupplier;
 import com.omega.audio.GuildAudioPlayer;
 import com.omega.audio.callback.QueueAudioLoadCallback;
-import com.omega.command.AbstractCommand;
-import com.omega.command.Command;
-import com.omega.command.Parameter;
-import com.omega.command.Signature;
+import com.omega.command.*;
 import com.omega.guild.GuildContext;
 import com.omega.guild.GuildManager;
 import com.omega.util.MessageUtil;
@@ -25,6 +23,7 @@ public class QueueCommand extends AbstractCommand {
         super(by, message);
     }
 
+    @Permission(permission = MusicPermissionSupplier.COMMAND_QUEUE_LIST)
     @Signature(help = "Get list of the 10 next tracks in the queue")
     public void queueCommand() {
         GuildContext guildContext = GuildManager.getInstance().getContext(message.getGuild());
@@ -59,6 +58,7 @@ public class QueueCommand extends AbstractCommand {
         MessageUtil.reply(message, resultMessage);
     }
 
+    @Permission(permission = MusicPermissionSupplier.COMMAND_QUEUE_ADD)
     @Signature(help = "Add the source track(s) to the queue.")
     public void queueCommand(@Parameter(name = "source") String source) {
         GuildContext guildContext = GuildManager.getInstance().getContext(message.getGuild());

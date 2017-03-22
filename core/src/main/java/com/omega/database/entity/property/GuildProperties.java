@@ -1,7 +1,7 @@
 package com.omega.database.entity.property;
 
 import com.omega.database.DatastoreManagerSingleton;
-import com.omega.database.GuildPropertiesRepository;
+import com.omega.database.repository.GuildPropertiesRepository;
 import com.omega.exception.PropertyNotFoundException;
 import com.omega.guild.GuildContext;
 import com.omega.guild.property.PropertyDefinition;

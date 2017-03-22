@@ -1,9 +1,7 @@
 package com.omega.command.impl;
 
-import com.omega.command.AbstractCommand;
-import com.omega.command.Command;
-import com.omega.command.Parameter;
-import com.omega.command.Signature;
+import com.omega.command.*;
+import com.omega.database.entity.permission.CorePermissionSupplier;
 import com.omega.util.MessageUtil;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
@@ -20,6 +18,7 @@ public class UserInfoCommand extends AbstractCommand {
         super(by, message);
     }
 
+    @Permission(permission = CorePermissionSupplier.COMMAND_USERINFO)
     @Signature(help = "Get info on a user")
     public void userinfoCommand(@Parameter(name = "user") IUser user) {
         String message = String.format(TEMPLATE, user.getAvatarURL(),

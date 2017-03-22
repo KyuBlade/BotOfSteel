@@ -1,6 +1,6 @@
-package com.omega.database;
+package com.omega.database.repository;
 
-import com.omega.database.entity.GuildProperties;
+import com.omega.database.entity.property.GuildProperties;
 import sx.blah.discord.handle.obj.IGuild;
 
 public interface GuildPropertiesRepository extends Repository<GuildProperties> {

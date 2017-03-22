@@ -1,8 +1,12 @@
 package com.omega;
 
 import com.omega.command.CommandManager;
+import com.omega.command.CoreCommandSupplier;
 import com.omega.config.BotConfig;
 import com.omega.config.ConfigurationManager;
+import com.omega.database.entity.permission.CorePermissionSupplier;
+import com.omega.database.entity.property.GuildProperties;
+import com.omega.guild.property.CorePropertySupplier;
 import com.omega.listener.MessageListener;
 import com.omega.listener.StateListener;
 import org.slf4j.Logger;
@@ -46,15 +50,21 @@ public class BotManager {
 
         BotConfig config = BotConfig.getInstance();
 
+        CommandManager.getInstance().supply(new CoreCommandSupplier());
+        GuildProperties.supply(new CorePropertySupplier());
+        PermissionManager.getInstance().supply(new CorePermissionSupplier());
+
         clientBuilder = new ClientBuilder();
         clientBuilder.withToken(config.getBotToken())
             .withShards(config.getShards());
+        this.client = clientBuilder.build();
     }
 
     public void connect() {
         try {
-            client = clientBuilder.login();
+            client.login();
             EventDispatcher dispatcher = client.getDispatcher();
+            dispatcher.registerListener(PermissionManager.getInstance());
             dispatcher.registerListener(new StateListener());
             dispatcher.registerListener(new MessageListener(client));
             dispatcher.registerListener(CommandManager.getInstance());

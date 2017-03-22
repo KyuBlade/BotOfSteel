@@ -3,8 +3,10 @@ package com.omega.command.impl;
 import com.omega.BotManager;
 import com.omega.command.AbstractCommand;
 import com.omega.command.Command;
+import com.omega.command.Permission;
 import com.omega.command.Signature;
 import com.omega.config.BotConfig;
+import com.omega.database.entity.permission.CorePermissionSupplier;
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
@@ -23,6 +25,7 @@ public class InviteCommand extends AbstractCommand {
         super(by, message);
     }
 
+    @Permission(permission = CorePermissionSupplier.COMMAND_INVITE)
     @Signature(help = "Get the bot invite link")
     public void inviteCommand() throws RateLimitException, DiscordException, MissingPermissionsException {
         IDiscordClient client = BotManager.getInstance().getClient();

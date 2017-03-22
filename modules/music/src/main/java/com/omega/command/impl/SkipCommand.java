@@ -1,11 +1,9 @@
 package com.omega.command.impl;
 
 import com.omega.MusicModule;
+import com.omega.MusicPermissionSupplier;
 import com.omega.audio.GuildAudioPlayer;
-import com.omega.command.AbstractCommand;
-import com.omega.command.Command;
-import com.omega.command.Parameter;
-import com.omega.command.Signature;
+import com.omega.command.*;
 import com.omega.guild.GuildContext;
 import com.omega.guild.GuildManager;
 import sx.blah.discord.handle.obj.IMessage;
@@ -18,11 +16,13 @@ public class SkipCommand extends AbstractCommand {
         super(by, message);
     }
 
+    @Permission(permission = MusicPermissionSupplier.COMMAND_QUEUE_SKIP)
     @Signature(help = "Skip the current track")
     public void skipCommand() {
         skip(1);
     }
 
+    @Permission(permission = MusicPermissionSupplier.COMMAND_QUEUE_SKIP)
     @Signature(help = "Skip x tracks")
     public void skipCommand(@Parameter(name = "count") Long count) {
         skip(count.intValue());

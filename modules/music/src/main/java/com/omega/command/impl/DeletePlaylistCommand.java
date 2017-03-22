@@ -1,7 +1,9 @@
 package com.omega.command.impl;
 
+import com.omega.MusicPermissionSupplier;
 import com.omega.command.AbstractCommand;
 import com.omega.command.Command;
+import com.omega.command.Permission;
 import com.omega.command.Signature;
 import com.omega.database.DatastoreManagerSingleton;
 import com.omega.database.PlaylistRepository;
@@ -22,6 +24,7 @@ public class DeletePlaylistCommand extends AbstractCommand {
         super(by, message);
     }
 
+    @Permission(permission = MusicPermissionSupplier.COMMAND_PLAYLIST_DELETE)
     @Signature(help = "Remove the specified playlist")
     public void deletePlaylist(String playlistName) {
         PlaylistRepository repository = DatastoreManagerSingleton.getInstance().getRepository(PlaylistRepository.class);

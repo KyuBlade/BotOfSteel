@@ -1,10 +1,12 @@
 package com.omega.command.impl;
 
 import com.omega.MusicModule;
-import com.omega.audio.callback.AddToPlaylistAudioLoadCallback;
+import com.omega.MusicPermissionSupplier;
 import com.omega.audio.GuildAudioPlayer;
+import com.omega.audio.callback.AddToPlaylistAudioLoadCallback;
 import com.omega.command.AbstractCommand;
 import com.omega.command.Command;
+import com.omega.command.Permission;
 import com.omega.command.Signature;
 import com.omega.exception.PlaylistNotFoundException;
 import com.omega.guild.GuildContext;
@@ -20,6 +22,7 @@ public class AddToPlaylistCommand extends AbstractCommand {
         super(by, message);
     }
 
+    @Permission(permission = MusicPermissionSupplier.COMMAND_PLAYLIST_ADD)
     @Signature(help = "Add the source track(s) to the specified playlist")
     public void addToPlaylistCommand(String playlistName, String source) {
         GuildContext guildContext = GuildManager.getInstance().getContext(message.getGuild());

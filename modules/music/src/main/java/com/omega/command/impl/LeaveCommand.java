@@ -1,7 +1,9 @@
 package com.omega.command.impl;
 
+import com.omega.MusicPermissionSupplier;
 import com.omega.command.AbstractCommand;
 import com.omega.command.Command;
+import com.omega.command.Permission;
 import com.omega.command.Signature;
 import com.omega.util.MessageUtil;
 import org.slf4j.Logger;
@@ -19,6 +21,7 @@ public class LeaveCommand extends AbstractCommand {
         super(by, message);
     }
 
+    @Permission(permission = MusicPermissionSupplier.COMMAND_LEAVE)
     @Signature(help = "Leave the current voice channel")
     public void leaveCommand() {
         String resultMessage;

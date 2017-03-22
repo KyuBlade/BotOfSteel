@@ -1,12 +1,10 @@
 package com.omega.command.impl;
 
 import com.omega.MusicModule;
+import com.omega.MusicPermissionSupplier;
 import com.omega.audio.GuildAudioPlayer;
 import com.omega.audio.callback.PlayAudioLoadCallback;
-import com.omega.command.AbstractCommand;
-import com.omega.command.Command;
-import com.omega.command.Parameter;
-import com.omega.command.Signature;
+import com.omega.command.*;
 import com.omega.guild.GuildContext;
 import com.omega.guild.GuildManager;
 import sx.blah.discord.handle.obj.IMessage;
@@ -19,6 +17,7 @@ public class PlayCommand extends AbstractCommand {
         super(by, message);
     }
 
+    @Permission(permission = MusicPermissionSupplier.COMMAND_PLAY)
     @Signature(help = "Put the source track(s) at the head of the queue and play it immediately")
     public void playCommand(@Parameter(name = "source") String source) {
         GuildContext guildContext = GuildManager.getInstance().getContext(message.getGuild());

@@ -1,9 +1,7 @@
 package com.omega.command.impl;
 
-import com.omega.command.AbstractCommand;
-import com.omega.command.Command;
-import com.omega.command.Parameter;
-import com.omega.command.Signature;
+import com.omega.command.*;
+import com.omega.database.entity.permission.CorePermissionSupplier;
 import com.omega.util.MessageUtil;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
@@ -28,6 +26,7 @@ public class RandomCommand extends AbstractCommand {
         super(by, message);
     }
 
+    @Permission(permission = CorePermissionSupplier.COMMAND_RANDOM)
     @Signature(help = "Pick a random number in the given range")
     public void randomCommand(@Parameter(name = "min") Long min, @Parameter(name = "max") Long max) throws RateLimitException, DiscordException, MissingPermissionsException {
         String resultMessage;
@@ -47,6 +46,7 @@ public class RandomCommand extends AbstractCommand {
         MessageUtil.reply(message, resultMessage);
     }
 
+    @Permission(permission = CorePermissionSupplier.COMMAND_RANDOM)
     @Signature(help = "Pick a random decimal number in the given range")
     public void randomCommand(@Parameter(name = "min") Double min, @Parameter(name = "max") Double max) throws
         RateLimitException, DiscordException, MissingPermissionsException {

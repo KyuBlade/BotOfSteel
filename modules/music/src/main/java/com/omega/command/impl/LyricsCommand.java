@@ -1,9 +1,7 @@
 package com.omega.command.impl;
 
-import com.omega.command.AbstractCommand;
-import com.omega.command.Command;
-import com.omega.command.Parameter;
-import com.omega.command.Signature;
+import com.omega.MusicPermissionSupplier;
+import com.omega.command.*;
 import com.omega.util.MessageUtil;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -33,6 +31,7 @@ public class LyricsCommand extends AbstractCommand {
         super(by, message);
     }
 
+    @Permission(permission = MusicPermissionSupplier.COMMAND_LYRICS)
     @Signature(help = "Find the lyrics of a song")
     public void lyricsCommand(@Parameter(name = "songName") String songName) throws IOException {
         SearchResult searchResult = searchLyrics(songName);
