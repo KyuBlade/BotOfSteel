@@ -1,7 +1,14 @@
 apply plugin: 'application'
+apply plugin: 'distribution'
 
 version '0.3.0'
 mainClassName = "com.omega.DiscordBot"
+
+distributions {
+    main {
+        baseName = "botofsteel"
+    }
+}
 
 dependencies {
     testCompile group: 'de.flapdoodle.embed', name: 'de.flapdoodle.embed.mongo', version: '2.0.0'
