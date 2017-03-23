@@ -75,20 +75,39 @@ public class PrivateChannelPermissionCommand extends AbstractCommand {
     }
 
     @Permission(botOwnerOnly = true)
-    @Signature(help = "Add or remove a permission for the mentioned user in bot private channel. Usage privatePermission action<add|remove> userMention permission")
+    @Signature(help = "Add or remove a permission for the mentioned user in bot private channel. " +
+        "Usage privatePermission action<add|remove> userMention permission<permissionName|all>")
     public void onCommand(@Parameter(name = "action") String action,
                           @Parameter(name = "userMention") IUser user,
                           @Parameter(name = "permission") String permission) {
         String lowPermission = permission.toLowerCase();
         try {
             if (action.equalsIgnoreCase("add")) {
-                PermissionManager.getInstance().addPrivateChannelUserPermission(user, lowPermission);
-                MessageUtil.reply(message, "Added private channel permission " + lowPermission + " for user "
-                    + user.getName());
+                if (permission.equalsIgnoreCase("all")) {
+                    Set<String> permissions = PermissionManager.getInstance().getPermissions();
+                    PermissionManager.getInstance().addPrivateChannelUserPermissions(
+                        user,
+                        permissions.toArray(new String[permissions.size()])
+                    );
+                    MessageUtil.reply(message, "All permissions removed from user " + user.getName() + " in bot private channel");
+                } else {
+                    PermissionManager.getInstance().addPrivateChannelUserPermission(user, lowPermission);
+                    MessageUtil.reply(message, "Added private channel permission " + lowPermission + " for user "
+                        + user.getName());
+                }
             } else if (action.equalsIgnoreCase("remove")) {
-                PermissionManager.getInstance().removePrivateChannelUserPermission(user, lowPermission);
-                MessageUtil.reply(message, "Removed private channel permission " + lowPermission + " for user "
-                    + user.getName());
+                if (permission.equalsIgnoreCase("all")) {
+                    Set<String> permissions = PermissionManager.getInstance().getPermissions();
+                    PermissionManager.getInstance().removePrivateChannelUserPermissions(
+                        user,
+                        permissions.toArray(new String[permissions.size()])
+                    );
+                    MessageUtil.reply(message, "All permissions removed from user " + user.getName() + " in bot private channel");
+                } else {
+                    PermissionManager.getInstance().removePrivateChannelUserPermission(user, lowPermission);
+                    MessageUtil.reply(message, "Removed private channel permission " + lowPermission + " for user "
+                        + user.getName());
+                }
             } else {
                 MessageUtil.reply(message, "Wrong action, must be add or remove");
             }

@@ -38,6 +38,19 @@ public abstract class PrivateChannelPermissions {
         userPermissions.addPermission(permission);
     }
 
+    public void addUserPermissions(IUser user, String... permissions) {
+        Map<IUser, UserPermissions> userPermissionsMap = getUserPermissionsMap();
+        UserPermissions userPermissions;
+        if (!userPermissionsMap.containsKey(user)) {
+            userPermissions = new UserPermissions(user, DEFAULT_GROUP);
+            userPermissionsMap.put(user, userPermissions);
+        } else {
+            userPermissions = userPermissionsMap.get(user);
+        }
+
+        userPermissions.addPermissions(permissions);
+    }
+
     public void addGroupPermission(String permission) {
         DEFAULT_GROUP.addPermission(permission);
     }
@@ -57,6 +70,19 @@ public abstract class PrivateChannelPermissions {
         }
 
         userPermissions.removePermission(permission);
+    }
+
+    public void removeUserPermissions(IUser user, String... permissions) {
+        Map<IUser, UserPermissions> userPermissionsMap = getUserPermissionsMap();
+        UserPermissions userPermissions;
+        if (!userPermissionsMap.containsKey(user)) {
+            userPermissions = new UserPermissions(user, DEFAULT_GROUP);
+            userPermissionsMap.put(user, userPermissions);
+        } else {
+            userPermissions = userPermissionsMap.get(user);
+        }
+
+        userPermissions.removePermissions(permissions);
     }
 
     public UserPermissions getPermissionsFor(IUser user) {

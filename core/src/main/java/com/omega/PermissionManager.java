@@ -124,7 +124,7 @@ public class PermissionManager implements Suppliable<PermissionSupplier> {
     }
 
     /**
-     * Add a user permission override for all private channels.
+     * Add a user permission override for private channel.
      *
      * @param user       target user
      * @param permission permission to add
@@ -143,6 +143,28 @@ public class PermissionManager implements Suppliable<PermissionSupplier> {
         } else {
             throw new PermissionNotFoundException();
         }
+    }
+
+    /**
+     * Add a user permission override for private channel.
+     *
+     * @param user        target user
+     * @param permissions permissions to add
+     * @throws PermissionNotFoundException if the permission is not available
+     */
+    public void addPrivateChannelUserPermissions(IUser user, String... permissions)
+        throws PermissionNotFoundException {
+        String notFoundProperty = Arrays.stream(permissions)
+            .filter(permission -> !this.permissions.contains(permission))
+            .findFirst()
+            .orElse(null);
+
+        if (notFoundProperty != null) {
+            throw new PermissionNotFoundException(notFoundProperty);
+        }
+
+        privateChannelPermissions.addUserPermissions(user, permissions);
+        savePrivateChannelPermissions(privateChannelPermissions);
     }
 
     /**
@@ -228,6 +250,28 @@ public class PermissionManager implements Suppliable<PermissionSupplier> {
         } else {
             throw new PermissionNotFoundException();
         }
+    }
+
+    /**
+     * Remove a user permission override for private channel.
+     *
+     * @param user        target user
+     * @param permissions permissions to remove
+     * @throws PermissionNotFoundException if the permission is not available
+     */
+    public void removePrivateChannelUserPermissions(IUser user, String... permissions)
+        throws PermissionNotFoundException {
+        String notFoundProperty = Arrays.stream(permissions)
+            .filter(permission -> !this.permissions.contains(permission))
+            .findFirst()
+            .orElse(null);
+
+        if (notFoundProperty != null) {
+            throw new PermissionNotFoundException(notFoundProperty);
+        }
+
+        privateChannelPermissions.removeUserPermissions(user, permissions);
+        savePrivateChannelPermissions(privateChannelPermissions);
     }
 
     /**

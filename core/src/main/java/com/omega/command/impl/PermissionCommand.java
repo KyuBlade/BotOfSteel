@@ -10,7 +10,6 @@ import com.omega.exception.ImmutablePermissionsException;
 import com.omega.exception.PermissionNotFoundException;
 import com.omega.util.DiscordUtils;
 import com.omega.util.MessageUtil;
-import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.util.EmbedBuilder;
@@ -57,7 +56,6 @@ public class PermissionCommand extends AbstractCommand {
     @Permission(permission = CorePermissionSupplier.COMMAND_PERMISSION)
     @Signature(help = "Get the permissions for a user")
     public void permissionCommand(@Parameter(name = "userMention") IUser user) {
-        IGuild guild = message.getGuild();
         PermissionManager permMgr = PermissionManager.getInstance();
 
         final StringBuilder stringBuilder = new StringBuilder();
