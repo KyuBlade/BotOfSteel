@@ -9,10 +9,6 @@ buildscript {
 
 apply plugin: 'com.github.johnrengelman.shadow'
 
-configurations {
-    runtime.exclude module: 'core'
-}
-
 shadowJar {
     baseName = project.name
     classifier = null
@@ -21,7 +17,7 @@ shadowJar {
 version '0.3.0'
 
 dependencies {
-    compile project(':core')
+    compileOnly project(':core')
 
     compile 'org.jsoup:jsoup:1.10.2'
     compile 'com.sedmelluq:lavaplayer:1.2.34'
