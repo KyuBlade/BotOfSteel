@@ -1,18 +1,25 @@
 package com.omega.command.impl;
 
 import com.omega.MusicModule;
-import com.omega.MusicPermissionSupplier;
 import com.omega.audio.GuildAudioPlayer;
-import com.omega.command.*;
+import com.omega.command.AbstractCommand;
+import com.omega.command.Command;
+import com.omega.command.Parameter;
+import com.omega.command.Signature;
 import com.omega.guild.GuildContext;
 import com.omega.guild.GuildManager;
 import com.omega.util.MessageUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sx.blah.discord.handle.obj.*;
+import sx.blah.discord.handle.obj.IGuild;
+import sx.blah.discord.handle.obj.IMessage;
+import sx.blah.discord.handle.obj.IUser;
+import sx.blah.discord.handle.obj.IVoiceChannel;
 import sx.blah.discord.util.DiscordException;
 import sx.blah.discord.util.MissingPermissionsException;
 import sx.blah.discord.util.RateLimitException;
+
+import java.util.List;
 
 @Command(name = "setmusicchannel", aliases = "smc")
 public class SetMusicChannelCommand extends AbstractCommand {
@@ -23,11 +30,13 @@ public class SetMusicChannelCommand extends AbstractCommand {
         super(by, message);
     }
 
-    @Permission(permission = MusicPermissionSupplier.COMMAND_SETMUSICCHANNEL)
     @Signature(help = "Set your current voice channel as a music channel")
     public void setMusicChannelCommand() {
-        IVoiceState voiceState = by.getVoiceStateForGuild(message.getGuild());
-        IVoiceChannel currentVoiceChannel = voiceState.getChannel();
+        List<IVoiceChannel> connectedVoiceChannels = by.getConnectedVoiceChannels();
+        IVoiceChannel currentVoiceChannel = connectedVoiceChannels.stream()
+            .filter(voiceChannel -> voiceChannel.getGuild().getID().equals(message.getGuild().getID()))
+            .findFirst()
+            .orElse(null);
         if (currentVoiceChannel != null) {
             setMusicChannel(currentVoiceChannel);
         } else {
@@ -35,7 +44,6 @@ public class SetMusicChannelCommand extends AbstractCommand {
         }
     }
 
-    @Permission(permission = MusicPermissionSupplier.COMMAND_SETMUSICCHANNEL)
     @Signature(help = "Set the specified voice channel as a music channel")
     public void setMusicChannelCommand(@Parameter(name = "voiceChannelName") String voiceChannelName) {
         message.getGuild().getVoiceChannels();
