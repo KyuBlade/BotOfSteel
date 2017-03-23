@@ -1,6 +1,8 @@
 package com.omega.command.impl;
 
+import com.omega.BotManager;
 import com.omega.util.StringUtils;
+import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IRole;
@@ -25,6 +27,7 @@ public class CommandParser {
         if (!(parseFirstPass instanceof String)) {
             return parseFirstPass;
         } else {
+            IDiscordClient client = BotManager.getInstance().getClient();
             Matcher matcher = MENTION_PATTERN.matcher(arg);
             if (matcher.find()) {
                 String prefix = matcher.group("prefix");
@@ -33,21 +36,21 @@ public class CommandParser {
                 switch (prefix) {
                     case "@!":
                     case "@": // User
-                        IUser user = guild.getUserByID(id);
+                        IUser user = client.getUserByID(id);
                         if (user == null) {
                             throw new IllegalArgumentException("User id seems to be invalid");
                         }
                         return user;
 
                     case "@&": // Role
-                        IRole role = guild.getRoleByID(id);
+                        IRole role = client.getRoleByID(id);
                         if (role == null) {
                             throw new IllegalArgumentException("Role id seems to be invalid");
                         }
                         return role;
 
                     case "#": // Channel
-                        IChannel channel = guild.getChannelByID(id);
+                        IChannel channel = client.getChannelByID(id);
                         if (channel == null) {
                             throw new IllegalArgumentException("Channel id seems to be invalid");
                         }
