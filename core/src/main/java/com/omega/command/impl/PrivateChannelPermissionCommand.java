@@ -26,7 +26,7 @@ public class PrivateChannelPermissionCommand extends AbstractCommand {
     @Permission(botOwnerOnly = true)
     @Signature(help = "Get private channel permissions for the given username")
     public void onCommand(@Parameter(name = "userName") String userName) {
-        IUser user = DiscordUtils.findUserWithReply(message, by.getClient().getUsers(), userName);
+        IUser user = DiscordUtils.findUserWithReply(message, by.getClient().getUsers(), userName.toLowerCase());
         if (user != null) {
             onCommand(user);
         }

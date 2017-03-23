@@ -48,7 +48,7 @@ public class PermissionCommand extends AbstractCommand {
     @Permission(permission = CorePermissionSupplier.COMMAND_PERMISSION)
     @Signature(help = "Get the permissions for a user")
     public void permissionCommand(@Parameter(name = "userName") String userName) {
-        IUser user = DiscordUtils.findUserWithReply(message, message.getGuild().getUsers(), userName);
+        IUser user = DiscordUtils.findUserWithReply(message, message.getGuild().getUsers(), userName.toLowerCase());
         if (user != null) {
             permissionCommand(user);
         }
