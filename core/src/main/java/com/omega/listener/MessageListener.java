@@ -3,7 +3,7 @@ package com.omega.listener;
 import com.omega.event.CommandExecutionEvent;
 import com.omega.guild.GuildContext;
 import com.omega.guild.GuildManager;
-import com.omega.guild.property.CorePropertySupplier;
+import com.omega.guild.property.CoreGuildPropertySupplier;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.api.events.EventSubscriber;
@@ -40,9 +40,9 @@ public class MessageListener {
         GuildContext guildContext = GuildManager.getInstance().getContext(event.getMessage().getGuild());
         String prefix;
         if (guildContext != null) {
-            prefix = guildContext.getProperties().getProperty(CorePropertySupplier.COMMAND_PREFIX, String.class);
+            prefix = guildContext.getProperties().getProperty(CoreGuildPropertySupplier.COMMAND_PREFIX, String.class);
         } else {
-            prefix = (String) CorePropertySupplier.COMMAND_PREFIX.getDefaultProperty().getValue();
+            prefix = (String) CoreGuildPropertySupplier.COMMAND_PREFIX.getDefaultProperty().getValue();
         }
 
         String content = message.getContent();

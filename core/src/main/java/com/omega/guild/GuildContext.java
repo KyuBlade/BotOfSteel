@@ -33,9 +33,7 @@ public class GuildContext {
         this.properties = propertiesRepository.findByGuild(guild);
         if (properties != null) {
             properties.initLoad(this);
-            LOGGER.debug("Saved properties found, {}", properties.toString());
         } else {
-            LOGGER.debug("Loading default properties");
             this.properties = propertiesRepository.create(guild);
             properties.initDefault(this);
         }

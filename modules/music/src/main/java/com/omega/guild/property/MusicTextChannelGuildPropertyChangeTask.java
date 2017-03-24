@@ -10,7 +10,7 @@ import sx.blah.discord.handle.obj.Permissions;
 
 import java.util.List;
 
-public class MusicTextChannelPropertyChangeTask implements PropertyChangeTask<ChannelProperty> {
+public class MusicTextChannelGuildPropertyChangeTask implements GuildPropertyChangeTask<ChannelProperty> {
 
     @Override
     public void execute(GuildContext context, ChannelProperty property, boolean init) {

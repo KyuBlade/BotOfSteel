@@ -7,6 +7,10 @@ public class StringProperty implements Property<String> {
     public StringProperty() {
     }
 
+    public StringProperty(char[] value) {
+        this.value = new String(value);
+    }
+
     public StringProperty(String value) {
         this.value = value;
     }

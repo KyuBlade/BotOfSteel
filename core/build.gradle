@@ -19,4 +19,5 @@ dependencies {
     compile "ch.qos.logback:logback-classic:1.1.7"
     compile 'org.mongodb.morphia:morphia:1.3.2'
     compile group: 'org.mongodb', name: 'mongo-java-driver', version: '3.4.2'
+    compile 'org.beryx:text-io:2.0.0'
 }

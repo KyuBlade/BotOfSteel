@@ -2,16 +2,15 @@ package com.omega;
 
 import com.omega.command.CommandManager;
 import com.omega.command.CoreCommandSupplier;
-import com.omega.config.BotConfig;
-import com.omega.config.ConfigurationManager;
 import com.omega.database.entity.permission.CorePermissionSupplier;
+import com.omega.database.entity.property.BotProperties;
 import com.omega.database.entity.property.GuildProperties;
-import com.omega.guild.property.CorePropertySupplier;
+import com.omega.guild.property.CoreGuildPropertySupplier;
 import com.omega.listener.MessageListener;
 import com.omega.listener.StateListener;
+import com.omega.property.CoreBotPropertySupplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
 import sx.blah.discord.api.ClientBuilder;
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.api.events.EventDispatcher;
@@ -20,15 +19,11 @@ import sx.blah.discord.handle.impl.events.ReadyEvent;
 import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.util.DiscordException;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactoryConfigurationException;
-import java.io.IOException;
-
 public class BotManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BotManager.class);
 
+    private BotProperties botProperties;
     private ClientBuilder clientBuilder;
     private IDiscordClient client;
     private IUser applicationOwner;
@@ -41,22 +36,18 @@ public class BotManager {
     }
 
     public void init() throws Exception {
-        try {
-            LOGGER.info("Load configuration file");
-            ConfigurationManager.getInstance().load();
-        } catch (ParserConfigurationException | XPathFactoryConfigurationException | SAXException | IOException | XPathExpressionException e) {
-            throw new Exception("Unable to load bot configuration", e);
-        }
-
-        BotConfig config = BotConfig.getInstance();
+        BotProperties.supply(new CoreBotPropertySupplier());
+        BotSetup botSetup = new BotSetup();
+        botSetup.setup();
+        this.botProperties = botSetup.getBotProperties();
 
         CommandManager.getInstance().supply(new CoreCommandSupplier());
-        GuildProperties.supply(new CorePropertySupplier());
+        GuildProperties.supply(new CoreGuildPropertySupplier());
         PermissionManager.getInstance().supply(new CorePermissionSupplier());
 
         clientBuilder = new ClientBuilder();
-        clientBuilder.withToken(config.getBotToken())
-            .withShards(config.getShards());
+        clientBuilder.withToken(botProperties.getProperty(CoreBotPropertySupplier.BOT_TOKEN, String.class))
+            .withShards(botProperties.getProperty(CoreBotPropertySupplier.SHARD_COUNT, Integer.class));
         this.client = clientBuilder.build();
     }
 
@@ -83,6 +74,10 @@ public class BotManager {
             LOGGER.warn("Unable to get application owner, retrying");
             postConnect(event);
         }
+    }
+
+    public BotProperties getBotProperties() {
+        return botProperties;
     }
 
     public void registerEventListener(Object listener) {

@@ -6,9 +6,9 @@ public class PropertyDefinition {
 
     private final String propertyKey;
     private final Property defaultProperty;
-    private final PropertyChangeTask task;
+    private final GuildPropertyChangeTask task;
 
-    public PropertyDefinition(String propertyKey, Property defaultProperty, PropertyChangeTask task) {
+    public PropertyDefinition(String propertyKey, Property defaultProperty, GuildPropertyChangeTask task) {
         this.propertyKey = propertyKey;
         this.defaultProperty = defaultProperty;
         this.task = task;
@@ -22,7 +22,7 @@ public class PropertyDefinition {
         return defaultProperty;
     }
 
-    public PropertyChangeTask getTask() {
+    public GuildPropertyChangeTask getTask() {
         return task;
     }
 

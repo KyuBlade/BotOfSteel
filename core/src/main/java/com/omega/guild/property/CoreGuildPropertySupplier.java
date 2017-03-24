@@ -2,10 +2,10 @@ package com.omega.guild.property;
 
 import com.omega.database.entity.property.StringProperty;
 
-public class CorePropertySupplier implements PropertySupplier {
+public class CoreGuildPropertySupplier implements PropertySupplier {
 
     public static final PropertyDefinition COMMAND_PREFIX = new PropertyDefinition(
-        "command_prefix", new StringProperty("!"), new CommandPrefixPropertyChangeTask()
+        "command_prefix", new StringProperty("!"), new CommandPrefixGuildPropertyChangeTask()
     );
 
     @Override

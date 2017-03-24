@@ -5,7 +5,7 @@ import com.omega.audio.GuildAudioPlayer;
 import com.omega.database.entity.property.LongProperty;
 import com.omega.guild.GuildContext;
 
-public class MusicVolumePropertyChangeTask implements PropertyChangeTask<LongProperty> {
+public class MusicVolumeGuildPropertyChangeTask implements GuildPropertyChangeTask<LongProperty> {
 
     @Override
     public void execute(GuildContext context, LongProperty property, boolean init) {

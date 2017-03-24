@@ -5,7 +5,7 @@ import com.omega.audio.GuildAudioPlayer;
 import com.omega.database.entity.property.BooleanProperty;
 import com.omega.guild.GuildContext;
 
-public class MusicQueueLoopPropertyChangeTask implements PropertyChangeTask<BooleanProperty> {
+public class MusicQueueLoopGuildPropertyChangeTask implements GuildPropertyChangeTask<BooleanProperty> {
 
     @Override
     public void execute(GuildContext context, BooleanProperty property, boolean init) {

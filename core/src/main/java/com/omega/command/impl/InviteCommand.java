@@ -5,8 +5,9 @@ import com.omega.command.AbstractCommand;
 import com.omega.command.Command;
 import com.omega.command.Permission;
 import com.omega.command.Signature;
-import com.omega.config.BotConfig;
 import com.omega.database.entity.permission.CorePermissionSupplier;
+import com.omega.database.entity.property.BotProperties;
+import com.omega.property.CoreBotPropertySupplier;
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
@@ -30,7 +31,9 @@ public class InviteCommand extends AbstractCommand {
     public void inviteCommand() throws RateLimitException, DiscordException, MissingPermissionsException {
         IDiscordClient client = BotManager.getInstance().getClient();
         BotInviteBuilder builder = new BotInviteBuilder(client);
-        String link = builder.withClientID(BotConfig.getInstance().getClientId())
+        BotProperties botProperties = BotManager.getInstance().getBotProperties();
+        String clientId = botProperties.getProperty(CoreBotPropertySupplier.BOT_CLIENT_ID, String.class);
+        String link = builder.withClientID(clientId)
             .withPermissions(
                 EnumSet.of(
                     Permissions.EMBED_LINKS, Permissions.MANAGE_CHANNELS,

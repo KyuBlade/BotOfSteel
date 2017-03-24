@@ -1,64 +1,42 @@
 package com.omega.database.entity.property;
 
+import com.omega.BotManager;
 import com.omega.database.DatastoreManagerSingleton;
-import com.omega.database.repository.GuildPropertiesRepository;
-import com.omega.guild.GuildContext;
+import com.omega.database.repository.BotPropertiesRepository;
 import com.omega.guild.property.PropertyChangeTask;
 import com.omega.guild.property.PropertyDefinition;
 import com.omega.guild.property.PropertySupplier;
-import sx.blah.discord.handle.obj.IGuild;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class GuildProperties extends Properties {
+public abstract class BotProperties extends Properties {
 
     public enum Fields {
-        id, guild, properties
+        id, properties
     }
 
     private static final Map<String, PropertyDefinition> PROPERTY_DEFINITIONS = new HashMap<>();
 
-    public GuildProperties() {
-    }
-
     public abstract Object getId();
 
-    public abstract IGuild getGuild();
-
-    protected abstract GuildContext getGuildContext();
-
-    protected abstract void setGuildContext(GuildContext guildContext);
-
-    @SuppressWarnings("unchecked")
-    public void initLoad(GuildContext guildContext) {
-        setGuildContext(guildContext);
-
-        initLoad();
-    }
-
-    public void initDefault(GuildContext guildContext) {
-        setGuildContext(guildContext);
-
-        initDefault();
-    }
-
-    public void save() {
-        GuildPropertiesRepository propertiesRepository = DatastoreManagerSingleton.getInstance()
-            .getRepository(GuildPropertiesRepository.class);
-        propertiesRepository.save(this);
+    @Override
+    public Map<String, PropertyDefinition> getPropertyDefinitions() {
+        return PROPERTY_DEFINITIONS;
     }
 
     @SuppressWarnings("unchecked")
     @Override
     protected void executePropertyChangeTask(PropertyChangeTask task, Property property, boolean init) {
-        task.execute(getGuildContext(), property, init);
+        task.execute(BotManager.getInstance(), property, init);
     }
 
     @Override
-    public Map<String, PropertyDefinition> getPropertyDefinitions() {
-        return PROPERTY_DEFINITIONS;
+    public void save() {
+        BotPropertiesRepository repository = DatastoreManagerSingleton.getInstance()
+            .getRepository(BotPropertiesRepository.class);
+        repository.save(this);
     }
 
     /**
@@ -83,21 +61,5 @@ public abstract class GuildProperties extends Properties {
         Arrays.stream(propertyDefinitions).forEach(propertyDefinition ->
             PROPERTY_DEFINITIONS.remove(propertyDefinition.getPropertyKey())
         );
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("GuildProperties[\n");
-
-        Map<String, Property> properties = getProperties();
-        if (properties != null) {
-            properties.forEach((s, o) -> builder.append('\t').append(s).append(" = ").append(o).append('\n'));
-        } else {
-            builder.append("null");
-        }
-        builder.append(']');
-
-        return builder.toString();
     }
 }
