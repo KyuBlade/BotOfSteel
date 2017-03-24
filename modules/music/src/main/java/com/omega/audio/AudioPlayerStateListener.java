@@ -16,8 +16,10 @@ public class AudioPlayerStateListener extends AudioEventAdapter {
 
     @Override
     public void onTrackStart(com.sedmelluq.discord.lavaplayer.player.AudioPlayer player, com.sedmelluq.discord.lavaplayer.track.AudioTrack track) {
-        IChannel textChannel = guildContext.getProperties().getProperty(MusicPropertySupplier.MUSIC_CHANNEL_TEXT, IChannel.class);
-        MessageUtil.sendMessage(textChannel, "Playing track " + track.getInfo().title);
+        if (guildContext.getProperties().getProperty(MusicPropertySupplier.MUSIC_ANNOUNCE_TRACK, Boolean.class)) {
+            IChannel textChannel = guildContext.getProperties().getProperty(MusicPropertySupplier.MUSIC_CHANNEL_TEXT, IChannel.class);
+            MessageUtil.sendMessage(textChannel, "Playing track " + track.getInfo().title);
+        }
     }
 
     @Override

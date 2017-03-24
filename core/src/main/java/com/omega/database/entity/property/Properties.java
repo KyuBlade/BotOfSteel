@@ -76,7 +76,7 @@ public abstract class Properties {
     }
 
     public void setProperty(String property, Property value, boolean init) throws PropertyNotFoundException {
-        if (getProperties().containsKey(property)) {
+        if (getPropertyDefinitions().containsKey(property)) {
             PropertyDefinition propertyEnum = getPropertyDefinitions().get(property);
             setProperty(propertyEnum, value, init);
         } else {

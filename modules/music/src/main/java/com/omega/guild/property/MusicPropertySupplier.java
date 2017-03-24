@@ -9,7 +9,7 @@ public class MusicPropertySupplier implements PropertySupplier {
     public static final PropertyDefinition MUSIC_CHANNEL_TEXT = new PropertyDefinition(
         "music_channel_text", new ChannelProperty(null), new MusicTextChannelGuildPropertyChangeTask()
     );
-    public  static final PropertyDefinition MUSIC_CHANNEL_VOICE = new PropertyDefinition(
+    public static final PropertyDefinition MUSIC_CHANNEL_VOICE = new PropertyDefinition(
         "music_channel_voice", new ChannelProperty(null), new MusicVoiceChannelGuildPropertyChangeTask()
     );
     public static final PropertyDefinition MUSIC_QUEUE_LOOP = new PropertyDefinition(
@@ -21,6 +21,9 @@ public class MusicPropertySupplier implements PropertySupplier {
     public static final PropertyDefinition MUSIC_VOLUME = new PropertyDefinition(
         "music_volume", new LongProperty(50L), new MusicVolumeGuildPropertyChangeTask()
     );
+    public static final PropertyDefinition MUSIC_ANNOUNCE_TRACK = new PropertyDefinition(
+        "music_announce_track", new BooleanProperty(true), null
+    );
 
     public MusicPropertySupplier() {
     }
@@ -28,7 +31,8 @@ public class MusicPropertySupplier implements PropertySupplier {
     @Override
     public PropertyDefinition[] supply() {
         return new PropertyDefinition[]{
-            MUSIC_CHANNEL_TEXT, MUSIC_CHANNEL_VOICE, MUSIC_QUEUE_LOOP, MUSIC_QUEUE_SHUFFLE, MUSIC_VOLUME
+            MUSIC_CHANNEL_TEXT, MUSIC_CHANNEL_VOICE, MUSIC_QUEUE_LOOP, MUSIC_QUEUE_SHUFFLE, MUSIC_VOLUME,
+            MUSIC_ANNOUNCE_TRACK
         };
     }
 }
