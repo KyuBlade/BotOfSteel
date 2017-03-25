@@ -18,6 +18,7 @@ public class CorePermissionSupplier implements PermissionSupplier {
     public static final String COMMAND_RANDOM = "command.random";
     public static final String COMMAND_RIP = "command.rip";
     public static final String COMMAND_ROLL = "command.roll";
+    public static final String COMMAND_AUTOASSIGN = "command.autoassign";
 
     public CorePermissionSupplier() {
     }
@@ -27,7 +28,7 @@ public class CorePermissionSupplier implements PermissionSupplier {
         return new String[]{
             COMMAND_KICK, COMMAND_BAN, COMMAND_BOTINFO, COMMAND_GET, COMMAND_SET, COMMAND_GROUP, COMMAND_PERMISSION,
             COMMAND_GETVOICECHANNELINFO, COMMAND_HELP, COMMAND_INVITE, COMMAND_MODULE, COMMAND_PING, COMMAND_RANDOM,
-            COMMAND_RIP, COMMAND_ROLL, COMMAND_USERINFO
+            COMMAND_RIP, COMMAND_ROLL, COMMAND_USERINFO, COMMAND_AUTOASSIGN
         };
     }
 

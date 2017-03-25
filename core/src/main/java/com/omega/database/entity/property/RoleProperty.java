@@ -4,7 +4,10 @@ import sx.blah.discord.handle.obj.IRole;
 
 public class RoleProperty implements Property<IRole> {
 
-    private final IRole value;
+    private IRole value;
+
+    public RoleProperty() {
+    }
 
     public RoleProperty(IRole value) {
         this.value = value;

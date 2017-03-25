@@ -2,13 +2,19 @@ package com.omega.guild;
 
 
 import com.omega.database.DatastoreManagerSingleton;
-import com.omega.database.repository.GuildPropertiesRepository;
 import com.omega.database.entity.property.GuildProperties;
+import com.omega.database.repository.GuildPropertiesRepository;
 import com.omega.event.GuildContextCreatedEvent;
 import com.omega.event.GuildContextDestroyedEvent;
+import com.omega.guild.property.CoreGuildPropertySupplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sx.blah.discord.api.events.EventDispatcher;
+import sx.blah.discord.api.events.EventSubscriber;
+import sx.blah.discord.handle.impl.events.guild.member.UserJoinEvent;
 import sx.blah.discord.handle.obj.IGuild;
+import sx.blah.discord.handle.obj.IRole;
+import sx.blah.discord.handle.obj.IUser;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +33,9 @@ public class GuildContext {
 
         moduleComponents = new HashMap<>();
 
-        guild.getClient().getDispatcher().dispatch(new GuildContextCreatedEvent(this));
+        EventDispatcher dispatcher = guild.getClient().getDispatcher();
+        dispatcher.dispatch(new GuildContextCreatedEvent(this));
+        dispatcher.registerListener(this);
 
         GuildPropertiesRepository propertiesRepository = DatastoreManagerSingleton.getInstance().getRepository(GuildPropertiesRepository.class);
         this.properties = propertiesRepository.findByGuild(guild);
@@ -61,5 +69,18 @@ public class GuildContext {
 
     public IGuild getGuild() {
         return guild;
+    }
+
+    @EventSubscriber
+    public void onUserJoin(UserJoinEvent event) {
+        IGuild guild = event.getGuild();
+        if (guild.equals(this.guild)) {
+            GuildContext guildContext = GuildManager.getInstance().getContext(guild);
+            IRole role = guildContext.getProperties().getProperty(CoreGuildPropertySupplier.AUTOROLL, IRole.class);
+            if (role != null) {
+                IUser user = event.getUser();
+                user.addRole(role);
+            }
+        }
     }
 }

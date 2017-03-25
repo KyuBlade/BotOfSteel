@@ -8,7 +8,8 @@ public class CoreCommandSupplier implements CommandSupplier {
         PingCommand.class, HelpCommand.class, RandomCommand.class, RollCommand.class, InviteCommand.class,
         SetPropertyCommand.class, GetPropertyCommand.class, GetVoiceChannelInfoCommand.class,
         KickCommand.class, BanCommand.class, RipCommand.class, UserInfoCommand.class, BotInfoCommand.class,
-        ModuleCommand.class, PermissionCommand.class, GroupCommand.class, PrivateChannelPermissionCommand.class
+        ModuleCommand.class, PermissionCommand.class, GroupCommand.class, PrivateChannelPermissionCommand.class,
+        AutoassignCommand.class
     };
 
     public CoreCommandSupplier() {
