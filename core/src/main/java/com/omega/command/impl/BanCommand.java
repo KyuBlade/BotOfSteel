@@ -1,59 +1,55 @@
 package com.omega.command.impl;
 
-import com.omega.BotManager;
 import com.omega.command.*;
 import com.omega.database.entity.permission.CorePermissionSupplier;
+import com.omega.util.DiscordUtils;
 import com.omega.util.MessageUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
+import sx.blah.discord.handle.obj.Permissions;
+import sx.blah.discord.util.RequestBuffer;
 
-import java.util.List;
+import java.util.EnumSet;
 
 @Command(name = "ban")
 public class BanCommand extends AbstractCommand {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(BanCommand.class);
 
     public BanCommand(IUser by, IMessage message) {
         super(by, message);
     }
 
     @Permission(permission = CorePermissionSupplier.COMMAND_BAN)
-    @Signature(help = "Ban a motherfucker from his username")
+    @Signature(help = "Ban a user from the server by his username")
     public void banCommand(@Parameter(name = "username") String username) {
-        List<IUser> foundUsers = message.getGuild().getUsersByName(username);
-        if (foundUsers.size() > 0) {
-            IUser user = foundUsers.get(0);
-            ban(user);
-        } else {
-            MessageUtil.reply(message, "User with username " + username + " not found");
+        if (DiscordUtils.checkPermissions(message, EnumSet.of(Permissions.BAN))) {
+            IGuild guild = message.getGuild();
+            IUser user = DiscordUtils.findUserWithReply(message, guild.getUsers(), username);
+
+            if (user != null) {
+                ban(user);
+            }
         }
     }
 
-
     @Permission(permission = CorePermissionSupplier.COMMAND_BAN)
-    @Signature(help = "Ban a motherfucker from a mention")
-    public void banCommand(@Parameter(name = "user") IUser user) {
-        ban(user);
+    @Signature(help = "Ban the mentioned user from the server")
+    public void banCommand(@Parameter(name = "userMention") IUser user) {
+        if (DiscordUtils.checkPermissions(message, EnumSet.of(Permissions.BAN))) {
+            ban(user);
+        }
     }
 
     private void ban(IUser user) {
-        String reply;
-        if (user.isBot()) {
-            reply = "Nope :angry:";
-        } else {
-            IUser owner = BotManager.getInstance().getApplicationOwner();
-            if (owner == null) {
-                reply = "Unable to determine user";
-            } else if (owner.getID().equals(user.getID())) {
-                reply = "I won't ban my master :heart_eyes:";
-            } else {
-                reply = "Taste my ban hammer " + user.getName();
-            }
-        }
+        final IGuild guild = message.getGuild();
+        if (!user.isBot()) {
+            RequestBuffer.request(() -> {
+                guild.banUser(user);
 
-        MessageUtil.reply(message, reply);
+                MessageUtil.sendMessage(message.getChannel(), "Banned user " + user);
+            });
+        } else {
+            MessageUtil.reply(message, "You can't ban me");
+        }
     }
 }

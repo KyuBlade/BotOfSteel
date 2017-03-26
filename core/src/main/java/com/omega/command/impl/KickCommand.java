@@ -1,59 +1,55 @@
 package com.omega.command.impl;
 
-import com.omega.BotManager;
 import com.omega.command.*;
 import com.omega.database.entity.permission.CorePermissionSupplier;
+import com.omega.util.DiscordUtils;
 import com.omega.util.MessageUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
+import sx.blah.discord.handle.obj.Permissions;
+import sx.blah.discord.util.RequestBuffer;
 
-import java.util.List;
+import java.util.EnumSet;
 
 @Command(name = "kick")
 public class KickCommand extends AbstractCommand {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(KickCommand.class);
 
     public KickCommand(IUser by, IMessage message) {
         super(by, message);
     }
 
     @Permission(permission = CorePermissionSupplier.COMMAND_KICK)
-    @Signature(help = "Kick a motherfucker from his username")
+    @Signature(help = "Kick a user from the server by his username")
     public void kickCommand(@Parameter(name = "username") String username) {
-        List<IUser> foundUsers = message.getGuild().getUsersByName(username);
-        if (foundUsers.size() > 0) {
-            IUser user = foundUsers.get(0);
-            kick(user);
-        } else {
-            MessageUtil.reply(message, "User with username " + username + " not found");
+        if (DiscordUtils.checkPermissions(message, EnumSet.of(Permissions.KICK))) {
+            IGuild guild = message.getGuild();
+            IUser user = DiscordUtils.findUserWithReply(message, guild.getUsers(), username);
+
+            if (user != null) {
+                kick(user);
+            }
         }
     }
 
-
     @Permission(permission = CorePermissionSupplier.COMMAND_KICK)
-    @Signature(help = "Kick a motherfucker from a mention")
-    public void kickCommand(@Parameter(name = "user") IUser user) {
-        kick(user);
+    @Signature(help = "Kick the mentioned user from the server")
+    public void kickCommand(@Parameter(name = "userMention") IUser user) {
+        if (DiscordUtils.checkPermissions(message, EnumSet.of(Permissions.KICK))) {
+            kick(user);
+        }
     }
 
     private void kick(IUser user) {
-        String reply;
-        if (user.isBot()) {
-            reply = "Nope :angry:";
-        } else {
-            IUser owner = BotManager.getInstance().getApplicationOwner();
-            if (owner == null) {
-                reply = "Unable to determine user";
-            } else if (owner.getID().equals(user.getID())) {
-                reply = "I won't kick my master :heart_eyes:";
-            } else {
-                reply = "GTFO " + user.getName();
-            }
-        }
+        final IGuild guild = message.getGuild();
+        if (!user.isBot()) {
+            RequestBuffer.request(() -> {
+                guild.kickUser(user);
 
-        MessageUtil.reply(message, reply);
+                MessageUtil.sendMessage(message.getChannel(), "Kicked user " + user);
+            });
+        } else {
+            MessageUtil.reply(message, "You can't kick me");
+        }
     }
 }

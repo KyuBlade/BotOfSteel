@@ -3,7 +3,11 @@ package com.omega.util;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IRole;
 import sx.blah.discord.handle.obj.IUser;
+import sx.blah.discord.handle.obj.Permissions;
+import sx.blah.discord.util.MissingPermissionsException;
 
+import java.util.EnumSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -94,5 +98,33 @@ public class DiscordUtils {
         }
 
         return null;
+    }
+
+    public static boolean checkPermissions(IMessage message, EnumSet<Permissions> permissions) {
+        try {
+            sx.blah.discord.api.internal.DiscordUtils.checkPermissions(
+                message.getClient().getOurUser(),
+                message.getGuild(),
+                permissions
+            );
+            return true;
+        } catch (MissingPermissionsException e) {
+            StringBuilder builder = new StringBuilder("Need permissions : ");
+            EnumSet<Permissions> missingPerms = e.getMissingPermissions();
+
+            Iterator<Permissions> it = missingPerms.iterator();
+            while (it.hasNext()) {
+                Permissions permission = it.next();
+                builder.append(permission.name());
+
+                if (it.hasNext()) {
+                    builder.append(", ");
+                }
+            }
+
+            MessageUtil.reply(message, builder.toString());
+
+            return false;
+        }
     }
 }
