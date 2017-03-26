@@ -26,17 +26,21 @@ public class RipCommand extends AbstractCommand {
             final StringBuilder builder = new StringBuilder();
             RequestBuffer.request(() -> {
                 List<IUser> bannedUsers = message.getGuild().getBannedUsers();
-                builder.append("Rest In Peace").append('\n').append('\n');
-                for (int i = 0; i < bannedUsers.size(); i++) {
-                    IUser bannedUser = bannedUsers.get(i);
-                    builder.append(":skull_crossbones: ").append(bannedUser.getName()).append(" :skull_crossbones:");
+                if (bannedUsers.isEmpty()) {
+                    builder.append("**No one got banned on this server**");
+                } else {
+                    builder.append("**Rest In Peace**").append('\n').append('\n');
+                    for (int i = 0; i < bannedUsers.size(); i++) {
+                        IUser bannedUser = bannedUsers.get(i);
+                        builder.append(":skull_crossbones: ").append(bannedUser).append(" :skull_crossbones:");
 
-                    if (i < bannedUsers.size()) {
-                        builder.append('\n');
+                        if (i < bannedUsers.size()) {
+                            builder.append('\n');
+                        }
                     }
                 }
             }).get();
-            RequestBuffer.request(() -> MessageUtil.reply(message, builder.toString()));
+            RequestBuffer.request(() -> MessageUtil.sendMessage(message.getChannel(), builder.toString()));
         } else {
             MessageUtil.reply(message, "Unavailable in private channel");
         }
