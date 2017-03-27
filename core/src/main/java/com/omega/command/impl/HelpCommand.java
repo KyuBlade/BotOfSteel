@@ -6,7 +6,10 @@ import com.omega.util.CommandExtractHelper;
 import com.omega.util.MessageUtil;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
-import sx.blah.discord.util.*;
+import sx.blah.discord.util.DiscordException;
+import sx.blah.discord.util.MessageBuilder;
+import sx.blah.discord.util.MissingPermissionsException;
+import sx.blah.discord.util.RateLimitException;
 
 import java.util.*;
 import java.util.stream.IntStream;
@@ -61,29 +64,31 @@ public class HelpCommand extends AbstractCommand {
     @Signature(help = "Get help for the specified method")
     public void helpCommand(@Parameter(name = "commandName") String commandName) {
         CommandExtractHelper.CommandInfo commandInfo = CommandManager.getInstance().getCommand(commandName.toLowerCase());
-        List<CommandExtractHelper.CommandSignatureInfo> signatureInfos = CommandExtractHelper.getCommandSignatureInfos(commandInfo.getType());
+        if (commandInfo != null) {
+            List<CommandExtractHelper.CommandSignatureInfo> signatureInfos = CommandExtractHelper.getCommandSignatureInfos(commandInfo.getType());
 
-        StringBuilder builder = new StringBuilder();
-        builder.append(MessageBuilder.Styles.CODE_WITH_LANG.getMarkdown());
+            StringBuilder builder = new StringBuilder();
+            builder.append(MessageBuilder.Styles.CODE_WITH_LANG.getMarkdown());
 
-        IntStream.range(0, signatureInfos.size()).forEach(i -> {
-            CommandExtractHelper.CommandSignatureInfo signatureInfo = signatureInfos.get(i);
-            builder.append(commandInfo.getName()).append(' ');
-            signatureInfo.getParameters().forEach(parameter ->
-                builder.append(parameter.getName())
-                    .append('(')
-                    .append(parameter.getType().getSimpleName())
-                    .append(") ")
-            );
-            builder.append("- ")
-                .append(signatureInfo.getHelp());
+            IntStream.range(0, signatureInfos.size()).forEach(i -> {
+                CommandExtractHelper.CommandSignatureInfo signatureInfo = signatureInfos.get(i);
+                builder.append(commandInfo.getName()).append(' ');
+                signatureInfo.getParameters().forEach(parameter ->
+                    builder.append(parameter.getName())
+                        .append('(')
+                        .append(parameter.getType().getSimpleName())
+                        .append(") ")
+                );
+                builder.append("- ")
+                    .append(signatureInfo.getHelp());
 
-            if (i < signatureInfos.size()) {
-                builder.append("\n\n");
-            }
-        });
+                if (i < signatureInfos.size()) {
+                    builder.append("\n\n");
+                }
+            });
 
-        builder.append(MessageBuilder.Styles.CODE_WITH_LANG.getReverseMarkdown());
-        MessageUtil.sendPrivateMessage(by, builder.toString());
+            builder.append(MessageBuilder.Styles.CODE_WITH_LANG.getReverseMarkdown());
+            MessageUtil.sendPrivateMessage(by, builder.toString());
+        }
     }
 }
