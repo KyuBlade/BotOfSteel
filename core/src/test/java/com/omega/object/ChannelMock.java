@@ -184,7 +184,17 @@ public class ChannelMock implements IChannel {
     }
 
     @Override
+    public IMessage sendFiles(File... files) throws FileNotFoundException, DiscordException, RateLimitException, MissingPermissionsException {
+        return null;
+    }
+
+    @Override
     public IMessage sendFile(String s, File file) throws FileNotFoundException, DiscordException, RateLimitException, MissingPermissionsException {
+        return null;
+    }
+
+    @Override
+    public IMessage sendFiles(String content, File... files) throws FileNotFoundException, DiscordException, RateLimitException, MissingPermissionsException {
         return null;
     }
 
@@ -194,7 +204,17 @@ public class ChannelMock implements IChannel {
     }
 
     @Override
+    public IMessage sendFiles(EmbedObject embed, File... files) throws FileNotFoundException, DiscordException, RateLimitException, MissingPermissionsException {
+        return null;
+    }
+
+    @Override
     public IMessage sendFile(String s, InputStream inputStream, String s1) throws DiscordException, RateLimitException, MissingPermissionsException {
+        return null;
+    }
+
+    @Override
+    public IMessage sendFiles(String content, AttachmentPartEntry... entries) throws DiscordException, RateLimitException, MissingPermissionsException {
         return null;
     }
 
@@ -204,12 +224,27 @@ public class ChannelMock implements IChannel {
     }
 
     @Override
+    public IMessage sendFiles(EmbedObject embed, AttachmentPartEntry... entries) throws DiscordException, RateLimitException, MissingPermissionsException {
+        return null;
+    }
+
+    @Override
     public IMessage sendFile(String s, boolean b, InputStream inputStream, String s1) throws DiscordException, RateLimitException, MissingPermissionsException {
         return null;
     }
 
     @Override
+    public IMessage sendFiles(String content, boolean tts, AttachmentPartEntry... entries) throws DiscordException, RateLimitException, MissingPermissionsException {
+        return null;
+    }
+
+    @Override
     public IMessage sendFile(String s, boolean b, InputStream inputStream, String s1, EmbedObject embedObject) throws DiscordException, RateLimitException, MissingPermissionsException {
+        return null;
+    }
+
+    @Override
+    public IMessage sendFiles(String content, boolean tts, EmbedObject embed, AttachmentPartEntry... entries) throws DiscordException, RateLimitException, MissingPermissionsException {
         return null;
     }
 

@@ -12,8 +12,8 @@ distributions {
 
 dependencies {
     testCompile group: 'de.flapdoodle.embed', name: 'de.flapdoodle.embed.mongo', version: '2.0.0'
-
-    compile fileTree(dir: 'libs', include: '*.jar')
+    
+    compile "com.github.austinv11:Discord4j:dev-SNAPSHOT"
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
 
     compile "ch.qos.logback:logback-classic:1.1.7"

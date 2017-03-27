@@ -50,6 +50,7 @@ public class DatastoreManager {
         repositories.remove(repositoryType);
     }
 
+    @SuppressWarnings("unchecked")
     public <T extends Repository> T getRepository(Class<T> repositoryType) {
         return (T) repositories.get(repositoryType);
     }

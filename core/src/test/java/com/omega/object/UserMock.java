@@ -7,10 +7,7 @@ import sx.blah.discord.util.DiscordException;
 import sx.blah.discord.util.MissingPermissionsException;
 import sx.blah.discord.util.RateLimitException;
 
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 public class UserMock implements IUser {
 
@@ -76,7 +73,17 @@ public class UserMock implements IUser {
     }
 
     @Override
-    public Optional<String> getNicknameForGuild(IGuild iGuild) {
+    public String getNicknameForGuild(IGuild guild) {
+        return null;
+    }
+
+    @Override
+    public IVoiceState getVoiceStateForGuild(IGuild guild) {
+        return null;
+    }
+
+    @Override
+    public Map<String, IVoiceState> getVoiceStates() {
         return null;
     }
 
@@ -91,33 +98,8 @@ public class UserMock implements IUser {
     }
 
     @Override
-    public List<IVoiceChannel> getConnectedVoiceChannels() {
-        return null;
-    }
-
-    @Override
     public IPrivateChannel getOrCreatePMChannel() throws DiscordException, RateLimitException {
         return null;
-    }
-
-    @Override
-    public boolean isDeaf(IGuild iGuild) {
-        return false;
-    }
-
-    @Override
-    public boolean isMuted(IGuild iGuild) {
-        return false;
-    }
-
-    @Override
-    public boolean isDeafLocally() {
-        return false;
-    }
-
-    @Override
-    public boolean isMutedLocally() {
-        return false;
     }
 
     @Override

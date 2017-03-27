@@ -5,13 +5,8 @@ import com.omega.command.*;
 import com.omega.util.MessageUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sx.blah.discord.handle.obj.IGuild;
-import sx.blah.discord.handle.obj.IMessage;
-import sx.blah.discord.handle.obj.IUser;
-import sx.blah.discord.handle.obj.IVoiceChannel;
+import sx.blah.discord.handle.obj.*;
 import sx.blah.discord.util.MissingPermissionsException;
-
-import java.util.List;
 
 @Command(name = "join", aliases = "j")
 public class JoinCommand extends AbstractCommand {
@@ -25,12 +20,8 @@ public class JoinCommand extends AbstractCommand {
     @Permission(permission = MusicPermissionSupplier.COMMAND_JOIN)
     @Signature(help = "The bot will join your current voice channel")
     public void joinCommand() {
-        List<IVoiceChannel> connectedVoiceChannels = by.getConnectedVoiceChannels();
-        IVoiceChannel connectedVoiceChannel = connectedVoiceChannels.stream()
-            .filter(voiceChannel -> voiceChannel.getGuild().getID().equals(message.getGuild().getID()))
-            .findAny()
-            .orElse(null);
-
+        IVoiceState voiceState = by.getVoiceStateForGuild(message.getGuild());
+        IVoiceChannel connectedVoiceChannel = voiceState.getChannel();
         if (connectedVoiceChannel != null) {
             join(connectedVoiceChannel);
         } else {
