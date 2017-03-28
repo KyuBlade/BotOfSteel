@@ -9,7 +9,7 @@ public class CoreCommandSupplier implements CommandSupplier {
         SetPropertyCommand.class, GetPropertyCommand.class, GetVoiceChannelInfoCommand.class,
         KickCommand.class, BanCommand.class, RipCommand.class, UserInfoCommand.class, BotInfoCommand.class,
         ModuleCommand.class, PermissionCommand.class, GroupCommand.class, PrivateChannelPermissionCommand.class,
-        AutoassignCommand.class
+        AutoassignCommand.class, SetBotPropertyCommand.class
     };
 
     public CoreCommandSupplier() {
