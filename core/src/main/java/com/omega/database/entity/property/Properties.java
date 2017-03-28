@@ -43,7 +43,12 @@ public abstract class Properties {
 
     @SuppressWarnings("unchecked")
     public <T> T getProperty(PropertyDefinition property, Class<T> type) {
-        return (T) getProperties().get(property.getPropertyKey()).getValue();
+        Property foundProperty = getProperties().get(property.getPropertyKey());
+        if (foundProperty == null) {
+            return null;
+        }
+
+        return (T) foundProperty.getValue();
     }
 
     public Object getProperty(String property) throws PropertyNotFoundException {
