@@ -1,9 +1,7 @@
 package com.omega.command.impl;
 
-import com.omega.command.AbstractCommand;
-import com.omega.command.Command;
-import com.omega.command.Parameter;
-import com.omega.command.Signature;
+import com.omega.command.*;
+import com.omega.database.entity.permission.CorePermissionSupplier;
 import com.omega.database.entity.property.GuildProperties;
 import com.omega.database.entity.property.Property;
 import com.omega.exception.PropertyNotFoundException;
@@ -24,6 +22,7 @@ public class GetPropertyCommand extends AbstractCommand {
         super(by, message);
     }
 
+    @Permission(permission = CorePermissionSupplier.COMMAND_GET)
     @Signature(help = "Get all properties")
     public void getProperty() {
         GuildContext guildContext = GuildManager.getInstance().getContext(message.getGuild());
@@ -47,6 +46,7 @@ public class GetPropertyCommand extends AbstractCommand {
         MessageUtil.sendPrivateMessage(by, builder.toString());
     }
 
+    @Permission(permission = CorePermissionSupplier.COMMAND_GET)
     @Signature(help = "Get the property for the given property")
     public void getProperty(@Parameter(name = "property") String property) {
         GuildContext guildContext = GuildManager.getInstance().getContext(message.getGuild());

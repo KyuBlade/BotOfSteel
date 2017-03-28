@@ -2,7 +2,9 @@ package com.omega.command.impl;
 
 import com.omega.command.AbstractCommand;
 import com.omega.command.Command;
+import com.omega.command.Permission;
 import com.omega.command.Signature;
+import com.omega.database.entity.permission.CorePermissionSupplier;
 import com.omega.util.MessageUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +26,7 @@ public class GetVoiceChannelInfoCommand extends AbstractCommand {
         super(by, message);
     }
 
+    @Permission(permission = CorePermissionSupplier.COMMAND_GETVOICECHANNELINFO)
     @Signature(help = "Get the current voice channel info")
     public void getChannelInfo() {
         IVoiceState voiceState = by.getVoiceStateForGuild(message.getGuild());

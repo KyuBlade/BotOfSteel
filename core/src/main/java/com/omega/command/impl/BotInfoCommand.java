@@ -3,7 +3,9 @@ package com.omega.command.impl;
 import com.omega.BotManager;
 import com.omega.command.AbstractCommand;
 import com.omega.command.Command;
+import com.omega.command.Permission;
 import com.omega.command.Signature;
+import com.omega.database.entity.permission.CorePermissionSupplier;
 import com.omega.util.MessageUtil;
 import com.omega.util.StringUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
@@ -24,6 +26,7 @@ public class BotInfoCommand extends AbstractCommand {
         super(by, message);
     }
 
+    @Permission(permission = CorePermissionSupplier.COMMAND_BOTINFO)
     @Signature(help = "Get information on the bot")
     public void botInfoCommand() {
         IDiscordClient client = by.getClient();

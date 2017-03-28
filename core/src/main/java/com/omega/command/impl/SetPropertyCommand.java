@@ -1,9 +1,7 @@
 package com.omega.command.impl;
 
-import com.omega.command.AbstractCommand;
-import com.omega.command.Command;
-import com.omega.command.Parameter;
-import com.omega.command.Signature;
+import com.omega.command.*;
+import com.omega.database.entity.permission.CorePermissionSupplier;
 import com.omega.database.entity.property.GuildProperties;
 import com.omega.database.entity.property.*;
 import com.omega.exception.PropertyNotFoundException;
@@ -22,36 +20,43 @@ public class SetPropertyCommand extends AbstractCommand {
         super(by, message);
     }
 
+    @Permission(permission = CorePermissionSupplier.COMMAND_SET)
     @Signature(help = "Set a bot property")
     public void setPropertyCommand(@Parameter(name = "property") String property, @Parameter(name = "value") String value) {
         setProperty(property, new StringProperty(value));
     }
 
+    @Permission(permission = CorePermissionSupplier.COMMAND_SET)
     @Signature(help = "Set a bot property")
     public void setPropertyCommand(@Parameter(name = "property") String property, @Parameter(name = "value") Long value) {
         setProperty(property, new LongProperty(value));
     }
 
+    @Permission(permission = CorePermissionSupplier.COMMAND_SET)
     @Signature(help = "Set a bot property")
     public void setPropertyCommand(@Parameter(name = "property") String property, @Parameter(name = "value") Double value) {
         setProperty(property, new DoubleProperty(value));
     }
 
+    @Permission(permission = CorePermissionSupplier.COMMAND_SET)
     @Signature(help = "Set a bot property")
     public void setPropertyCommand(@Parameter(name = "property") String property, @Parameter(name = "value") Boolean value) {
         setProperty(property, new BooleanProperty(value));
     }
 
+    @Permission(permission = CorePermissionSupplier.COMMAND_SET)
     @Signature(help = "Set a bot property")
     public void setPropertyCommand(@Parameter(name = "property") String property, @Parameter(name = "value") IUser value) {
         setProperty(property, new UserProperty(value));
     }
 
+    @Permission(permission = CorePermissionSupplier.COMMAND_SET)
     @Signature(help = "Set a bot property")
     public void setPropertyCommand(@Parameter(name = "property") String property, @Parameter(name = "value") IRole value) {
         setProperty(property, new RoleProperty(value));
     }
 
+    @Permission(permission = CorePermissionSupplier.COMMAND_SET)
     @Signature(help = "Set a bot property")
     public void setPropertyCommand(@Parameter(name = "property") String property, @Parameter(name = "value") IChannel value) {
         setProperty(property, new ChannelProperty(value));
