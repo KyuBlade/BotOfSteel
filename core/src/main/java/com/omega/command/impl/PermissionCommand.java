@@ -6,6 +6,7 @@ import com.omega.database.entity.permission.CorePermissionSupplier;
 import com.omega.database.entity.permission.GroupPermissions;
 import com.omega.database.entity.permission.PermissionOverride;
 import com.omega.database.entity.permission.UserPermissions;
+import com.omega.exception.GroupNotFoundException;
 import com.omega.exception.ImmutablePermissionsException;
 import com.omega.exception.PermissionNotFoundException;
 import com.omega.util.DiscordUtils;
@@ -46,7 +47,7 @@ public class PermissionCommand extends AbstractCommand {
 
     @Permission(permission = CorePermissionSupplier.COMMAND_PERMISSION)
     @Signature(help = "Get the permissions for a user")
-    public void permissionCommand(@Parameter(name = "userName") String userName) {
+    public void permissionCommand(@Parameter(name = "userName") String userName) throws GroupNotFoundException {
         IUser user = DiscordUtils.findUserWithReply(message, message.getGuild().getUsers(), userName.toLowerCase());
         if (user != null) {
             permissionCommand(user);
@@ -55,7 +56,7 @@ public class PermissionCommand extends AbstractCommand {
 
     @Permission(permission = CorePermissionSupplier.COMMAND_PERMISSION)
     @Signature(help = "Get the permissions for a user")
-    public void permissionCommand(@Parameter(name = "userMention") IUser user) {
+    public void permissionCommand(@Parameter(name = "userMention") IUser user) throws GroupNotFoundException {
         PermissionManager permMgr = PermissionManager.getInstance();
 
         final StringBuilder stringBuilder = new StringBuilder();
@@ -66,18 +67,25 @@ public class PermissionCommand extends AbstractCommand {
         } else {
             UserPermissions userPermissions = permMgr.getPermissionsFor(message.getGuild(), user);
             List<String> permissions = new ArrayList<>();
-            permissions.addAll(userPermissions.getGroup().getPermissions());
+            if (userPermissions != null) {
+                permissions.addAll(userPermissions.getGroup().getPermissions());
+            } else {
+                GroupPermissions defaultGroup = permMgr.getPermissionsFor(guild, "default");
+                permissions.addAll(defaultGroup.getPermissions());
+            }
 
-            Set<PermissionOverride> permOverrides = userPermissions.getPermissions();
-            for (PermissionOverride permOverride : permOverrides) {
-                PermissionOverride.OverrideType overrideType = permOverride.getOverrideType();
-                String permission = permOverride.getPermission();
-                if (overrideType.equals(PermissionOverride.OverrideType.ADD)) {
-                    if (!permissions.contains(permission)) {
-                        permissions.add(permission);
+            if (userPermissions != null) {
+                Set<PermissionOverride> permOverrides = userPermissions.getPermissions();
+                for (PermissionOverride permOverride : permOverrides) {
+                    PermissionOverride.OverrideType overrideType = permOverride.getOverrideType();
+                    String permission = permOverride.getPermission();
+                    if (overrideType.equals(PermissionOverride.OverrideType.ADD)) {
+                        if (!permissions.contains(permission)) {
+                            permissions.add(permission);
+                        }
+                    } else {
+                        permissions.remove(permission);
                     }
-                } else {
-                    permissions.remove(permission);
                 }
             }
 
