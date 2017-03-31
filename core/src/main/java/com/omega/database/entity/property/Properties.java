@@ -45,7 +45,7 @@ public abstract class Properties {
     public <T> T getProperty(PropertyDefinition property, Class<T> type) {
         Property foundProperty = getProperties().get(property.getPropertyKey());
         if (foundProperty == null) {
-            return null;
+            return (T) property.getDefaultProperty();
         }
 
         return (T) foundProperty.getValue();
