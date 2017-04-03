@@ -4,7 +4,7 @@ import com.omega.BotManager;
 import com.omega.command.*;
 import com.omega.database.entity.property.*;
 import com.omega.exception.PropertyNotFoundException;
-import com.omega.util.MessageUtil;
+import com.omega.util.MessageUtils;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IRole;
 import sx.blah.discord.handle.obj.IUser;
@@ -56,11 +56,11 @@ public class SetBotPropertyCommand extends AbstractCommand {
         BotProperties properties = BotManager.getInstance().getBotProperties();
         try {
             properties.setProperty(property, value);
-            MessageUtil.reply(message, "Property " + property + " set to " + value);
+            MessageUtils.reply(message, "Property " + property + " set to " + value);
         } catch (PropertyNotFoundException e) {
-            MessageUtil.reply(message, "Property " + property + " not found");
+            MessageUtils.reply(message, "Property " + property + " not found");
         } catch (IllegalArgumentException e) {
-            MessageUtil.reply(message, "Wrong value for property " + property);
+            MessageUtils.reply(message, "Wrong value for property " + property);
         }
     }
 }

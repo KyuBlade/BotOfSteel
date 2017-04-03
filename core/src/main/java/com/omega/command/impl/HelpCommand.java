@@ -3,7 +3,7 @@ package com.omega.command.impl;
 import com.omega.command.*;
 import com.omega.database.entity.permission.CorePermissionSupplier;
 import com.omega.util.CommandExtractHelper;
-import com.omega.util.MessageUtil;
+import com.omega.util.MessageUtils;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.util.DiscordException;
@@ -56,8 +56,8 @@ public class HelpCommand extends AbstractCommand {
         }
         builder.append(MessageBuilder.Styles.CODE_WITH_LANG.getReverseMarkdown());
 
-        MessageUtil.deleteMessage(message);
-        MessageUtil.sendPrivateMessage(by, builder.toString());
+        MessageUtils.deleteMessage(message);
+        MessageUtils.sendPrivateMessage(by, builder.toString());
     }
 
     @Permission(permission = CorePermissionSupplier.COMMAND_HELP)
@@ -88,7 +88,7 @@ public class HelpCommand extends AbstractCommand {
             });
 
             builder.append(MessageBuilder.Styles.CODE_WITH_LANG.getReverseMarkdown());
-            MessageUtil.sendPrivateMessage(by, builder.toString());
+            MessageUtils.sendPrivateMessage(by, builder.toString());
         }
     }
 }

@@ -9,7 +9,7 @@ import com.omega.exception.GroupAlreadyExistsException;
 import com.omega.exception.GroupNotFoundException;
 import com.omega.exception.PermissionNotFoundException;
 import com.omega.exception.UnremovableGroupException;
-import com.omega.util.MessageUtil;
+import com.omega.util.MessageUtils;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.util.EmbedBuilder;
@@ -42,7 +42,7 @@ public class GroupCommand extends AbstractCommand {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.withDescription(stringBuilder.toString());
 
-        MessageUtil.sendPrivateMessage(by, "", embedBuilder.build());
+        MessageUtils.sendPrivateMessage(by, "", embedBuilder.build());
     }
 
     @Permission(permission = CorePermissionSupplier.COMMAND_GROUP)
@@ -63,9 +63,9 @@ public class GroupCommand extends AbstractCommand {
             EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.withDescription(stringBuilder.toString());
 
-            MessageUtil.sendPrivateMessage(by, "", embedBuilder.build());
+            MessageUtils.sendPrivateMessage(by, "", embedBuilder.build());
         } catch (GroupNotFoundException e) {
-            MessageUtil.reply(message, "Group " + groupName + " not found");
+            MessageUtils.reply(message, "Group " + groupName + " not found");
         }
     }
 
@@ -77,19 +77,19 @@ public class GroupCommand extends AbstractCommand {
         try {
             if (action.equalsIgnoreCase("create")) {
                 PermissionManager.getInstance().addGroup(message.getGuild(), lowGroupName);
-                MessageUtil.reply(message, "Created group " + lowGroupName);
+                MessageUtils.reply(message, "Created group " + lowGroupName);
             } else if (action.equalsIgnoreCase("delete")) {
                 PermissionManager.getInstance().removeGroup(message.getGuild(), lowGroupName);
-                MessageUtil.reply(message, "Removed group " + lowGroupName);
+                MessageUtils.reply(message, "Removed group " + lowGroupName);
             } else {
-                MessageUtil.reply(message, "Wrong action, must be create or delete");
+                MessageUtils.reply(message, "Wrong action, must be create or delete");
             }
         } catch (GroupNotFoundException e) {
-            MessageUtil.reply(message, "Group " + lowGroupName + " not found");
+            MessageUtils.reply(message, "Group " + lowGroupName + " not found");
         } catch (GroupAlreadyExistsException e) {
-            MessageUtil.reply(message, "Group " + lowGroupName + " already exists");
+            MessageUtils.reply(message, "Group " + lowGroupName + " already exists");
         } catch (UnremovableGroupException e) {
-            MessageUtil.reply(message, "Can't delete group " + lowGroupName);
+            MessageUtils.reply(message, "Can't delete group " + lowGroupName);
         }
     }
 
@@ -109,10 +109,10 @@ public class GroupCommand extends AbstractCommand {
                         lowGroupName,
                         permissions.toArray(new String[permissions.size()])
                     );
-                    MessageUtil.reply(message, "All permissions added to group " + lowGroupName);
+                    MessageUtils.reply(message, "All permissions added to group " + lowGroupName);
                 } else {
                     PermissionManager.getInstance().addGroupPermission(message.getGuild(), groupName, lowPermission);
-                    MessageUtil.reply(message, "Permission " + lowPermission + " added to group " + lowGroupName);
+                    MessageUtils.reply(message, "Permission " + lowPermission + " added to group " + lowGroupName);
                 }
             } else if (action.equalsIgnoreCase("remove")) {
                 if (permission.equalsIgnoreCase("all")) {
@@ -122,20 +122,20 @@ public class GroupCommand extends AbstractCommand {
                         lowGroupName,
                         permissions.toArray(new String[permissions.size()])
                     );
-                    MessageUtil.reply(message, "All permissions removed from group " + lowGroupName);
+                    MessageUtils.reply(message, "All permissions removed from group " + lowGroupName);
                 } else {
                     PermissionManager.getInstance().removeGroupPermission(message.getGuild(), groupName, lowPermission);
                 }
             } else {
-                MessageUtil.reply(message, "Wrong action, must be create or remove");
+                MessageUtils.reply(message, "Wrong action, must be create or remove");
             }
         } catch (PermissionNotFoundException e) {
             if (e.getPermission() != null) {
                 lowPermission = e.getPermission();
             }
-            MessageUtil.reply(message, "Permission " + lowPermission + " not found");
+            MessageUtils.reply(message, "Permission " + lowPermission + " not found");
         } catch (GroupNotFoundException e) {
-            MessageUtil.reply(message, "Group " + lowGroupName + " not found");
+            MessageUtils.reply(message, "Group " + lowGroupName + " not found");
         }
     }
 
@@ -146,9 +146,9 @@ public class GroupCommand extends AbstractCommand {
         String lowGroupName = groupName.toLowerCase();
         try {
             PermissionManager.getInstance().setUserGroup(message.getGuild(), user, lowGroupName);
-            MessageUtil.reply(message, "Set group of the user " + user.getName() + " to " + lowGroupName);
+            MessageUtils.reply(message, "Set group of the user " + user.getName() + " to " + lowGroupName);
         } catch (GroupNotFoundException e) {
-            MessageUtil.reply(message, "Group " + lowGroupName + " not found");
+            MessageUtils.reply(message, "Group " + lowGroupName + " not found");
         }
     }
 }

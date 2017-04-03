@@ -8,7 +8,6 @@ import com.omega.database.entity.Playlist;
 import com.omega.exception.PlaylistAlreadyExists;
 import com.omega.guild.GuildContext;
 import com.omega.guild.GuildManager;
-import com.omega.util.MessageUtil;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
 
@@ -32,18 +31,20 @@ public class PlaylistCreateCommand extends AbstractCommand {
         if (resolvedPrivacy != null) {
             createPlaylist(playlistName, resolvedPrivacy);
         } else {
-            MessageUtil.reply(message, "Wrong privacy");
+            sendErrorMessage("Wrong privacy, must be 0 (private) or 1 (public)");
         }
     }
 
     private void createPlaylist(String name, Playlist.Privacy privacy) {
         GuildContext guildContext = GuildManager.getInstance().getContext(message.getGuild());
         GuildAudioPlayer audioPlayer = (GuildAudioPlayer) guildContext.getModuleComponent(MusicModule.AUDIO_PLAYER_COMPONENT);
+
         try {
             audioPlayer.createPlaylist(name, privacy, message.getGuild(), by);
-            MessageUtil.reply(message, "Added playlist " + name);
+
+            sendStateMessage("Added playlist " + name);
         } catch (PlaylistAlreadyExists e) {
-            MessageUtil.reply(message, "Playlist " + name + " already exists");
+            sendErrorMessage("Playlist " + name + " already exists");
         }
     }
 }

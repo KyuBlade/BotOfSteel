@@ -8,7 +8,6 @@ import com.omega.command.Signature;
 import com.omega.database.DatastoreManagerSingleton;
 import com.omega.database.PlaylistRepository;
 import com.omega.database.entity.Playlist;
-import com.omega.util.MessageUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IGuild;
@@ -35,21 +34,25 @@ public class DeletePlaylistCommand extends AbstractCommand {
 
             if (privacy.equals(Playlist.Privacy.USER) && by.equals(playlist.getUser())) { // Requested by the owner of the playlist
                 repository.delete(playlist);
-                MessageUtil.sendPrivateMessage(by, "Deleted playlist named " + playlist.getName());
+
+                sendPrivateStateMessage("Deleted playlist named " + playlist.getName());
             } else if (privacy.equals(Playlist.Privacy.GUILD)) { // Requested by anyone in the guild
                 IGuild guild = playlist.getGuild();
 
                 if (guild == null) {
                     LOGGER.warn("Playlist {} doesn't have a guild bound to it", playlist.getName());
+
+                    sendErrorMessage("No guild bound to the playlist");
                 } else if (guild.getOwnerID().equals(by.getID())) { // Requested by the owner of the playlist
                     repository.delete(playlist);
-                    MessageUtil.reply(message, "Deleted playlist named " + playlist.getName());
+
+                    sendStateMessage("Deleted playlist named " + playlist.getName());
                 } else {
-                    MessageUtil.reply(message, "You are not the owner of the playlist named " + playlist.getName());
+                    sendErrorMessage("You are not the owner of the playlist named " + playlist.getName());
                 }
             }
         } else {
-            MessageUtil.reply(message, "Playlist with name " + playlistName + " not found");
+            sendErrorMessage("Playlist with name " + playlistName + " not found");
         }
     }
 }

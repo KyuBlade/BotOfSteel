@@ -1,5 +1,6 @@
 package com.omega.audio;
 
+import com.omega.exception.NotSeekableException;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
@@ -110,10 +111,15 @@ public class TrackScheduler extends AudioEventAdapter {
      *
      * @param position position to seek to
      * @throws IllegalStateException if trying to seek while no track playing
+     * @throws NotSeekableException if the current track is not seekable
      */
     public void seek(long position) {
         AudioTrack currentTrack = getPlayingTrack();
         if (currentTrack != null) {
+            if (!currentTrack.isSeekable()) {
+                throw new NotSeekableException();
+            }
+
             currentTrack.setPosition(position);
         } else {
             throw new IllegalStateException("No track playing");

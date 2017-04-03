@@ -11,9 +11,10 @@ import com.omega.command.Signature;
 import com.omega.exception.PlaylistNotFoundException;
 import com.omega.guild.GuildContext;
 import com.omega.guild.GuildManager;
-import com.omega.util.MessageUtil;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
+
+import java.awt.*;
 
 @Command(name = "addToPlaylist", aliases = {"atp"})
 public class AddToPlaylistCommand extends AbstractCommand {
@@ -28,11 +29,13 @@ public class AddToPlaylistCommand extends AbstractCommand {
         GuildContext guildContext = GuildManager.getInstance().getContext(message.getGuild());
         GuildAudioPlayer audioPlayer = (GuildAudioPlayer) guildContext.getModuleComponent(MusicModule.AUDIO_PLAYER_COMPONENT);
 
+        sendStateMessage("Processing tracks to add, please wait ...", Color.BLUE);
+
         try {
             audioPlayer.addToPlaylist(playlistName, source,
-                new AddToPlaylistAudioLoadCallback(message, playlistName));
+                new AddToPlaylistAudioLoadCallback(this, playlistName));
         } catch (PlaylistNotFoundException e) {
-            MessageUtil.reply(message, "Playlist " + playlistName + " not found");
+            sendErrorMessage("Playlist " + playlistName + " not found");
         }
     }
 }

@@ -8,7 +8,6 @@ import com.omega.guild.GuildContext;
 import com.omega.guild.GuildManager;
 import com.omega.guild.property.CoreGuildPropertySupplier;
 import com.omega.util.DiscordUtils;
-import com.omega.util.MessageUtil;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IRole;
@@ -26,7 +25,7 @@ public class AutoassignCommand extends AbstractCommand {
     }
 
     @Permission(permission = CorePermissionSupplier.COMMAND_AUTOASSIGN)
-    @Signature(help = "Automatically assign a role to users when they joining the server")
+    @Signature(help = "Automatically assign a role to users when they are joining the server")
     public void autoassignCommand(@Parameter(name = "roleMention") IRole role) {
         IGuild guild = message.getGuild();
         IUser botUser = guild.getClient().getOurUser();
@@ -35,11 +34,11 @@ public class AutoassignCommand extends AbstractCommand {
             GuildContext guildContext = GuildManager.getInstance().getContext(guild);
             guildContext.getProperties().setProperty(CoreGuildPropertySupplier.AUTOROLL, new NullProperty());
 
-            MessageUtil.reply(message, "No role will be assign to users when they join this server");
+            sendStateMessage("autoassign", "No role will be assign to users when they join this server");
         } else if (role.isEveryoneRole()) {
-            MessageUtil.reply(message, "Everyone role can't be assigned to a user");
+            sendErrorMessage("autoassign", "Everyone role can't be assigned to a user");
         } else if (role.isManaged()) {
-            MessageUtil.reply(message, "The managed role " + role.getName() + " can't be assigned to a user");
+            sendErrorMessage("autoassign", "The managed role " + role.getName() + " can't be assigned to a user");
         } else {
             List<IRole> botRoles = guild.getRolesForUser(botUser);
             Optional<IRole> highestRole = botRoles.stream().max(Comparator.comparingInt(IRole::getPosition));
@@ -47,16 +46,16 @@ public class AutoassignCommand extends AbstractCommand {
                 GuildContext guildContext = GuildManager.getInstance().getContext(guild);
                 guildContext.getProperties().setProperty(CoreGuildPropertySupplier.AUTOROLL, new RoleProperty(role));
 
-                MessageUtil.reply(message, "New users will now be auto assigned to role " + role.getName() +
+                sendStateMessage("autoassign", "New users will now be auto assigned to role " + role.getName() +
                     " when they join this server");
             } else {
-                MessageUtil.reply(message, "Role " + role.getName() + " is higher or equals to my own highest role");
+                sendErrorMessage("autoassign", "Role " + role.getName() + " is higher or equals to my own highest role");
             }
         }
     }
 
     @Permission(permission = CorePermissionSupplier.COMMAND_AUTOASSIGN)
-    @Signature(help = "Automatically assign a role to users when they joining the server. Use none as role name to don't assign any role")
+    @Signature(help = "Automatically assign a role to users when they are joining the server. Use none as role name to don't assign any role")
     public void autoassignCommand(@Parameter(name = "roleName") String roleName) {
         if (roleName.equalsIgnoreCase("none")) {
             autoassignCommand((IRole) null);

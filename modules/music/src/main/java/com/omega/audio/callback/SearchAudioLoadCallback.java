@@ -1,18 +1,21 @@
 package com.omega.audio.callback;
 
-import com.omega.command.AbstractCommand;
+import com.omega.command.impl.SearchCommand;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import sx.blah.discord.handle.impl.obj.Embed;
 import sx.blah.discord.util.EmbedBuilder;
 
-public class QueueAudioLoadCallback implements AudioLoadResultHandler {
+public class SearchAudioLoadCallback implements AudioLoadResultHandler {
 
-    private final AbstractCommand command;
+    private final SearchCommand command;
+    private final String keywords;
 
-    public QueueAudioLoadCallback(AbstractCommand command) {
+    public SearchAudioLoadCallback(SearchCommand command, String keywords) {
         this.command = command;
+        this.keywords = keywords;
     }
 
     @Override
@@ -22,7 +25,8 @@ public class QueueAudioLoadCallback implements AudioLoadResultHandler {
         embedBuilder
             .withTitle(track.getInfo().title)
             .withUrl(track.getInfo().uri)
-            .withDescription("Track added to queue");
+            .withDescription("Track added to queue")
+            .appendField("Keywords", keywords, true);
 
         command.sendStateMessage(embedBuilder.build());
     }
@@ -33,7 +37,8 @@ public class QueueAudioLoadCallback implements AudioLoadResultHandler {
 
         embedBuilder
             .withTitle(playlist.getName() + " (" + playlist.getTracks().size() + " tracks)")
-            .withDescription("Playlist added to queue");
+            .withDescription("Playlist added to queue")
+            .appendField("Keywords", keywords, true);
 
         command.sendStateMessage(embedBuilder.build());
     }
@@ -42,13 +47,15 @@ public class QueueAudioLoadCallback implements AudioLoadResultHandler {
     public void noMatches() {
         EmbedBuilder embedBuilder = new EmbedBuilder();
 
-        embedBuilder.withDescription("The provided source may not be supported");
+        embedBuilder.withTitle("YouTube search").withDescription("The provided source may not be supported");
 
         command.sendStateMessage(embedBuilder.build());
     }
 
     @Override
     public void loadFailed(FriendlyException exception) {
-        command.sendExceptionMessage("Unable to add to queue", exception);
+        command.sendExceptionMessage("YouTube search", "Unable to add to queue", exception,
+            new Embed.EmbedField("Keywords", keywords, true)
+        );
     }
 }

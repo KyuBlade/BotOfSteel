@@ -2,7 +2,7 @@ package com.omega.command.impl;
 
 import com.omega.command.*;
 import com.omega.module.Module;
-import com.omega.util.MessageUtil;
+import com.omega.util.MessageUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
@@ -57,7 +57,7 @@ public class ModuleCommand extends AbstractCommand {
         EmbedBuilder embBuilder = new EmbedBuilder();
         embBuilder.withDescription(builder.toString());
 
-        MessageUtil.sendMessage(message.getChannel(), "", embBuilder.build());
+        MessageUtils.sendMessage(message.getChannel(), "", embBuilder.build());
     }
 
     @Permission(botOwnerOnly = true)
@@ -80,31 +80,31 @@ public class ModuleCommand extends AbstractCommand {
 
         int moduleCount = modules.size();
         if (moduleCount == 0) {
-            MessageUtil.reply(message, "Module " + moduleName + " not found");
+            MessageUtils.reply(message, "Module " + moduleName + " not found");
         } else if (moduleCount > 1) {
-            MessageUtil.reply(message, "More than one module found");
+            MessageUtils.reply(message, "More than one module found");
         } else {
             IModule module = modules.get(0);
             boolean enabled = (((Module) module).isEnabled());
             switch (action.toLowerCase()) {
                 case "enable":
                     if (enabled) {
-                        MessageUtil.reply(message, "Module " + moduleName + " already enabled");
+                        MessageUtils.reply(message, "Module " + moduleName + " already enabled");
                     } else {
                         enabled = module.enable(by.getClient());
                         if (enabled) {
-                            MessageUtil.reply(message, "Module " + moduleName + " enabled");
+                            MessageUtils.reply(message, "Module " + moduleName + " enabled");
                         } else {
-                            MessageUtil.reply(message, "Error while enabling module " + moduleName);
+                            MessageUtils.reply(message, "Error while enabling module " + moduleName);
                         }
                     }
                     break;
                 case "disable":
                     if (!enabled) {
-                        MessageUtil.reply(message, "Module " + moduleName + " already enabled");
+                        MessageUtils.reply(message, "Module " + moduleName + " already enabled");
                     } else {
                         module.disable();
-                        MessageUtil.reply(message, "Module " + moduleName + " disabled");
+                        MessageUtils.reply(message, "Module " + moduleName + " disabled");
                     }
                     break;
 
@@ -114,9 +114,9 @@ public class ModuleCommand extends AbstractCommand {
                     } else {
                         enabled = module.enable(by.getClient());
                         if (enabled) {
-                            MessageUtil.reply(message, "Module " + moduleName + " reloaded");
+                            MessageUtils.reply(message, "Module " + moduleName + " reloaded");
                         } else {
-                            MessageUtil.reply(message, "Error while enabling module " + moduleName);
+                            MessageUtils.reply(message, "Error while enabling module " + moduleName);
                         }
                     }
                     break;

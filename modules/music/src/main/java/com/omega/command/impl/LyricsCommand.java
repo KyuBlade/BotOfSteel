@@ -2,7 +2,7 @@ package com.omega.command.impl;
 
 import com.omega.MusicPermissionSupplier;
 import com.omega.command.*;
-import com.omega.util.MessageUtil;
+import com.omega.util.MessageWrapper;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -12,7 +12,6 @@ import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.util.EmbedBuilder;
 import sx.blah.discord.util.MessageBuilder;
-import sx.blah.discord.util.RequestBuffer;
 
 import java.awt.*;
 import java.io.IOException;
@@ -33,19 +32,30 @@ public class LyricsCommand extends AbstractCommand {
 
     @Permission(permission = MusicPermissionSupplier.COMMAND_LYRICS)
     @Signature(help = "Find the lyrics of a song")
-    public void lyricsCommand(@Parameter(name = "songName") String songName) throws IOException {
-        SearchResult searchResult = searchLyrics(songName);
+    public void lyricsCommand(@Parameter(name = "keywords") String keywords) throws IOException {
+        EmbedBuilder embedBuilder = new EmbedBuilder();
+
+        embedBuilder
+            .withDescription("Searching for lyrics, please wait ...")
+            .appendField("Keywords", keywords, true);
+
+        sendStateMessage(embedBuilder.build(), Color.BLUE);
+
+        SearchResult searchResult = searchLyrics(keywords);
         if (searchResult == null) {
-            MessageUtil.reply(message, "Nothing found for song " + songName);
+            sendErrorMessage("Nothing found for song " + keywords);
         } else if (searchResult instanceof SongLyricsWithHint) {
             SongLyricsWithHint lyricsWithHint = (SongLyricsWithHint) searchResult;
-            RequestBuffer.RequestFuture<Void> future = sendLyrics(lyricsWithHint.songLyrics);
-            while (!future.isDone()) {
+            MessageWrapper messageWrapper = sendLyrics(lyricsWithHint.songLyrics);
+
+            while (!messageWrapper.isSent()) {
                 try {
                     Thread.sleep(50L);
                 } catch (InterruptedException e) {
                 }
             }
+
+            stateMessage = null;
             sendHints(lyricsWithHint.hints, false);
         } else if (searchResult instanceof HintResult) {
             sendHints((HintResult) searchResult, true);
@@ -76,6 +86,7 @@ public class LyricsCommand extends AbstractCommand {
 
             List<Element> finalEntryList;
             int entrySize = entries.size();
+
             if (entrySize < 1) { // Nothing to filter
                 finalEntryList = new ArrayList<>(0);
             } else if (entrySize == 1) { // No need to filter
@@ -96,6 +107,7 @@ public class LyricsCommand extends AbstractCommand {
             SongHint songHint = null;
             ArtistHint artistHint = null;
             int finalEntrySize = finalEntryList.size();
+
             if (finalEntrySize > 1) {
                 List<String> songHints = new ArrayList<>(finalEntrySize);
                 finalEntryList.forEach(entry -> {
@@ -114,6 +126,7 @@ public class LyricsCommand extends AbstractCommand {
             if (finalEntrySize > 0) {
                 Element firstEntry = finalEntryList.get(0);
                 Element linkElement = firstEntry.select("a").first();
+
                 String link = linkElement.attr("href");
                 String title = linkElement.text();
                 String author = firstEntry.select("b").get(1).text();
@@ -129,7 +142,7 @@ public class LyricsCommand extends AbstractCommand {
                 songLyrics = new SongLyrics(author, title, lyrics, link);
             }
 
-            if (songHint == null && artistHint == null) {
+            if (songHint == null) {
                 return songLyrics;
             } else {
                 return new SongLyricsWithHint(songLyrics, songHint, artistHint);
@@ -154,7 +167,7 @@ public class LyricsCommand extends AbstractCommand {
         return new ArtistHint(artistHints);
     }
 
-    private RequestBuffer.RequestFuture<Void> sendHints(HintResult hints, boolean notFound) {
+    private MessageWrapper sendHints(HintResult hints, boolean notFound) {
         List<String> songHints = (hints.songHints != null) ? hints.songHints.hints : null;
         List<String> artistHints = (hints.artistHints != null) ? hints.artistHints.hints : null;
 
@@ -201,15 +214,10 @@ public class LyricsCommand extends AbstractCommand {
             });
         }
 
-        EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder
-            .withColor(EMBED_COLOR)
-            .withDescription(sBuilder.toString());
-
-        return MessageUtil.sendMessage(message.getChannel(), "", embedBuilder.build());
+        return sendStateMessage(sBuilder.toString());
     }
 
-    private RequestBuffer.RequestFuture<Void> sendLyrics(SongLyrics songLyrics) {
+    private MessageWrapper sendLyrics(SongLyrics songLyrics) {
         String lyrics = songLyrics.lyrics;
         if (lyrics.length() <= EmbedBuilder.DESCRIPTION_CONTENT_LIMIT) {
             EmbedBuilder builder = new EmbedBuilder();
@@ -220,9 +228,9 @@ public class LyricsCommand extends AbstractCommand {
                 .withAuthorName(songLyrics.artist)
                 .withAuthorUrl("")
                 .withDescription(lyrics);
-            return MessageUtil.sendMessage(message.getChannel(), "", builder.build());
+            return sendStateMessage(builder.build());
         } else {
-            return MessageUtil.reply(message, "Lyrics were too long, here the link instead : " + songLyrics.url);
+            return sendStateMessage("Lyrics were too long, here the link instead : <" + songLyrics.url + '>');
         }
     }
 

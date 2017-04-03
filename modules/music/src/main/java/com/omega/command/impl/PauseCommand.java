@@ -27,8 +27,10 @@ public class PauseCommand extends AbstractCommand {
     public void pauseCommand(@Parameter(name = "pause") Boolean pause) {
         GuildContext guildContext = GuildManager.getInstance().getContext(message.getGuild());
         GuildAudioPlayer audioPlayer = (GuildAudioPlayer) guildContext.getModuleComponent(MusicModule.AUDIO_PLAYER_COMPONENT);
+
         boolean currentState = audioPlayer.isPause();
         boolean nextState = pause;
+
         if (currentState != nextState) {
             audioPlayer.pause(nextState);
         }

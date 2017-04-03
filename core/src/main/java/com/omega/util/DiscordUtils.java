@@ -3,16 +3,14 @@ package com.omega.util;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IRole;
 import sx.blah.discord.handle.obj.IUser;
-import sx.blah.discord.handle.obj.Permissions;
-import sx.blah.discord.util.MissingPermissionsException;
+import sx.blah.discord.util.EmbedBuilder;
 
-import java.util.EnumSet;
-import java.util.Iterator;
+import java.awt.*;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class DiscordUtils {
+public class DiscordUtils extends sx.blah.discord.api.internal.DiscordUtils {
 
     public static List<IUser> findUsers(List<IUser> users, String userName) {
         boolean hasDiscriminator = userName.contains("#");
@@ -41,22 +39,24 @@ public class DiscordUtils {
         List<IUser> result = DiscordUtils.findUsers(users, userName);
         int resultCount = result.size();
         if (result.isEmpty()) {
-            MessageUtil.reply(messageToReplyTo, "User " + userName + " not found");
+            MessageUtils.sendErrorMessage(messageToReplyTo.getChannel(), "User " + userName + " not found");
         } else if (resultCount > 1) {
-            StringBuilder builder = new StringBuilder();
-            builder.append("**More than one users matches the given username : **\n\n```");
+            EmbedBuilder embedBuilder = new EmbedBuilder();
+
+            embedBuilder.withDescription("More than one users matches the given username : \n\n");
+
             IntStream.range(0, resultCount)
                 .forEach(i -> {
                     IUser user = result.get(i);
-                    builder.append(user.getName()).append('#').append(user.getDiscriminator());
+
+                    embedBuilder.appendDescription(user.getName() + "#" + user.getDiscriminator());
 
                     if (i < resultCount) {
-                        builder.append("\n");
+                        embedBuilder.appendDescription("\n");
                     }
                 });
-            builder.append("```");
 
-            MessageUtil.reply(messageToReplyTo, builder.toString());
+            MessageUtils.sendMessage(messageToReplyTo.getChannel(), embedBuilder.build());
         } else {
             return result.get(0);
         }
@@ -77,7 +77,7 @@ public class DiscordUtils {
         int resultCount = result.size();
 
         if (result.isEmpty()) {
-            MessageUtil.reply(messageToReplyTo, "Role " + roleName + " not found");
+            MessageUtils.sendErrorMessage(messageToReplyTo.getChannel(), "Role " + roleName + " not found");
         } else if (resultCount > 1) {
             StringBuilder builder = new StringBuilder();
             builder.append("**More than one roles matches the given name : **\n\n```");
@@ -92,7 +92,7 @@ public class DiscordUtils {
                 });
             builder.append("```");
 
-            MessageUtil.reply(messageToReplyTo, builder.toString());
+            MessageUtils.reply(messageToReplyTo, builder.toString());
         } else {
             return result.get(0);
         }
@@ -100,31 +100,9 @@ public class DiscordUtils {
         return null;
     }
 
-    public static boolean checkPermissions(IMessage message, EnumSet<Permissions> permissions) {
-        try {
-            sx.blah.discord.api.internal.DiscordUtils.checkPermissions(
-                message.getClient().getOurUser(),
-                message.getGuild(),
-                permissions
-            );
-            return true;
-        } catch (MissingPermissionsException e) {
-            StringBuilder builder = new StringBuilder("Need permissions : ");
-            EnumSet<Permissions> missingPerms = e.getMissingPermissions();
-
-            Iterator<Permissions> it = missingPerms.iterator();
-            while (it.hasNext()) {
-                Permissions permission = it.next();
-                builder.append(permission.name());
-
-                if (it.hasNext()) {
-                    builder.append(", ");
-                }
-            }
-
-            MessageUtil.reply(message, builder.toString());
-
-            return false;
-        }
+    public static int getColorInteger(Color color) {
+        return ((color.getRed() & 0xFF) << 16) |
+            ((color.getGreen() & 0xFF) << 8) |
+            (color.getBlue() & 0xFF);
     }
 }

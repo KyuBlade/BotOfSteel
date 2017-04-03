@@ -7,12 +7,12 @@ import com.omega.audio.callback.QueueAudioLoadCallback;
 import com.omega.command.*;
 import com.omega.guild.GuildContext;
 import com.omega.guild.GuildManager;
-import com.omega.util.MessageUtil;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
-import sx.blah.discord.util.*;
+import sx.blah.discord.util.EmbedBuilder;
 
+import java.awt.*;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -28,34 +28,30 @@ public class QueueCommand extends AbstractCommand {
     public void queueCommand() {
         GuildContext guildContext = GuildManager.getInstance().getContext(message.getGuild());
         GuildAudioPlayer audioPlayer = (GuildAudioPlayer) guildContext.getModuleComponent(MusicModule.AUDIO_PLAYER_COMPONENT);
-        ;
 
+        EmbedBuilder embedBuilder = new EmbedBuilder();
         List<AudioTrack> queue = audioPlayer.getQueue();
-        String resultMessage;
-        if (!queue.isEmpty()) {
-            StringBuilder sb = new StringBuilder(128);
-            sb.append(MessageBuilder.Styles.CODE)
-                .append("Tracks in queue : \n\n");
 
-            final int TRACK_TO_DISPLAY = 10;
-            IntStream.range(0, Math.min(TRACK_TO_DISPLAY, queue.size())).forEach(i -> {
+        if (!queue.isEmpty()) {
+            embedBuilder.withDescription("Tracks in queue :\n\n");
+
+            IntStream.range(0, Math.min(10, queue.size())).forEach(i -> {
                 AudioTrack track = queue.get(i);
-                sb.append(track.getInfo().title).append('\n');
+                embedBuilder.appendField((i + 1) + " - " + track.getInfo().title, track.getInfo().uri, false);
             });
 
             int notShownTrackCount = queue.size() - 10;
             if (notShownTrackCount > 0) {
-                sb.append("...").append('\n')
-                    .append(notShownTrackCount).append(" more");
+                embedBuilder.appendField("...", notShownTrackCount + " more", false);
             }
-
-            sb.append(MessageBuilder.Styles.CODE);
-            resultMessage = sb.toString();
         } else {
-            resultMessage = "No tracks in queue";
+            embedBuilder.appendField("No tracks in queue.",
+                "Use \"queue url\" to add tracks to the queue.",
+                false
+            );
         }
 
-        MessageUtil.reply(message, resultMessage);
+        sendStateMessage(embedBuilder.build());
     }
 
     @Permission(permission = MusicPermissionSupplier.COMMAND_QUEUE_ADD)
@@ -63,6 +59,14 @@ public class QueueCommand extends AbstractCommand {
     public void queueCommand(@Parameter(name = "source") String source) {
         GuildContext guildContext = GuildManager.getInstance().getContext(message.getGuild());
         GuildAudioPlayer audioPlayer = (GuildAudioPlayer) guildContext.getModuleComponent(MusicModule.AUDIO_PLAYER_COMPONENT);
-        audioPlayer.queue(source, false, new QueueAudioLoadCallback(message));
+
+        sendStateMessage(
+            new EmbedBuilder()
+                .withDescription("Processing the source, please wait ...")
+                .build(),
+            Color.BLUE
+        );
+
+        audioPlayer.queue(source, false, new QueueAudioLoadCallback(this));
     }
 }

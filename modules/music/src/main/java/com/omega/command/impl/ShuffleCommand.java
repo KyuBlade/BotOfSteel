@@ -9,7 +9,6 @@ import com.omega.command.Permission;
 import com.omega.command.Signature;
 import com.omega.guild.GuildContext;
 import com.omega.guild.GuildManager;
-import com.omega.util.MessageUtil;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
 
@@ -27,6 +26,7 @@ public class ShuffleCommand extends AbstractCommand {
         GuildAudioPlayer audioPlayer = (GuildAudioPlayer) guildContext.getModuleComponent(MusicModule.AUDIO_PLAYER_COMPONENT);
 
         audioPlayer.shuffle();
-        MessageUtil.reply(message, "Queue as been shuffled");
+
+        sendStateMessage("Queue as been shuffled");
     }
 }

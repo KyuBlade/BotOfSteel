@@ -5,7 +5,7 @@ import com.omega.command.Command;
 import com.omega.command.Permission;
 import com.omega.command.Signature;
 import com.omega.database.entity.permission.CorePermissionSupplier;
-import com.omega.util.MessageUtil;
+import com.omega.util.MessageUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.IMessage;
@@ -32,9 +32,9 @@ public class GetVoiceChannelInfoCommand extends AbstractCommand {
         IVoiceState voiceState = by.getVoiceStateForGuild(message.getGuild());
         IVoiceChannel connectedVoiceChannel = voiceState.getChannel();
         if (connectedVoiceChannel != null) {
-            MessageUtil.reply(message, printChannelInfo(connectedVoiceChannel));
+            MessageUtils.reply(message, printChannelInfo(connectedVoiceChannel));
         } else {
-            MessageUtil.reply(message, "Not connected to a voice channel");
+            MessageUtils.reply(message, "Not connected to a voice channel");
         }
     }
 

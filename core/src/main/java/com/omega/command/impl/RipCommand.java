@@ -5,9 +5,12 @@ import com.omega.command.Command;
 import com.omega.command.Permission;
 import com.omega.command.Signature;
 import com.omega.database.entity.permission.CorePermissionSupplier;
-import com.omega.util.MessageUtil;
+import sx.blah.discord.api.internal.json.objects.EmbedObject;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
+import sx.blah.discord.util.DiscordException;
+import sx.blah.discord.util.EmbedBuilder;
+import sx.blah.discord.util.MissingPermissionsException;
 import sx.blah.discord.util.RequestBuffer;
 
 import java.util.List;
@@ -23,26 +26,46 @@ public class RipCommand extends AbstractCommand {
     @Signature(help = "Print the list of banned users")
     public void ripCommand() {
         if (!message.getChannel().isPrivate()) {
-            final StringBuilder builder = new StringBuilder();
-            RequestBuffer.request(() -> {
-                List<IUser> bannedUsers = message.getGuild().getBannedUsers();
-                if (bannedUsers.isEmpty()) {
-                    builder.append("**No one got banned on this server**");
-                } else {
-                    builder.append("**Rest In Peace**").append('\n').append('\n');
-                    for (int i = 0; i < bannedUsers.size(); i++) {
-                        IUser bannedUser = bannedUsers.get(i);
-                        builder.append(":skull_crossbones: ").append(bannedUser).append(" :skull_crossbones:");
+            final EmbedBuilder embedBuilder = new EmbedBuilder();
 
-                        if (i < bannedUsers.size()) {
-                            builder.append('\n');
+            RequestBuffer.request(() -> {
+                try {
+                    List<IUser> bannedUsers = message.getGuild().getBannedUsers();
+
+                    if (bannedUsers.isEmpty()) {
+                        embedBuilder.withDescription("No one got banned on this server");
+                    } else {
+                        StringBuilder stringBuilder = new StringBuilder();
+
+                        for (int i = 0; i < bannedUsers.size(); i++) {
+                            IUser bannedUser = bannedUsers.get(i);
+
+                            stringBuilder.append(":skull_crossbones: ").append(bannedUser).append(" :skull_crossbones:");
+
+                            if (i < bannedUsers.size()) {
+                                stringBuilder.append('\n');
+                            }
                         }
+
+                        embedBuilder.appendField("Rest In Peace", stringBuilder.toString(), false);
                     }
+
+                    sendStateMessage(embedBuilder.build());
+                } catch (DiscordException e) {
+                    sendExceptionMessage(
+                        "rip command",
+                        "Error occurred while getting list of banned users",
+                        e
+                    );
+                } catch (MissingPermissionsException e) {
+                    sendMissingPermissionsMessage(e.getMissingPermissions());
                 }
-            }).get();
-            RequestBuffer.request(() -> MessageUtil.sendMessage(message.getChannel(), builder.toString()));
+            });
         } else {
-            MessageUtil.reply(message, "Unavailable in private channel");
+            EmbedObject embedObject = new EmbedObject();
+            embedObject.description = "Unavailable in private channel";
+
+            sendStateMessage(embedObject);
         }
     }
 }

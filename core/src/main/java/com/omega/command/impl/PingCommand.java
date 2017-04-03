@@ -11,6 +11,8 @@ import sx.blah.discord.util.DiscordException;
 import sx.blah.discord.util.MissingPermissionsException;
 import sx.blah.discord.util.RateLimitException;
 
+import java.awt.*;
+
 @Command(name = "ping")
 public class PingCommand extends AbstractCommand {
 
@@ -21,7 +23,10 @@ public class PingCommand extends AbstractCommand {
     @Permission(permission = CorePermissionSupplier.COMMAND_PING)
     @Signature(help = "Send a ping to the bot to know if he is online and get the response time")
     public void pingCommand() throws RateLimitException, DiscordException, MissingPermissionsException {
+        sendStateMessage("Ping sent, waiting for pong ...", Color.BLUE);
+
         long ping = message.getShard().getResponseTime();
-        by.getOrCreatePMChannel().sendMessage(String.format("Pong - %dms", +ping));
+
+        sendStateMessage(String.format(":hourglass: Ping - %dms", ping));
     }
 }

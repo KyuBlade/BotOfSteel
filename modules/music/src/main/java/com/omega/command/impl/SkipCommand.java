@@ -6,6 +6,7 @@ import com.omega.audio.GuildAudioPlayer;
 import com.omega.command.*;
 import com.omega.guild.GuildContext;
 import com.omega.guild.GuildManager;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
 
@@ -31,6 +32,20 @@ public class SkipCommand extends AbstractCommand {
     private void skip(int count) {
         GuildContext guildContext = GuildManager.getInstance().getContext(message.getGuild());
         GuildAudioPlayer audioPlayer = (GuildAudioPlayer) guildContext.getModuleComponent(MusicModule.AUDIO_PLAYER_COMPONENT);
-        audioPlayer.skip(count);
+
+        if (count > 0) {
+            AudioTrack track = audioPlayer.getPlayingTrack();
+            if (track != null) {
+                audioPlayer.skip(count);
+
+                if (count == 1) {
+                    sendStateMessage("Skipped track " + track.getInfo().title);
+                } else {
+                    sendStateMessage("Skipped " + count + " tracks");
+                }
+            } else {
+                sendStateMessage("Nothing to skip, no track playing");
+            }
+        }
     }
 }

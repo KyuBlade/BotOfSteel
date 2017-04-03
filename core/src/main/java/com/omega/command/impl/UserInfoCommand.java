@@ -2,17 +2,16 @@ package com.omega.command.impl;
 
 import com.omega.command.*;
 import com.omega.database.entity.permission.CorePermissionSupplier;
-import com.omega.util.MessageUtil;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
+import sx.blah.discord.util.EmbedBuilder;
+
+import java.time.format.DateTimeFormatter;
 
 @Command(name = "userinfo", aliases = "ui")
 public class UserInfoCommand extends AbstractCommand {
 
-    private static final String TEMPLATE =
-        "Avatar : (%s)\n" +
-            "Name : %s\n" +
-            "Presence : %s\n";
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm:ss");
 
     public UserInfoCommand(IUser by, IMessage message) {
         super(by, message);
@@ -21,9 +20,17 @@ public class UserInfoCommand extends AbstractCommand {
     @Permission(permission = CorePermissionSupplier.COMMAND_USERINFO)
     @Signature(help = "Get info on a user")
     public void userinfoCommand(@Parameter(name = "user") IUser user) {
-        String message = String.format(TEMPLATE, user.getAvatarURL(),
-            user.getName(), user.getPresence());
+        EmbedBuilder embedBuilder = new EmbedBuilder();
 
-        MessageUtil.sendPrivateMessage(by, message);
+        embedBuilder
+            .withTitle("User info")
+            .withThumbnail(user.getAvatarURL())
+            .appendField("Avatar", user.getAvatarURL(), true)
+            .appendField("Name", user.getName(), true)
+            .appendField("Presence", user.getPresence().toString(), true)
+            .appendField("Creation date", user.getCreationDate().format(DATE_FORMATTER), true)
+            .appendField("Guild join date", guild.getJoinTimeForUser(user).format(DATE_FORMATTER), true);
+
+        sendPrivateStateMessage(embedBuilder.build());
     }
 }

@@ -5,7 +5,7 @@ import com.omega.command.*;
 import com.omega.database.entity.Playlist;
 import com.omega.database.DatastoreManagerSingleton;
 import com.omega.database.PlaylistRepository;
-import com.omega.util.MessageUtil;
+import com.omega.util.MessageUtils;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.util.DiscordException;
@@ -29,22 +29,24 @@ public class PlaylistListCommand extends AbstractCommand {
         builder.append(MessageBuilder.Styles.CODE.getMarkdown()).append('\n');
 
         PlaylistRepository playlistRepository = DatastoreManagerSingleton.getInstance().getRepository(PlaylistRepository.class);
-        List<? extends Playlist> userPlaylists = playlistRepository.findBasicByUserPrivacy(by);
+
+        List<? extends Playlist> userPlaylists = playlistRepository.findBasicPrivate(by);
+
         printPlaylistsCategory(builder, "Private", userPlaylists);
         builder.append('\n');
 
-        List<? extends Playlist> guildPlaylists = playlistRepository.findBasicByGuildPrivacy(message.getGuild());
+        List<? extends Playlist> guildPlaylists = playlistRepository.findBasicPublic(message.getGuild());
         printPlaylistsCategory(builder, "Guild", guildPlaylists);
 
         builder.append(MessageBuilder.Styles.CODE.getReverseMarkdown());
 
-        MessageUtil.sendPrivateMessage(by, builder.toString());
+        MessageUtils.sendPrivateMessage(by, builder.toString());
     }
 
-    @Permission(permission = MusicPermissionSupplier.COMMAND_PLAYLIST_LIST)
+    @Permission(permission = MusicPermissionSupplier.COMMAND_PLAYLIST_LIST_USER)
     @Signature(help = "Show playlist for the mentioned user")
     public void playlistListCommand(@Parameter(name = "user") IUser user) {
-        MessageUtil.reply(message, "Not for you");
+        MessageUtils.reply(message, "Not for you");
     }
 
     private void printPlaylistsCategory(StringBuilder builder, String categoryName, List<? extends Playlist> playlists) {

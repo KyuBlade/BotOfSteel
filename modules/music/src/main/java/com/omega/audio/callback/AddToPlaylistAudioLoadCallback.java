@@ -1,39 +1,51 @@
 package com.omega.audio.callback;
 
-import com.omega.util.MessageUtil;
+import com.omega.command.impl.AddToPlaylistCommand;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import sx.blah.discord.handle.obj.IMessage;
+import sx.blah.discord.util.EmbedBuilder;
 
 public class AddToPlaylistAudioLoadCallback implements AudioLoadResultHandler {
 
-    private final IMessage message;
+    private final AddToPlaylistCommand command;
     private final String playlistName;
 
-    public AddToPlaylistAudioLoadCallback(IMessage message, String playlistName) {
-        this.message = message;
+    public AddToPlaylistAudioLoadCallback(AddToPlaylistCommand command, String playlistName) {
+        this.command = command;
         this.playlistName = playlistName;
     }
 
     @Override
     public void trackLoaded(AudioTrack track) {
-        MessageUtil.reply(message, "Track " + track.getInfo().title + " added to playlist " + playlistName);
+        EmbedBuilder embedBuilder = new EmbedBuilder();
+
+        embedBuilder
+            .withTitle(track.getInfo().title)
+            .withAuthorName(track.getInfo().author)
+            .withUrl(track.getInfo().uri)
+            .withDescription("Track added to playlist ")
+            .appendDescription(playlistName);
+
+        command.sendStateMessage(embedBuilder.build());
     }
 
     @Override
     public void playlistLoaded(AudioPlaylist playlist) {
-        MessageUtil.reply(message, "Playlist " + playlist.getName() + " (" + playlist.getTracks().size() + " tracks) added to playlist " + playlistName);
+        command.sendStateMessage(
+            "Playlist " + playlist.getName() +
+                " (" + playlist.getTracks().size() + " tracks) added to playlist " + playlistName
+        );
     }
 
     @Override
     public void noMatches() {
-        MessageUtil.reply(message, "The provided source may not be supported");
+        command.sendErrorMessage("The provided source may not be supported");
     }
 
     @Override
     public void loadFailed(FriendlyException exception) {
-        MessageUtil.reply(message, "Track load failed");
+        command.sendExceptionMessage("Track load failed", exception);
     }
 }

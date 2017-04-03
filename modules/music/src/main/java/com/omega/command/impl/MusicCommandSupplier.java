@@ -10,7 +10,7 @@ public class MusicCommandSupplier implements CommandSupplier {
         PlaylistListCommand.class, AddToPlaylistCommand.class, PlayPlaylistCommand.class,
         DeletePlaylistCommand.class, PlayCommand.class, PauseCommand.class, ResumeCommand.class,
         SkipCommand.class, SetMusicChannelCommand.class, TrackCommand.class, ShuffleCommand.class,
-        ClearQueueCommand.class, SeekCommand.class, LyricsCommand.class
+        ClearQueueCommand.class, SeekCommand.class, LyricsCommand.class, SearchCommand.class
     };
 
     public MusicCommandSupplier() {

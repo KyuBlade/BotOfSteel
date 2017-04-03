@@ -34,11 +34,6 @@ public class BotSetup {
                 .read("Bot token : ");
             botProperties.setProperty(CoreBotPropertySupplier.BOT_TOKEN, new StringProperty(botToken));
 
-            String botClientId = textIO
-                .newStringInputReader()
-                .read("Bot client id : ");
-            botProperties.setProperty(CoreBotPropertySupplier.BOT_CLIENT_ID, new StringProperty(botClientId));
-
             int shardCount = textIO
                 .newIntInputReader()
                 .withMinVal(1)

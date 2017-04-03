@@ -9,7 +9,6 @@ import com.omega.command.Permission;
 import com.omega.command.Signature;
 import com.omega.guild.GuildContext;
 import com.omega.guild.GuildManager;
-import com.omega.util.MessageUtil;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
 
@@ -27,6 +26,6 @@ public class ClearQueueCommand extends AbstractCommand {
         GuildAudioPlayer audioPlayer = (GuildAudioPlayer) guildContext.getModuleComponent(MusicModule.AUDIO_PLAYER_COMPONENT);
 
         audioPlayer.clearQueue();
-        MessageUtil.reply(message, "Queue cleared");
+        sendStateMessage("Queue cleared");
     }
 }

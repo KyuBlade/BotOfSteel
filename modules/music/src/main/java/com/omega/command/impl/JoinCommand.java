@@ -2,10 +2,10 @@ package com.omega.command.impl;
 
 import com.omega.MusicPermissionSupplier;
 import com.omega.command.*;
-import com.omega.util.MessageUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.*;
+import sx.blah.discord.util.EmbedBuilder;
 import sx.blah.discord.util.MissingPermissionsException;
 
 @Command(name = "join", aliases = "j")
@@ -13,8 +13,12 @@ public class JoinCommand extends AbstractCommand {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JoinCommand.class);
 
+    private final EmbedBuilder embedBuilder;
+
     public JoinCommand(IUser by, IMessage message) {
         super(by, message);
+
+        this.embedBuilder = new EmbedBuilder();
     }
 
     @Permission(permission = MusicPermissionSupplier.COMMAND_JOIN)
@@ -22,10 +26,13 @@ public class JoinCommand extends AbstractCommand {
     public void joinCommand() {
         IVoiceState voiceState = by.getVoiceStateForGuild(message.getGuild());
         IVoiceChannel connectedVoiceChannel = voiceState.getChannel();
+
         if (connectedVoiceChannel != null) {
             join(connectedVoiceChannel);
         } else {
-            MessageUtil.reply(message, "You are not connected to a voice channel");
+            embedBuilder.withDescription("You are not connected to a voice channel");
+
+            sendStateMessage(embedBuilder.build());
         }
     }
 
@@ -35,28 +42,35 @@ public class JoinCommand extends AbstractCommand {
         final IGuild guild = message.getGuild();
         IVoiceChannel voiceChannel = guild.getVoiceChannels().stream()
             .filter(channel -> channel.getName().equalsIgnoreCase(voiceChannelName)).findFirst().orElse(null);
+
         if (voiceChannel != null) {
             join(voiceChannel);
         } else {
-            MessageUtil.reply(message, "I don't see voice channel with name " + voiceChannelName);
+            embedBuilder.withDescription("I don't see voice channel with name " + voiceChannelName);
+
+            sendStateMessage(embedBuilder.build());
         }
     }
 
     private void join(IVoiceChannel voiceChannel) {
-        String resultMessage;
         if (voiceChannel.getConnectedUsers().contains(by.getClient().getOurUser())) {
-            resultMessage = "I'm already into this voice channel";
+            embedBuilder.withDescription("I'm already into this voice channel");
         } else if (voiceChannel.getUserLimit() > 0 && voiceChannel.getConnectedUsers().size() >= voiceChannel.getUserLimit()) {
-            resultMessage = "Max users reached for voice channel " + voiceChannel.getName();
+            embedBuilder.withDescription("Max users reached for voice channel " + voiceChannel.getName());
         } else {
             try {
                 voiceChannel.join();
-                resultMessage = "Joined voice channel " + voiceChannel.getName();
+                embedBuilder.withDescription("Joined voice channel " + voiceChannel.getName());
             } catch (MissingPermissionsException e) {
-                resultMessage = "I don't have permissions to connect to voice channel " + voiceChannel.getName();
+                sendMissingPermissionsMessage(
+                    "I don't have permissions to connect to voice channel " + voiceChannel.getName(),
+                    e.getMissingPermissions()
+                );
+
+                return;
             }
         }
 
-        MessageUtil.reply(message, resultMessage);
+        sendStateMessage(embedBuilder.build());
     }
 }

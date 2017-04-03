@@ -7,7 +7,6 @@ import com.omega.command.*;
 import com.omega.exception.PlaylistNotFoundException;
 import com.omega.guild.GuildContext;
 import com.omega.guild.GuildManager;
-import com.omega.util.MessageUtil;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
 
@@ -26,8 +25,9 @@ public class PlayPlaylistCommand extends AbstractCommand {
 
         try {
             audioPlayer.playPlaylist(playlistName);
+            sendStateMessage("Will play playlist " + playlistName);
         } catch (PlaylistNotFoundException e) {
-            MessageUtil.reply(message, "Playlist " + playlistName + " not found");
+            sendErrorMessage("Playlist " + playlistName + " not found");
         }
     }
 }

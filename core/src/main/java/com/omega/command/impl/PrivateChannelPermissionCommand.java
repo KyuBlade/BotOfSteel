@@ -7,7 +7,7 @@ import com.omega.database.entity.permission.UserPermissions;
 import com.omega.exception.ImmutablePermissionsException;
 import com.omega.exception.PermissionNotFoundException;
 import com.omega.util.DiscordUtils;
-import com.omega.util.MessageUtil;
+import com.omega.util.MessageUtils;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
 
@@ -71,7 +71,7 @@ public class PrivateChannelPermissionCommand extends AbstractCommand {
             });
         }
 
-        MessageUtil.sendPrivateMessage(by, stringBuilder.toString());
+        MessageUtils.sendPrivateMessage(by, stringBuilder.toString());
     }
 
     @Permission(botOwnerOnly = true)
@@ -89,10 +89,10 @@ public class PrivateChannelPermissionCommand extends AbstractCommand {
                         user,
                         permissions.toArray(new String[permissions.size()])
                     );
-                    MessageUtil.reply(message, "All permissions removed from user " + user.getName() + " in bot private channel");
+                    MessageUtils.reply(message, "All permissions removed from user " + user.getName() + " in bot private channel");
                 } else {
                     PermissionManager.getInstance().addPrivateChannelUserPermission(user, lowPermission);
-                    MessageUtil.reply(message, "Added private channel permission " + lowPermission + " for user "
+                    MessageUtils.reply(message, "Added private channel permission " + lowPermission + " for user "
                         + user.getName());
                 }
             } else if (action.equalsIgnoreCase("remove")) {
@@ -102,19 +102,19 @@ public class PrivateChannelPermissionCommand extends AbstractCommand {
                         user,
                         permissions.toArray(new String[permissions.size()])
                     );
-                    MessageUtil.reply(message, "All permissions removed from user " + user.getName() + " in bot private channel");
+                    MessageUtils.reply(message, "All permissions removed from user " + user.getName() + " in bot private channel");
                 } else {
                     PermissionManager.getInstance().removePrivateChannelUserPermission(user, lowPermission);
-                    MessageUtil.reply(message, "Removed private channel permission " + lowPermission + " for user "
+                    MessageUtils.reply(message, "Removed private channel permission " + lowPermission + " for user "
                         + user.getName());
                 }
             } else {
-                MessageUtil.reply(message, "Wrong action, must be add or remove");
+                MessageUtils.reply(message, "Wrong action, must be add or remove");
             }
         } catch (PermissionNotFoundException e) {
-            MessageUtil.reply(message, "Permission " + lowPermission + " not found");
+            MessageUtils.reply(message, "Permission " + lowPermission + " not found");
         } catch (ImmutablePermissionsException e) {
-            MessageUtil.reply(message, "You can't modify permissions of the user " + user.getName());
+            MessageUtils.reply(message, "You can't modify permissions of the user " + user.getName());
         }
     }
 

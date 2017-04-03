@@ -4,14 +4,16 @@ import com.omega.MusicModule;
 import com.omega.MusicPermissionSupplier;
 import com.omega.audio.GuildAudioPlayer;
 import com.omega.command.*;
+import com.omega.exception.NotSeekableException;
 import com.omega.guild.GuildContext;
 import com.omega.guild.GuildManager;
-import com.omega.util.MessageUtil;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.slf4j.Logger;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
+import sx.blah.discord.util.EmbedBuilder;
 
 @Command(name = "seek")
 public class SeekCommand extends AbstractCommand {
@@ -52,7 +54,7 @@ public class SeekCommand extends AbstractCommand {
 
             seekCommand(hours, minutes, seconds);
         } catch (NumberFormatException e) {
-            MessageUtil.reply(message, "Malformed time");
+            sendErrorMessage("Malformed time");
         }
 
     }
@@ -75,21 +77,31 @@ public class SeekCommand extends AbstractCommand {
         GuildContext guildContext = GuildManager.getInstance().getContext(message.getGuild());
         GuildAudioPlayer audioPlayer = (GuildAudioPlayer) guildContext.getModuleComponent(MusicModule.AUDIO_PLAYER_COMPONENT);
 
-        LOGGER.debug("{}:{}:{}", hours, minutes, seconds);
-
         long seekTime = hours * 60 * 60;
         seekTime += minutes * 60;
         seekTime += seconds;
         seekTime *= 1000L;
 
         if (seekTime < 0) {
-            MessageUtil.reply(message, "Seek time must not be negative");
+            sendErrorMessage("Seek time must not be negative");
         } else {
             try {
                 audioPlayer.seek(seekTime);
-                MessageUtil.reply(message, DurationFormatUtils.formatDuration(seekTime, "HH:mm:ss"));
+
+                AudioTrack playingTrack = audioPlayer.getPlayingTrack();
+
+                EmbedBuilder embedBuilder = new EmbedBuilder();
+
+                embedBuilder
+                    .withTitle("Seeking")
+                    .appendField("Track", playingTrack.getInfo().title, true)
+                    .appendField("To", DurationFormatUtils.formatDuration(seekTime, "HH:mm:ss"), true);
+
+                sendStateMessage(embedBuilder.build());
             } catch (IllegalStateException e) {
-                MessageUtil.reply(message, "No track playing");
+                sendErrorMessage("No track playing");
+            } catch (NotSeekableException e) {
+                sendErrorMessage("Current track is not seekable");
             }
         }
     }

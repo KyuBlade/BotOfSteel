@@ -8,13 +8,13 @@ import com.omega.command.Parameter;
 import com.omega.command.Signature;
 import com.omega.guild.GuildContext;
 import com.omega.guild.GuildManager;
-import com.omega.util.MessageUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.*;
 import sx.blah.discord.util.DiscordException;
 import sx.blah.discord.util.MissingPermissionsException;
-import sx.blah.discord.util.RateLimitException;
+
+import java.awt.*;
 
 @Command(name = "setmusicchannel", aliases = "smc")
 public class SetMusicChannelCommand extends AbstractCommand {
@@ -27,12 +27,15 @@ public class SetMusicChannelCommand extends AbstractCommand {
 
     @Signature(help = "Set your current voice channel as a music channel")
     public void setMusicChannelCommand() {
-        IVoiceState voiceState = by.getVoiceStateForGuild(message.getGuild());
+        sendStateMessage("Setting voice channel, please wait ...", Color.BLUE);
+
+        IVoiceState voiceState = by.getVoiceStateForGuild(guild);
         IVoiceChannel currentVoiceChannel = voiceState.getChannel();
+
         if (currentVoiceChannel != null) {
             setMusicChannel(currentVoiceChannel);
         } else {
-            MessageUtil.reply(message, "You are not in a voice channel");
+            sendErrorMessage("You are not in a voice channel");
         }
     }
 
@@ -40,12 +43,17 @@ public class SetMusicChannelCommand extends AbstractCommand {
     public void setMusicChannelCommand(@Parameter(name = "voiceChannelName") String voiceChannelName) {
         message.getGuild().getVoiceChannels();
         IGuild guild = message.getGuild();
-        IVoiceChannel voiceChannel = guild.getVoiceChannels().stream()
-            .filter(channel -> channel.getName().equalsIgnoreCase(voiceChannelName)).findFirst().orElse(null);
+
+        IVoiceChannel voiceChannel = guild.getVoiceChannels()
+            .stream()
+            .filter(channel -> channel.getName().equalsIgnoreCase(voiceChannelName))
+            .findFirst()
+            .orElse(null);
+
         if (voiceChannel != null) {
             setMusicChannel(voiceChannel);
         } else {
-            MessageUtil.reply(message, "Voice channel " + voiceChannelName + " not found");
+            sendErrorMessage("Voice channel " + voiceChannelName + " not found");
         }
     }
 
@@ -53,15 +61,14 @@ public class SetMusicChannelCommand extends AbstractCommand {
         try {
             GuildContext guildContext = GuildManager.getInstance().getContext(voiceChannel.getGuild());
             GuildAudioPlayer audioPlayer = (GuildAudioPlayer) guildContext.getModuleComponent(MusicModule.AUDIO_PLAYER_COMPONENT);
+
             audioPlayer.setMusicChannel(voiceChannel);
-            MessageUtil.reply(message, "Voice channel " + voiceChannel.getName() + " is now a music channel");
+
+            sendStateMessage("Voice channel " + voiceChannel.getName() + " is now a music channel");
         } catch (DiscordException e) {
-            LOGGER.error("Failed to set voice channel " + voiceChannel.getName() + " as music channel", e);
+            sendExceptionMessage("Failed to set voice channel " + voiceChannel.getName() + " as music channel", e);
         } catch (MissingPermissionsException e) {
-            LOGGER.warn("Missing permissions", e);
-            MessageUtil.reply(message, "Permissions needed");
-        } catch (RateLimitException e) {
-            LOGGER.warn("Rate limit exceeded", e);
+            sendMissingPermissionsMessage(e.getMissingPermissions());
         }
     }
 }

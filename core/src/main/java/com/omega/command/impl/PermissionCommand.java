@@ -10,7 +10,7 @@ import com.omega.exception.GroupNotFoundException;
 import com.omega.exception.ImmutablePermissionsException;
 import com.omega.exception.PermissionNotFoundException;
 import com.omega.util.DiscordUtils;
-import com.omega.util.MessageUtil;
+import com.omega.util.MessageUtils;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.util.EmbedBuilder;
@@ -42,7 +42,7 @@ public class PermissionCommand extends AbstractCommand {
         embedBuilder.withTitle("Available permissions");
         embedBuilder.withDescription(sBuild.toString());
 
-        MessageUtil.sendPrivateMessage(by, "", embedBuilder.build());
+        MessageUtils.sendPrivateMessage(by, "", embedBuilder.build());
     }
 
     @Permission(permission = CorePermissionSupplier.COMMAND_PERMISSION)
@@ -108,7 +108,7 @@ public class PermissionCommand extends AbstractCommand {
         embedBuilder.withTitle("Permissions for user " + user.getName());
         embedBuilder.withDescription(stringBuilder.toString());
 
-        MessageUtil.sendPrivateMessage(by, "", embedBuilder.build());
+        MessageUtils.sendPrivateMessage(by, "", embedBuilder.build());
     }
 
     @Permission(permission = CorePermissionSupplier.COMMAND_PERMISSION)
@@ -126,10 +126,10 @@ public class PermissionCommand extends AbstractCommand {
                         user,
                         permissions.toArray(new String[permissions.size()])
                     );
-                    MessageUtil.reply(message, "All permissions added to user " + user.getName());
+                    MessageUtils.reply(message, "All permissions added to user " + user.getName());
                 } else {
                     PermissionManager.getInstance().addUserPermission(message.getGuild(), user, lowPermission);
-                    MessageUtil.reply(message, "Permission " + lowPermission + " added to user " + user.getName());
+                    MessageUtils.reply(message, "Permission " + lowPermission + " added to user " + user.getName());
                 }
             } else if (action.equalsIgnoreCase("remove")) {
                 if (permission.equalsIgnoreCase("all")) {
@@ -139,18 +139,18 @@ public class PermissionCommand extends AbstractCommand {
                         user,
                         permissions.toArray(new String[permissions.size()])
                     );
-                    MessageUtil.reply(message, "All permissions removed from user " + user.getName());
+                    MessageUtils.reply(message, "All permissions removed from user " + user.getName());
                 } else {
                     PermissionManager.getInstance().removeUserPermission(message.getGuild(), user, lowPermission);
-                    MessageUtil.reply(message, "Permission " + lowPermission + " removed from user " + user.getName());
+                    MessageUtils.reply(message, "Permission " + lowPermission + " removed from user " + user.getName());
                 }
             } else {
-                MessageUtil.reply(message, "Wrong action, must be create or remove");
+                MessageUtils.reply(message, "Wrong action, must be create or remove");
             }
         } catch (PermissionNotFoundException e) {
-            MessageUtil.reply(message, "Permission " + lowPermission + " not found");
+            MessageUtils.reply(message, "Permission " + lowPermission + " not found");
         } catch (ImmutablePermissionsException e) {
-            MessageUtil.reply(message, "You can't modify admin permissions");
+            MessageUtils.reply(message, "You can't modify admin permissions");
         }
     }
 }

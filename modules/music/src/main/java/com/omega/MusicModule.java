@@ -6,16 +6,18 @@ import com.omega.command.CommandManager;
 import com.omega.command.impl.MusicCommandSupplier;
 import com.omega.database.DatastoreManager;
 import com.omega.database.DatastoreManagerSingleton;
+import com.omega.database.entity.property.BotProperties;
 import com.omega.database.entity.property.GuildProperties;
 import com.omega.database.impl.morphia.AudioTrackMorphiaRepository;
 import com.omega.database.impl.morphia.MorphiaDatastoreManager;
-import com.omega.database.impl.morphia.PlaylistMorphiaRepository;
+import com.omega.database.impl.morphia.MorphiaPlaylistRepository;
 import com.omega.event.GuildContextCreatedEvent;
 import com.omega.event.GuildContextDestroyedEvent;
 import com.omega.guild.GuildContext;
 import com.omega.guild.GuildManager;
 import com.omega.guild.property.MusicPropertySupplier;
 import com.omega.module.Module;
+import com.omega.property.MusicBotPropertySupplier;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
@@ -44,13 +46,14 @@ public class MusicModule extends Module {
             Datastore datastore = ((MorphiaDatastoreManager) datastoreManager).getDatastore();
             datastoreManager.addRepositories(
                 new AudioTrackMorphiaRepository(datastore),
-                new PlaylistMorphiaRepository(datastore)
+                new MorphiaPlaylistRepository(datastore)
             );
         }
 
         audioManager = new DefaultAudioPlayerManager();
         AudioSourceManagers.registerRemoteSources(audioManager);
 
+        BotProperties.supply(new MusicBotPropertySupplier());
         PermissionManager.getInstance().supply(new MusicPermissionSupplier());
         CommandManager.getInstance().supply(new MusicCommandSupplier());
         GuildProperties.supply(new MusicPropertySupplier());
@@ -65,12 +68,15 @@ public class MusicModule extends Module {
     protected void unload() {
         LOGGER.info("Disable music module");
         CommandManager.getInstance().unsupply(new MusicCommandSupplier());
+        BotProperties.unsupply(new MusicBotPropertySupplier());
+        GuildProperties.unsupply(new MusicPropertySupplier());
+        PermissionManager.getInstance().unsupply(new MusicPermissionSupplier());
 
         DatastoreManager datastoreManager = DatastoreManagerSingleton.getInstance();
         if (datastoreManager instanceof MorphiaDatastoreManager) {
             datastoreManager.removeRepositories(
                 AudioTrackMorphiaRepository.class,
-                PlaylistMorphiaRepository.class
+                MorphiaPlaylistRepository.class
             );
         }
 
@@ -80,9 +86,6 @@ public class MusicModule extends Module {
             GuildAudioPlayer audioPlayer = (GuildAudioPlayer) guildContext.removeModuleComponent(AUDIO_PLAYER_COMPONENT);
             audioPlayer.cleanup();
         });
-
-        GuildProperties.unsupply(new MusicPropertySupplier());
-        PermissionManager.getInstance().unsupply(new MusicPermissionSupplier());
     }
 
     @Override

@@ -7,7 +7,7 @@ import com.omega.database.entity.property.*;
 import com.omega.exception.PropertyNotFoundException;
 import com.omega.guild.GuildContext;
 import com.omega.guild.GuildManager;
-import com.omega.util.MessageUtil;
+import com.omega.util.MessageUtils;
 import sx.blah.discord.handle.obj.IChannel;
 import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IRole;
@@ -67,11 +67,11 @@ public class SetPropertyCommand extends AbstractCommand {
         GuildProperties properties = guildContext.getProperties();
         try {
             properties.setProperty(property, value);
-            MessageUtil.reply(message, "Property " + property + " set to " + value);
+            MessageUtils.reply(message, "Property " + property + " set to " + value);
         } catch (PropertyNotFoundException e) {
-            MessageUtil.reply(message, "Property " + property + " not found");
+            MessageUtils.reply(message, "Property " + property + " not found");
         } catch (IllegalArgumentException e) {
-            MessageUtil.reply(message, "Wrong value for property " + property);
+            MessageUtils.reply(message, "Wrong value for property " + property);
         }
     }
 }

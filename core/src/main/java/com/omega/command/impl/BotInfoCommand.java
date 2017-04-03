@@ -6,7 +6,7 @@ import com.omega.command.Command;
 import com.omega.command.Permission;
 import com.omega.command.Signature;
 import com.omega.database.entity.permission.CorePermissionSupplier;
-import com.omega.util.MessageUtil;
+import com.omega.util.MessageUtils;
 import com.omega.util.StringUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import sx.blah.discord.api.IDiscordClient;
@@ -30,7 +30,6 @@ public class BotInfoCommand extends AbstractCommand {
     @Signature(help = "Get information on the bot")
     public void botInfoCommand() {
         IDiscordClient client = by.getClient();
-        IUser botUser = client.getOurUser();
         IUser ownerUser = BotManager.getInstance().getApplicationOwner();
 
         RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
@@ -129,6 +128,6 @@ public class BotInfoCommand extends AbstractCommand {
             .withFooterIcon(ownerUser.getAvatarURL())
             .withFooterText(ownerUser.getName());
 
-        MessageUtil.sendPrivateMessage(by, "", embedBuilder.build());
+        MessageUtils.sendPrivateMessage(by, "", embedBuilder.build());
     }
 }

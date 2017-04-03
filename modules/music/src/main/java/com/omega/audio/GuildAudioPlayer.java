@@ -8,6 +8,7 @@ import com.omega.database.entity.Playlist;
 import com.omega.exception.PlaylistAlreadyExists;
 import com.omega.exception.PlaylistNotFoundException;
 import com.omega.guild.GuildModuleComponent;
+import com.omega.util.DiscordUtils;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventListener;
@@ -19,9 +20,10 @@ import org.slf4j.LoggerFactory;
 import sx.blah.discord.handle.obj.*;
 import sx.blah.discord.util.DiscordException;
 import sx.blah.discord.util.MissingPermissionsException;
-import sx.blah.discord.util.RateLimitException;
+import sx.blah.discord.util.RequestBuffer;
 
-import java.util.*;
+import java.util.EnumSet;
+import java.util.List;
 
 /**
  * A {@code GuildAudioPlayer} handle all the audio processes and executions for one guild.
@@ -127,7 +129,7 @@ public class GuildAudioPlayer implements GuildModuleComponent {
     }
 
     /**
-     * Clear the queue, add the plalyist to it and start to play.
+     * Clear the queue, add the playlist to it and start to play.
      *
      * @param playlistName playlist to play
      * @throws PlaylistNotFoundException
@@ -135,6 +137,7 @@ public class GuildAudioPlayer implements GuildModuleComponent {
     public void playPlaylist(String playlistName) throws PlaylistNotFoundException {
         PlaylistRepository playlistRepository = DatastoreManagerSingleton.getInstance().getRepository(PlaylistRepository.class);
         Playlist playlist = playlistRepository.findByName(playlistName);
+
         if (playlist == null) {
             throw new PlaylistNotFoundException();
         }
@@ -269,37 +272,62 @@ public class GuildAudioPlayer implements GuildModuleComponent {
      *
      * @param voiceChannel voice channel to set-up
      * @throws DiscordException
-     * @throws RateLimitException
      * @throws MissingPermissionsException
      */
-    public void setMusicChannel(IVoiceChannel voiceChannel) throws DiscordException, RateLimitException,
-        MissingPermissionsException {
-        Set<String> roles = voiceChannel.getRoleOverrides().keySet();
-        Iterator<String> it = roles.iterator();
-        while (it.hasNext()) {
-            IRole role = guild.getRoleByID(it.next());
-            if (!role.isEveryoneRole() && !role.isManaged()) {
-                voiceChannel.removePermissionsOverride(role);
-            } else {
-                voiceChannel.overrideRolePermissions(role, null, EnumSet.of(Permissions.VOICE_SPEAK));
-            }
-        }
+    public void setMusicChannel(IVoiceChannel voiceChannel) throws DiscordException, MissingPermissionsException {
+        IUser botUser = voiceChannel.getClient().getOurUser();
 
-        Set<String> users = voiceChannel.getUserOverrides().keySet();
-        it = users.iterator();
-        while (it.hasNext()) {
-            IUser user = guild.getUserByID(it.next());
-            if (!user.isBot()) {
-                voiceChannel.removePermissionsOverride(user);
-            } else {
-                voiceChannel.overrideUserPermissions(user, null, EnumSet.of(Permissions.VOICE_SPEAK));
-            }
-        }
+        DiscordUtils.checkPermissions(botUser, voiceChannel, EnumSet.of(
+            Permissions.MANAGE_CHANNEL, Permissions.MANAGE_PERMISSIONS
+        ));
 
-        voiceChannel.changeBitrate(96000);
+        // Remove all role permission overrides
+        voiceChannel.getRoleOverrides().forEach((roleId, permissionOverride) -> {
+            final IRole role = guild.getRoleByID(roleId);
+
+            RequestBuffer.request(() -> {
+                    try {
+                        voiceChannel.removePermissionsOverride(role);
+                    } catch (MissingPermissionsException e) {
+                    }
+                }
+            );
+        });
+
+        // Remove all user permission overrides
+        voiceChannel.getUserOverrides().forEach((userId, permissionOverride) -> {
+            final IUser user = guild.getUserByID(userId);
+
+            RequestBuffer.request(() ->
+                voiceChannel.removePermissionsOverride(user)
+            );
+        });
+
+
+        // Remove VOICE_SPEAK permission for @everyone
+        RequestBuffer.request(() ->
+            voiceChannel.overrideRolePermissions(
+                guild.getEveryoneRole(),
+                null,
+                EnumSet.of(Permissions.VOICE_SPEAK)
+            )
+        );
+
+        // Add VOICE_SPEAK permission to bot
+        RequestBuffer.request(() ->
+            voiceChannel.overrideUserPermissions(
+                botUser,
+                EnumSet.of(Permissions.VOICE_SPEAK),
+                null
+            )
+        );
+
+        RequestBuffer.request(() ->
+            voiceChannel.changeBitrate(96000)
+        );
 
         if (!voiceChannel.isConnected()) {
-            voiceChannel.join();
+            RequestBuffer.request(voiceChannel::join);
         }
     }
 

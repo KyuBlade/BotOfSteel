@@ -7,7 +7,7 @@ import com.omega.event.CommandExecutionEvent;
 import com.omega.exception.PermissionNotFoundException;
 import com.omega.module.Suppliable;
 import com.omega.util.CommandExtractHelper;
-import com.omega.util.MessageUtil;
+import com.omega.util.MessageUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.events.EventSubscriber;
@@ -138,11 +138,11 @@ public class CommandManager implements Suppliable<CommandSupplier> {
 
             if (canExecute) {
                 try {
-                    MessageUtil.deleteMessage(message);
-                    LOGGER.debug("Invoke method {}", commandMethod);
+                    MessageUtils.deleteMessage(message);
                     commandMethod.invoke(commandInstance, castedArgs.toArray());
-                } catch (IllegalAccessException | InvocationTargetException e) {
+                } catch (Exception e) {
                     LOGGER.error("Unable to invoke method " + commandMethod.toGenericString() + " of class " + cmdType.getName(), e);
+                    MessageUtils.sendMessage(message.getChannel(), null, "Error occurred while executing command " + commandName, e);
                 }
             } else {
                 LOGGER.info("User {} don't have permission to use command {}", by.getName(), commandName);

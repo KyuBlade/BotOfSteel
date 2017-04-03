@@ -1,38 +1,37 @@
 package com.omega.audio.callback;
 
-import com.omega.util.MessageUtil;
+import com.omega.command.impl.PlayCommand;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import sx.blah.discord.handle.obj.IMessage;
 
 public class PlayAudioLoadCallback implements AudioLoadResultHandler {
 
-    private final IMessage message;
+    private final PlayCommand command;
 
-    public PlayAudioLoadCallback(IMessage message) {
-        this.message = message;
+    public PlayAudioLoadCallback(PlayCommand command) {
+        this.command = command;
     }
 
     @Override
     public void trackLoaded(AudioTrack track) {
-
+        command.sendStateMessage("Will play track " + track.getInfo().title);
     }
 
     @Override
     public void playlistLoaded(AudioPlaylist playlist) {
-        MessageUtil.reply(message, "Will play playlist " + playlist.getName() +
+        command.sendStateMessage("Will play playlist " + playlist.getName() +
             "(" + playlist.getTracks().size() + " tracks).");
     }
 
     @Override
     public void noMatches() {
-        MessageUtil.reply(message, "No tracks found.");
+        command.sendErrorMessage("No tracks found.");
     }
 
     @Override
     public void loadFailed(FriendlyException exception) {
-        MessageUtil.reply(message, "Everything exploded, try again or not.");
+        command.sendExceptionMessage("Everything exploded, try again or not.", exception);
     }
 }

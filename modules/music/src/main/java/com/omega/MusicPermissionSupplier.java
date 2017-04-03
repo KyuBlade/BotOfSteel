@@ -8,6 +8,7 @@ public class MusicPermissionSupplier implements PermissionSupplier {
     public static final String COMMAND_PLAYLIST_ADD = "command.music.playlist.add";
     public static final String COMMAND_PLAYLIST_DELETE = "command.music.playlist.delete";
     public static final String COMMAND_PLAYLIST_LIST = "command.music.playlist.list";
+    public static final String COMMAND_PLAYLIST_LIST_USER = "command.music.playlist.list.user";
     public static final String COMMAND_PLAYLIST_PLAY = "command.music.playlist.play";
     public static final String COMMAND_QUEUE_CLEAR = "command.music.queue.clear";
     public static final String COMMAND_QUEUE_LIST = "command.music.queue.list";
@@ -23,6 +24,7 @@ public class MusicPermissionSupplier implements PermissionSupplier {
     public static final String COMMAND_PLAY = "command.music.play";
     public static final String COMMAND_SEEK = "command.music.seek";
     public static final String COMMAND_TRACK = "command.music.track";
+    public static final String COMMAND_SEARCH = "command.music.search";
 
     @Override
     public String[] supply() {
@@ -31,7 +33,7 @@ public class MusicPermissionSupplier implements PermissionSupplier {
             COMMAND_PLAYLIST_PLAY, COMMAND_QUEUE_CLEAR, COMMAND_QUEUE_LIST, COMMAND_QUEUE_ADD,
             COMMAND_QUEUE_SHUFFLE, COMMAND_QUEUE_SKIP, COMMAND_SETMUSICCHANNEL, COMMAND_JOIN,
             COMMAND_LEAVE, COMMAND_LYRICS, COMMAND_PAUSE, COMMAND_RESUME, COMMAND_PLAY, COMMAND_SEEK,
-            COMMAND_TRACK
+            COMMAND_TRACK, COMMAND_SEARCH
         };
     }
 
@@ -39,7 +41,7 @@ public class MusicPermissionSupplier implements PermissionSupplier {
     public String[] supplyDefault() {
         return new String[]{
             COMMAND_PLAYLIST_CREATE, COMMAND_PLAYLIST_ADD, COMMAND_PLAYLIST_DELETE, COMMAND_PLAYLIST_LIST,
-            COMMAND_QUEUE_LIST, COMMAND_QUEUE_ADD, COMMAND_LYRICS, COMMAND_TRACK
+            COMMAND_QUEUE_LIST, COMMAND_QUEUE_ADD, COMMAND_LYRICS, COMMAND_TRACK, COMMAND_SEARCH
         };
     }
 }

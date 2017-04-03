@@ -11,9 +11,9 @@ import sx.blah.discord.handle.obj.IUser;
 
 import java.util.List;
 
-public class PlaylistMorphiaRepository extends MorphiaBaseRepository implements PlaylistRepository {
+public class MorphiaPlaylistRepository extends MorphiaBaseRepository implements PlaylistRepository {
 
-    public PlaylistMorphiaRepository(Datastore datastore) {
+    public MorphiaPlaylistRepository(Datastore datastore) {
         super(datastore);
     }
 
@@ -48,36 +48,45 @@ public class PlaylistMorphiaRepository extends MorphiaBaseRepository implements 
     }
 
     public boolean exists(String playlistName) {
-        return datastore.createQuery(MorphiaPlaylist.class)
+        return datastore
+            .createQuery(MorphiaPlaylist.class)
             .field(Playlist.Fields.normalizedName.name()).equal(playlistName.toLowerCase()).count() >= 1;
     }
 
     @Override
     public void deleteByName(String playlistName) {
-        datastore.delete(datastore.createQuery(MorphiaPlaylist.class)
-            .field(Playlist.Fields.normalizedName.name()).equal(playlistName.toLowerCase()));
+        datastore
+            .delete(datastore.createQuery(MorphiaPlaylist.class)
+                .field(Playlist.Fields.normalizedName.name()).equal(playlistName.toLowerCase()));
     }
 
     @Override
     public Playlist findByName(String playlistName) {
-        return datastore.createQuery(MorphiaPlaylist.class)
+        return datastore
+            .createQuery(MorphiaPlaylist.class)
             .field(Playlist.Fields.normalizedName.name()).equal(playlistName.toLowerCase())
             .get();
     }
 
     @Override
-    public List<MorphiaPlaylist> findBasicByUserPrivacy(IUser user) {
-        Query<MorphiaPlaylist> query = datastore.createQuery(MorphiaPlaylist.class).field(Playlist.Fields.user.name()).equal(user)
-            .field(Playlist.Fields.privacy.name()).equal(Playlist.Privacy.USER);
+    public List<MorphiaPlaylist> findBasicPrivate(IUser user) {
+        Query<MorphiaPlaylist> query = datastore.createQuery(MorphiaPlaylist.class)
+            .field(Playlist.Fields.user.name()).equal(user);
+
         query.project(Playlist.Fields.tracks.name(), false);
+
         return query.asList();
     }
 
     @Override
-    public List<MorphiaPlaylist> findBasicByGuildPrivacy(IGuild guild) {
-        return datastore.createQuery(MorphiaPlaylist.class)
+    public List<MorphiaPlaylist> findBasicPublic(IGuild guild) {
+        Query<MorphiaPlaylist> query = datastore
+            .createQuery(MorphiaPlaylist.class)
             .field(Playlist.Fields.guild.name()).equal(guild)
-            .field(Playlist.Fields.privacy.name()).equal(Playlist.Privacy.GUILD)
-            .asList();
+            .field(Playlist.Fields.privacy.name()).equal(Playlist.Privacy.GUILD);
+
+        query.project(Playlist.Fields.tracks.name(), false);
+
+        return query.asList();
     }
 }
