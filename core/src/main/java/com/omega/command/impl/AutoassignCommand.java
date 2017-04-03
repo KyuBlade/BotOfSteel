@@ -34,9 +34,9 @@ public class AutoassignCommand extends AbstractCommand {
             GuildContext guildContext = GuildManager.getInstance().getContext(guild);
             guildContext.getProperties().setProperty(CoreGuildPropertySupplier.AUTOROLL, new NullProperty());
 
-            sendStateMessage("autoassign", "No role will be assign to users when they join this server");
+            sendStateMessage("autoassign", "No role will be assigned to users when they join this server");
         } else if (role.isEveryoneRole()) {
-            sendErrorMessage("autoassign", "Everyone role can't be assigned to a user");
+            sendErrorMessage("autoassign", "@everyone role can't be assigned to a user");
         } else if (role.isManaged()) {
             sendErrorMessage("autoassign", "The managed role " + role.getName() + " can't be assigned to a user");
         } else {
