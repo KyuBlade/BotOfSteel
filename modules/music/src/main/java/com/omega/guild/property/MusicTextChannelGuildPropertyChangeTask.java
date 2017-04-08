@@ -15,17 +15,18 @@ public class MusicTextChannelGuildPropertyChangeTask implements GuildPropertyCha
     @Override
     public void execute(GuildContext context, ChannelProperty property, boolean init) {
         if (init) {
-            if (property == null) {
-                IGuild guild = context.getGuild();
-                Discord4J.LOGGER.debug("Init music_text_channel property for guild {}", guild.getName());
-                List<IChannel> channels = guild.getChannels();
-                IUser botUser = guild.getClient().getOurUser();
-                IChannel writableChannel = channels.stream()
-                    .filter(channel -> channel.getModifiedPermissions(botUser).contains(Permissions.SEND_MESSAGES))
-                    .findFirst()
-                    .orElse(null);
-                Discord4J.LOGGER.debug("Writable channel found : {}", writableChannel.getName());
+            IGuild guild = context.getGuild();
 
+            Discord4J.LOGGER.debug("Init music_text_channel property for guild {}", guild.getName());
+            List<IChannel> channels = guild.getChannels();
+            IUser botUser = guild.getClient().getOurUser();
+
+            IChannel writableChannel = channels.stream()
+                .filter(channel -> channel.getModifiedPermissions(botUser).contains(Permissions.SEND_MESSAGES))
+                .findFirst()
+                .orElse(null);
+
+            if (writableChannel != null) {
                 context.getProperties().setProperty(MusicPropertySupplier.MUSIC_CHANNEL_TEXT, new ChannelProperty(writableChannel));
             }
         }
