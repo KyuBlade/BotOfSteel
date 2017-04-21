@@ -125,6 +125,7 @@ public class GroupCommand extends AbstractCommand {
                     MessageUtils.reply(message, "All permissions removed from group " + lowGroupName);
                 } else {
                     PermissionManager.getInstance().removeGroupPermission(message.getGuild(), groupName, lowPermission);
+                    MessageUtils.reply(message, "Permission " + lowPermission + " removed from group " + lowGroupName);
                 }
             } else {
                 MessageUtils.reply(message, "Wrong action, must be create or remove");
