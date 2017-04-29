@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.events.EventDispatcher;
 import sx.blah.discord.api.events.EventSubscriber;
+import sx.blah.discord.handle.impl.events.ReadyEvent;
 import sx.blah.discord.handle.impl.events.guild.member.UserJoinEvent;
 import sx.blah.discord.handle.obj.IGuild;
 import sx.blah.discord.handle.obj.IRole;
@@ -36,15 +37,6 @@ public class GuildContext {
         EventDispatcher dispatcher = guild.getClient().getDispatcher();
         dispatcher.dispatch(new GuildContextCreatedEvent(this));
         dispatcher.registerListener(this);
-
-        GuildPropertiesRepository propertiesRepository = DatastoreManagerSingleton.getInstance().getRepository(GuildPropertiesRepository.class);
-        this.properties = propertiesRepository.findByGuild(guild);
-        if (properties != null) {
-            properties.initLoad(this);
-        } else {
-            this.properties = propertiesRepository.create(guild);
-            properties.initDefault(this);
-        }
     }
 
     public void destroy() {
@@ -81,6 +73,18 @@ public class GuildContext {
                 IUser user = event.getUser();
                 user.addRole(role);
             }
+        }
+    }
+
+    @EventSubscriber
+    public void onReady(ReadyEvent event) {
+        GuildPropertiesRepository propertiesRepository = DatastoreManagerSingleton.getInstance().getRepository(GuildPropertiesRepository.class);
+        this.properties = propertiesRepository.findByGuild(guild);
+        if (properties != null) {
+            properties.initLoad(this);
+        } else {
+            this.properties = propertiesRepository.create(guild);
+            properties.initDefault(this);
         }
     }
 }
