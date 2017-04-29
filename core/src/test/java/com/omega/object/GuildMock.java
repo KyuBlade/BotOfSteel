@@ -27,6 +27,11 @@ public class GuildMock implements IGuild {
     }
 
     @Override
+    public long getOwnerLongID() {
+        return 221359162930626562L;
+    }
+
+    @Override
     public IUser getOwner() {
         return new UserMock("221359162930626562");
     }
@@ -52,12 +57,22 @@ public class GuildMock implements IGuild {
     }
 
     @Override
+    public IChannel getChannelByID(long id) {
+        return null;
+    }
+
+    @Override
     public List<IUser> getUsers() {
         return null;
     }
 
     @Override
     public IUser getUserByID(String s) {
+        return null;
+    }
+
+    @Override
+    public IUser getUserByID(long id) {
         return null;
     }
 
@@ -107,6 +122,11 @@ public class GuildMock implements IGuild {
     }
 
     @Override
+    public IRole getRoleByID(long id) {
+        return null;
+    }
+
+    @Override
     public List<IRole> getRolesByName(String s) {
         return null;
     }
@@ -118,6 +138,11 @@ public class GuildMock implements IGuild {
 
     @Override
     public IVoiceChannel getVoiceChannelByID(String s) {
+        return null;
+    }
+
+    @Override
+    public IVoiceChannel getVoiceChannelByID(long id) {
         return null;
     }
 
@@ -162,12 +187,27 @@ public class GuildMock implements IGuild {
     }
 
     @Override
+    public void banUser(long userID) {
+
+    }
+
+    @Override
     public void banUser(String s, int i) throws DiscordException, RateLimitException, MissingPermissionsException {
 
     }
 
     @Override
+    public void banUser(long userID, int deleteMessagesForDays) {
+
+    }
+
+    @Override
     public void pardonUser(String s) throws DiscordException, RateLimitException, MissingPermissionsException {
+
+    }
+
+    @Override
+    public void pardonUser(long userID) {
 
     }
 
@@ -282,6 +322,11 @@ public class GuildMock implements IGuild {
     }
 
     @Override
+    public List<IExtendedInvite> getExtendedInvites() {
+        return null;
+    }
+
+    @Override
     public void reorderRoles(IRole... iRoles) throws DiscordException, RateLimitException, MissingPermissionsException {
 
     }
@@ -317,6 +362,11 @@ public class GuildMock implements IGuild {
     }
 
     @Override
+    public IMessage getMessageByID(long id) {
+        return null;
+    }
+
+    @Override
     public List<IEmoji> getEmojis() {
         return null;
     }
@@ -327,12 +377,22 @@ public class GuildMock implements IGuild {
     }
 
     @Override
+    public IEmoji getEmojiByID(long id) {
+        return null;
+    }
+
+    @Override
     public IEmoji getEmojiByName(String s) {
         return null;
     }
 
     @Override
     public IWebhook getWebhookByID(String s) {
+        return null;
+    }
+
+    @Override
+    public IWebhook getWebhookByID(long id) {
         return null;
     }
 
@@ -354,6 +414,11 @@ public class GuildMock implements IGuild {
     @Override
     public String getID() {
         return id;
+    }
+
+    @Override
+    public long getLongID() {
+        return 0;
     }
 
     @Override

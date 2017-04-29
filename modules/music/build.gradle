@@ -20,6 +20,6 @@ dependencies {
     compileOnly project(':core')
 
     compile 'org.jsoup:jsoup:1.10.2'
-    compile 'com.sedmelluq:lavaplayer:1.2.34'
+    compile 'com.sedmelluq:lavaplayer:1.2.36'
     compile 'com.google.apis:google-api-services-youtube:v3-rev182-1.22.0'
 }

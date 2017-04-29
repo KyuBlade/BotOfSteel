@@ -1,9 +1,10 @@
 package com.omega;
 
 import com.mongodb.MongoClient;
-import com.omega.database.repository.GuildPropertiesRepository;
 import com.omega.database.entity.property.GuildProperties;
 import com.omega.database.impl.morphia.MorphiaDatastoreManager;
+import com.omega.database.repository.GuildPropertiesRepository;
+import com.omega.object.GuildMock;
 import de.flapdoodle.embed.mongo.MongodExecutable;
 import de.flapdoodle.embed.mongo.MongodProcess;
 import de.flapdoodle.embed.mongo.MongodStarter;
@@ -18,7 +19,6 @@ import org.junit.Test;
 import org.mongodb.morphia.Morphia;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sx.blah.discord.handle.impl.obj.Guild;
 
 import java.io.IOException;
 
@@ -117,7 +117,7 @@ public class MorphiaDBTest {
     public void canPersistAndLoadGuildProperties() {
         GuildPropertiesRepository repository = datastoreManager.getRepository(GuildPropertiesRepository.class);
 
-        GuildProperties guildProps = repository.create(new Guild(null, null, "265847274377052161", null, null, null, 0, null, 0));
+        GuildProperties guildProps = repository.create(new GuildMock("265847274377052161"));
 
         repository.save(guildProps);
     }

@@ -6,6 +6,7 @@ import sx.blah.discord.handle.obj.*;
 import sx.blah.discord.util.DiscordException;
 import sx.blah.discord.util.MissingPermissionsException;
 import sx.blah.discord.util.RateLimitException;
+import sx.blah.discord.util.cache.LongMap;
 
 import java.util.*;
 
@@ -88,6 +89,11 @@ public class UserMock implements IUser {
     }
 
     @Override
+    public LongMap<IVoiceState> getVoiceStatesLong() {
+        return null;
+    }
+
+    @Override
     public boolean isBot() {
         return false;
     }
@@ -115,6 +121,11 @@ public class UserMock implements IUser {
     @Override
     public String getID() {
         return id;
+    }
+
+    @Override
+    public long getLongID() {
+        return Long.valueOf(id);
     }
 
     @Override

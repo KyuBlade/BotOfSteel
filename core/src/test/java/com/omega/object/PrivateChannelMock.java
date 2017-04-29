@@ -5,6 +5,7 @@ import sx.blah.discord.api.IShard;
 import sx.blah.discord.api.internal.json.objects.EmbedObject;
 import sx.blah.discord.handle.obj.*;
 import sx.blah.discord.util.*;
+import sx.blah.discord.util.cache.LongMap;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -79,7 +80,17 @@ public class PrivateChannelMock implements IPrivateChannel {
     }
 
     @Override
+    public MessageHistory getMessageHistoryFrom(long id) {
+        return null;
+    }
+
+    @Override
     public MessageHistory getMessageHistoryFrom(String s, int i) {
+        return null;
+    }
+
+    @Override
+    public MessageHistory getMessageHistoryFrom(long id, int maxMessageCount) {
         return null;
     }
 
@@ -89,7 +100,17 @@ public class PrivateChannelMock implements IPrivateChannel {
     }
 
     @Override
+    public MessageHistory getMessageHistoryTo(long id) {
+        return null;
+    }
+
+    @Override
     public MessageHistory getMessageHistoryTo(String s, int i) {
+        return null;
+    }
+
+    @Override
+    public MessageHistory getMessageHistoryTo(long id, int maxMessageCount) {
         return null;
     }
 
@@ -99,7 +120,17 @@ public class PrivateChannelMock implements IPrivateChannel {
     }
 
     @Override
+    public MessageHistory getMessageHistoryIn(long beginID, long endID) {
+        return null;
+    }
+
+    @Override
     public MessageHistory getMessageHistoryIn(String s, String s1, int i) {
+        return null;
+    }
+
+    @Override
+    public MessageHistory getMessageHistoryIn(long beginID, long endID, int maxMessageCount) {
         return null;
     }
 
@@ -134,12 +165,22 @@ public class PrivateChannelMock implements IPrivateChannel {
     }
 
     @Override
+    public IMessage getMessageByID(long messageID) {
+        return null;
+    }
+
+    @Override
     public IGuild getGuild() {
         return null;
     }
 
     @Override
     public boolean isPrivate() {
+        return false;
+    }
+
+    @Override
+    public boolean isNSFW() {
         return false;
     }
 
@@ -309,7 +350,17 @@ public class PrivateChannelMock implements IPrivateChannel {
     }
 
     @Override
+    public LongMap<PermissionOverride> getUserOverridesLong() {
+        return null;
+    }
+
+    @Override
     public Map<String, PermissionOverride> getRoleOverrides() {
+        return null;
+    }
+
+    @Override
+    public LongMap<PermissionOverride> getRoleOverridesLong() {
         return null;
     }
 
@@ -349,6 +400,11 @@ public class PrivateChannelMock implements IPrivateChannel {
     }
 
     @Override
+    public List<IExtendedInvite> getExtendedInvites() {
+        return null;
+    }
+
+    @Override
     public List<IUser> getUsersHere() {
         return null;
     }
@@ -375,6 +431,11 @@ public class PrivateChannelMock implements IPrivateChannel {
 
     @Override
     public IWebhook getWebhookByID(String s) {
+        return null;
+    }
+
+    @Override
+    public IWebhook getWebhookByID(long id) {
         return null;
     }
 
@@ -406,6 +467,11 @@ public class PrivateChannelMock implements IPrivateChannel {
     @Override
     public String getID() {
         return id;
+    }
+
+    @Override
+    public long getLongID() {
+        return Long.valueOf(id);
     }
 
     @Override
