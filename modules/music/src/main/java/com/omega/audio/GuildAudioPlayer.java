@@ -7,6 +7,7 @@ import com.omega.database.PlaylistRepository;
 import com.omega.database.entity.Playlist;
 import com.omega.exception.PlaylistAlreadyExists;
 import com.omega.exception.PlaylistNotFoundException;
+import com.omega.guild.GuildContext;
 import com.omega.guild.GuildModuleComponent;
 import com.omega.util.DiscordUtils;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
@@ -38,22 +39,27 @@ public class GuildAudioPlayer implements GuildModuleComponent {
 
     private final PlayPlaylistTrackLoader ppTrackLoader;
 
+    private final GuildContext guildContext;
     private final IGuild guild;
 
-    public GuildAudioPlayer(com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager manager, IGuild guild) {
+    public GuildAudioPlayer(com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager manager, GuildContext guildContext) {
         this.manager = manager;
         this.player = manager.createPlayer();
 
         this.scheduler = new TrackScheduler(player);
-        this.guild = guild;
+        this.guildContext = guildContext;
+        this.guild = guildContext.getGuild();
 
         player.addListener(scheduler);
+        player.addListener(new AudioPlayerStateListener(guildContext));
 
         this.ppTrackLoader = new PlayPlaylistTrackLoader(manager, scheduler);
+
+        guild.getAudioManager().setAudioProvider(getAudioProvider());
     }
 
     /**
-     * Add an audio listener to the audio player.
+     * Add an audio event listener to the audio player.
      *
      * @param listener audio listener to add
      */

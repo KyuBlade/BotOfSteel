@@ -6,9 +6,9 @@ import com.omega.database.impl.morphia.entity.MorphiaAudioTrack;
 import com.omega.database.impl.morphia.repository.MorphiaBaseRepository;
 import org.mongodb.morphia.Datastore;
 
-public class AudioTrackMorphiaRepository extends MorphiaBaseRepository implements AudioTrackRepository {
+public class MorphiaAudioTrackRepository extends MorphiaBaseRepository implements AudioTrackRepository {
 
-    public AudioTrackMorphiaRepository(Datastore datastore) {
+    public MorphiaAudioTrackRepository(Datastore datastore) {
         super(datastore);
     }
 

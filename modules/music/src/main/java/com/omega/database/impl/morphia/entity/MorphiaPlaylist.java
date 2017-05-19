@@ -3,6 +3,7 @@ package com.omega.database.impl.morphia.entity;
 import com.omega.database.entity.AudioTrack;
 import com.omega.database.entity.Playlist;
 import com.omega.database.impl.morphia.converter.GuildTypeConverter;
+import com.omega.database.impl.morphia.converter.UserTypeConverter;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.*;
 import sx.blah.discord.handle.obj.IGuild;
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity(value = "playlist", noClassnameStored = true)
-@Converters(value = GuildTypeConverter.class)
+@Converters(value = {GuildTypeConverter.class, UserTypeConverter.class})
 public class MorphiaPlaylist extends Playlist {
 
     @Id

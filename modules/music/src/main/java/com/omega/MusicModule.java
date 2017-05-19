@@ -1,6 +1,5 @@
 package com.omega;
 
-import com.omega.audio.AudioPlayerStateListener;
 import com.omega.audio.GuildAudioPlayer;
 import com.omega.command.CommandManager;
 import com.omega.command.impl.MusicCommandSupplier;
@@ -8,7 +7,7 @@ import com.omega.database.DatastoreManager;
 import com.omega.database.DatastoreManagerSingleton;
 import com.omega.database.entity.property.BotProperties;
 import com.omega.database.entity.property.GuildProperties;
-import com.omega.database.impl.morphia.AudioTrackMorphiaRepository;
+import com.omega.database.impl.morphia.MorphiaAudioTrackRepository;
 import com.omega.database.impl.morphia.MorphiaDatastoreManager;
 import com.omega.database.impl.morphia.MorphiaPlaylistRepository;
 import com.omega.event.GuildContextCreatedEvent;
@@ -26,7 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.IDiscordClient;
 import sx.blah.discord.api.events.EventSubscriber;
-import sx.blah.discord.handle.obj.IGuild;
 
 import java.util.Collection;
 
@@ -45,7 +43,7 @@ public class MusicModule extends Module {
         if (datastoreManager instanceof MorphiaDatastoreManager) {
             Datastore datastore = ((MorphiaDatastoreManager) datastoreManager).getDatastore();
             datastoreManager.addRepositories(
-                new AudioTrackMorphiaRepository(datastore),
+                new MorphiaAudioTrackRepository(datastore),
                 new MorphiaPlaylistRepository(datastore)
             );
         }
@@ -61,6 +59,8 @@ public class MusicModule extends Module {
         Collection<GuildContext> guildContexts = GuildManager.getInstance().getGuildContexts();
         guildContexts.forEach(this::initializeAudioPlayer);
 
+        LOGGER.info("Music module enabled");
+
         return true;
     }
 
@@ -75,7 +75,7 @@ public class MusicModule extends Module {
         DatastoreManager datastoreManager = DatastoreManagerSingleton.getInstance();
         if (datastoreManager instanceof MorphiaDatastoreManager) {
             datastoreManager.removeRepositories(
-                AudioTrackMorphiaRepository.class,
+                MorphiaAudioTrackRepository.class,
                 MorphiaPlaylistRepository.class
             );
         }
@@ -125,12 +125,9 @@ public class MusicModule extends Module {
     }
 
     private void initializeAudioPlayer(GuildContext guildContext) {
-        IGuild guild = guildContext.getGuild();
-        GuildAudioPlayer audioPlayer = new GuildAudioPlayer(audioManager, guild);
-
-        guild.getAudioManager().setAudioProvider(audioPlayer.getAudioProvider());
-        audioPlayer.addListener(new AudioPlayerStateListener(guildContext));
-
+        GuildAudioPlayer audioPlayer = new GuildAudioPlayer(audioManager, guildContext);
         guildContext.putModuleComponent(AUDIO_PLAYER_COMPONENT, audioPlayer);
+
+        LOGGER.info("Audio player component set");
     }
 }
