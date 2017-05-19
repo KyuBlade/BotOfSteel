@@ -210,7 +210,7 @@ public class TrackScheduler extends AudioEventAdapter {
     }
 
     /**
-     * Activate or deactivate the shuddle mode.
+     * Activate or deactivate the shuffle mode.
      *
      * @param shuffle true to activate, false otherwise
      */
