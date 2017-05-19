@@ -121,13 +121,13 @@ public abstract class AbstractCommand {
     public MessageWrapper sendExceptionMessage(String title, String description, Throwable t, IEmbed.IEmbedField... fields) {
         LOGGER.error(description);
 
-        return MessageUtils.sendMessage(channel, title, description, t, fields);
+        return MessageUtils.sendErrorMessage(channel, title, description, t, fields);
     }
 
     public MessageWrapper sendExceptionMessage(String title, String description, Throwable t) {
         LOGGER.error(description);
 
-        return MessageUtils.sendMessage(channel, title, description, t);
+        return MessageUtils.sendErrorMessage(channel, title, description, t);
     }
 
     public MessageWrapper sendExceptionMessage(String description, Throwable t) {

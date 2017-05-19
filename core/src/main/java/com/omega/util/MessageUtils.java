@@ -10,8 +10,7 @@ import sx.blah.discord.util.MissingPermissionsException;
 import sx.blah.discord.util.RequestBuffer;
 
 import java.awt.*;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.util.Arrays;
 import java.util.EnumSet;
 
@@ -137,8 +136,8 @@ public class MessageUtils {
     /**
      * Send a private message with an embed object.
      *
-     * @param target    user to message
-     * @param embed the embed object to send
+     * @param target user to message
+     * @param embed  the embed object to send
      * @return a message wrapper object that will queue operations on the message until it is sent
      */
     public static MessageWrapper sendPrivateMessage(IUser target, EmbedObject embed) {
@@ -213,41 +212,6 @@ public class MessageUtils {
         return sendMessage(channel, "", embed);
     }
 
-    /**
-     * Send a message in a channel with a stacktrace.
-     *
-     * @param channel     channel to send to
-     * @param title       embed title
-     * @param description embed description
-     * @param t           the stacktrace to send
-     * @param fields      embed fields to append
-     * @return a message wrapper object that will queue operations on the message until it is sent
-     */
-    public static MessageWrapper sendMessage(IChannel channel, String title, String description,
-                                             Throwable t, IEmbed.IEmbedField... fields) {
-        if (channel == null) {
-            throw new NullPointerException("channel must not be null");
-        }
-
-        StringWriter stacktraceWritter = new StringWriter();
-        stacktraceWritter.write(t.getMessage());
-        stacktraceWritter.write(": ");
-
-        t.printStackTrace(new PrintWriter(stacktraceWritter));
-
-        EmbedBuilder embedBuilder = new EmbedBuilder();
-
-        Arrays.stream(fields).forEachOrdered(embedBuilder::appendField);
-
-        embedBuilder
-            .withColor(Color.RED)
-            .withTitle(title)
-            .withDescription(description)
-            .appendField("Stacktrace", stacktraceWritter.toString(), false);
-
-        return sendMessage(channel, embedBuilder.build());
-    }
-
     public static void sendMissingPermissionsMessage(IChannel channel, EnumSet<Permissions> missingPermissions) {
         sendMissingPermissionsMessage(channel, null, missingPermissions);
     }
@@ -282,7 +246,11 @@ public class MessageUtils {
         return sendErrorMessage(channel, null, description);
     }
 
-    private static MessageWrapper sendErrorMessage(IChannel channel, String title, String description) {
+    public static MessageWrapper sendErrorMessage(IChannel channel, String title, String description) {
+        return sendErrorMessage(channel, title, description, null);
+    }
+
+    public static MessageWrapper sendErrorMessage(IChannel channel, String title, String description, IEmbed.IEmbedField... fields) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
 
         embedBuilder
@@ -290,7 +258,62 @@ public class MessageUtils {
             .withTitle(title)
             .withDescription(description);
 
+        if (fields != null) {
+            Arrays.stream(fields).forEachOrdered(embedBuilder::appendField);
+        }
+        
         return sendMessage(channel, embedBuilder.build());
+    }
+
+    /**
+     * Send an error message in a channel with a stacktrace.
+     *
+     * @param channel     channel to send to
+     * @param title       embed title
+     * @param description embed description
+     * @param t           the stacktrace to send
+     * @param fields      embed fields to append
+     * @return a message wrapper object that will queue operations on the message until it is sent
+     */
+    public static MessageWrapper sendErrorMessage(IChannel channel, String title, String description,
+                                                  Throwable t, IEmbed.IEmbedField... fields) {
+        if (channel == null) {
+            throw new NullPointerException("channel must not be null");
+        }
+
+
+        try (StringWriter stacktraceWritter = new StringWriter()) {
+            stacktraceWritter.write(t.getMessage());
+            stacktraceWritter.write(": ");
+
+            t.printStackTrace(new PrintWriter(stacktraceWritter));
+
+            // Check if description is not too long
+            if (stacktraceWritter.getBuffer().length() <= EmbedBuilder.DESCRIPTION_CONTENT_LIMIT + description.length()) {
+                return sendErrorMessage(channel, title, description + "\n\n" + stacktraceWritter.toString());
+            } else { // Send stacktrace in txt file
+                MessageWrapper messageWrapper = new MessageWrapper();
+
+                RequestBuffer.request(() -> {
+                    try {
+                        IMessage message = channel.sendFile(
+                            description,
+                            new ByteArrayInputStream(stacktraceWritter.toString().getBytes("UTF-8")),
+                            "stacktrace.txt");
+
+                        messageWrapper.setMessage(message);
+                    } catch (UnsupportedEncodingException e) {
+                        LOGGER.warn("UTF-8 charset not supported, can't send stacktrace error message");
+                    }
+                });
+
+                return messageWrapper;
+            }
+        } catch (IOException e) {
+            LOGGER.warn("Error while printing stacktrace", e);
+
+            return sendErrorMessage(channel, "Exception thrown but unable to print the stacktrace");
+        }
     }
 
     /**
@@ -298,6 +321,7 @@ public class MessageUtils {
      *
      * @param message message to delete
      */
+
     public static void deleteMessage(IMessage message) {
         if (message == null) {
             throw new NullPointerException("message must not be null");

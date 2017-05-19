@@ -142,7 +142,7 @@ public class CommandManager implements Suppliable<CommandSupplier> {
                     commandMethod.invoke(commandInstance, castedArgs.toArray());
                 } catch (Exception e) {
                     LOGGER.error("Unable to invoke method " + commandMethod.toGenericString() + " of class " + cmdType.getName(), e);
-                    MessageUtils.sendMessage(message.getChannel(), null, "Error occurred while executing command " + commandName, e);
+                    MessageUtils.sendErrorMessage(message.getChannel(), null, "Error occurred while executing command " + commandName, e);
                 }
             } else {
                 LOGGER.info("User {} don't have permission to use command {}", by.getName(), commandName);
