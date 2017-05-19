@@ -1,10 +1,9 @@
 package com.omega.database.impl.morphia.entity;
 
 import com.omega.PermissionManager;
-import com.omega.database.entity.permission.GroupPermissions;
+import com.omega.database.DatastoreManagerSingleton;
 import com.omega.database.entity.permission.GuildPermissions;
-import com.omega.database.entity.permission.UserPermissions;
-import com.omega.database.impl.morphia.converter.UserTypeConverter;
+import com.omega.database.impl.morphia.repository.MorphiaGroupPermissionsRepository;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.*;
 import sx.blah.discord.handle.obj.IGuild;
@@ -13,9 +12,8 @@ import sx.blah.discord.handle.obj.IUser;
 import java.util.HashMap;
 import java.util.Map;
 
-@Converters(value = UserTypeConverter.class)
 @Entity(value = "guild_permissions", noClassnameStored = true)
-public class MorphiaGuildPermissions extends GuildPermissions {
+public class MorphiaGuildPermissions extends GuildPermissions<MorphiaUserPermissions, MorphiaGroupPermissions> {
 
     @Id
     private ObjectId id;
@@ -25,22 +23,26 @@ public class MorphiaGuildPermissions extends GuildPermissions {
     private IGuild guild;
 
     @Embedded
-    private Map<IUser, UserPermissions> userPermissionsMap;
+    private Map<IUser, MorphiaUserPermissions> userPermissionsMap = new HashMap<>();
 
     @Embedded
-    private Map<String, GroupPermissions> groupPermissionsMap;
+    private Map<String, MorphiaGroupPermissions> groupPermissionsMap = new HashMap<>();
 
     public MorphiaGuildPermissions() {
-        this.userPermissionsMap = new HashMap<>();
-        this.groupPermissionsMap = new HashMap<>();
-
-        groupPermissionsMap.put("default", new GroupPermissions(PermissionManager.createDefaultGroup()));
     }
 
     public MorphiaGuildPermissions(IGuild guild) {
-        this();
-
+        this.id = new ObjectId();
         this.guild = guild;
+
+        MorphiaGroupPermissionsRepository repository = DatastoreManagerSingleton.getInstance()
+            .getRepository(MorphiaGroupPermissionsRepository.class);
+
+        MorphiaGroupPermissions group = (MorphiaGroupPermissions) repository.create(PermissionManager.getInstance()
+            .createDefaultGroup());
+        getGroupPermissionsMap().put("default", group);
+
+        repository.save(group);
     }
 
     @Override
@@ -54,12 +56,12 @@ public class MorphiaGuildPermissions extends GuildPermissions {
     }
 
     @Override
-    public Map<IUser, UserPermissions> getUserPermissionsMap() {
+    public Map<IUser, MorphiaUserPermissions> getUserPermissionsMap() {
         return userPermissionsMap;
     }
 
     @Override
-    public Map<String, GroupPermissions> getGroupPermissionsMap() {
+    public Map<String, MorphiaGroupPermissions> getGroupPermissionsMap() {
         return groupPermissionsMap;
     }
 }

@@ -1,6 +1,8 @@
 package com.omega.database.entity.permission;
 
 import com.omega.PermissionManager;
+import com.omega.database.DatastoreManagerSingleton;
+import com.omega.database.repository.UserPermissionsRepository;
 import sx.blah.discord.handle.obj.IUser;
 
 import java.util.Map;
@@ -10,7 +12,7 @@ public abstract class PrivateChannelPermissions {
     private transient final GroupPermissions DEFAULT_GROUP;
 
     public PrivateChannelPermissions() {
-        this.DEFAULT_GROUP = PermissionManager.createDefaultGroup();
+        this.DEFAULT_GROUP = PermissionManager.getInstance().createDefaultGroup();
     }
 
     public abstract Map<IUser, UserPermissions> getUserPermissionsMap();
@@ -26,10 +28,14 @@ public abstract class PrivateChannelPermissions {
     }
 
     public void addUserPermission(IUser user, String permission) {
+        UserPermissionsRepository repository = DatastoreManagerSingleton.getInstance()
+            .getRepository(UserPermissionsRepository.class);
+
         Map<IUser, UserPermissions> userPermissionsMap = getUserPermissionsMap();
         UserPermissions userPermissions;
+
         if (!userPermissionsMap.containsKey(user)) {
-            userPermissions = new UserPermissions(user, DEFAULT_GROUP);
+            userPermissions = repository.create(user, DEFAULT_GROUP);
             userPermissionsMap.put(user, userPermissions);
         } else {
             userPermissions = userPermissionsMap.get(user);
@@ -39,10 +45,14 @@ public abstract class PrivateChannelPermissions {
     }
 
     public void addUserPermissions(IUser user, String... permissions) {
+        UserPermissionsRepository repository = DatastoreManagerSingleton.getInstance()
+            .getRepository(UserPermissionsRepository.class);
+
         Map<IUser, UserPermissions> userPermissionsMap = getUserPermissionsMap();
         UserPermissions userPermissions;
+
         if (!userPermissionsMap.containsKey(user)) {
-            userPermissions = new UserPermissions(user, DEFAULT_GROUP);
+            userPermissions = repository.create(user, DEFAULT_GROUP);
             userPermissionsMap.put(user, userPermissions);
         } else {
             userPermissions = userPermissionsMap.get(user);
@@ -60,10 +70,14 @@ public abstract class PrivateChannelPermissions {
     }
 
     public void removeUserPermission(IUser user, String permission) {
+        UserPermissionsRepository repository = DatastoreManagerSingleton.getInstance()
+            .getRepository(UserPermissionsRepository.class);
+
         Map<IUser, UserPermissions> userPermissionsMap = getUserPermissionsMap();
         UserPermissions userPermissions;
+
         if (!userPermissionsMap.containsKey(user)) {
-            userPermissions = new UserPermissions(user, DEFAULT_GROUP);
+            userPermissions = repository.create(user, DEFAULT_GROUP);
             userPermissionsMap.put(user, userPermissions);
         } else {
             userPermissions = userPermissionsMap.get(user);
@@ -73,10 +87,14 @@ public abstract class PrivateChannelPermissions {
     }
 
     public void removeUserPermissions(IUser user, String... permissions) {
+        UserPermissionsRepository repository = DatastoreManagerSingleton.getInstance()
+            .getRepository(UserPermissionsRepository.class);
+
         Map<IUser, UserPermissions> userPermissionsMap = getUserPermissionsMap();
         UserPermissions userPermissions;
+
         if (!userPermissionsMap.containsKey(user)) {
-            userPermissions = new UserPermissions(user, DEFAULT_GROUP);
+            userPermissions = repository.create(user, DEFAULT_GROUP);
             userPermissionsMap.put(user, userPermissions);
         } else {
             userPermissions = userPermissionsMap.get(user);

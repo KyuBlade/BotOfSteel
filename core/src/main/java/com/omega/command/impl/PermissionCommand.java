@@ -23,7 +23,7 @@ import java.util.stream.IntStream;
 @Command(name = "permission", aliases = "perm")
 public class PermissionCommand extends AbstractCommand {
 
-    private static GroupPermissions DEFAULT_GROUP = PermissionManager.createDefaultGroup();
+    private static GroupPermissions DEFAULT_GROUP = PermissionManager.getInstance().createDefaultGroup();
 
     public PermissionCommand(IUser by, IMessage message) {
         super(by, message);

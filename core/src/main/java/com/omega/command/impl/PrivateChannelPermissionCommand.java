@@ -43,7 +43,7 @@ public class PrivateChannelPermissionCommand extends AbstractCommand {
         } else {
             UserPermissions userPermissions = permMgr.getPrivateChannelPermissionsFor(user);
             List<String> permissions = new ArrayList<>();
-            permissions.addAll(PermissionManager.DEFAULT_GROUP.getPermissions());
+            permissions.addAll(PermissionManager.getInstance().getDefaultGroup().getPermissions());
 
             Set<PermissionOverride> permOverrides = userPermissions.getPermissions();
             for (PermissionOverride permOverride : permOverrides) {

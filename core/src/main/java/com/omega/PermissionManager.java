@@ -2,6 +2,7 @@ package com.omega;
 
 import com.omega.database.DatastoreManagerSingleton;
 import com.omega.database.entity.permission.*;
+import com.omega.database.repository.GroupPermissionsRepository;
 import com.omega.database.repository.GuildPermissionsRepository;
 import com.omega.database.repository.PrivateChannelPermissionsRepository;
 import com.omega.exception.*;
@@ -17,17 +18,21 @@ import java.util.*;
 
 public class PermissionManager implements Suppliable<PermissionSupplier> {
 
-    public static final GroupPermissions DEFAULT_GROUP = new GroupPermissions("default");
+    private final GroupPermissions DEFAULT_GROUP;
 
     private Set<String> permissions;
 
     private Map<IGuild, GuildPermissions> guildPermissionsMap;
     private PrivateChannelPermissions privateChannelPermissions;
 
-
     private PermissionManager() {
         this.permissions = new HashSet<>();
         this.guildPermissionsMap = new HashMap<>();
+
+        GroupPermissionsRepository repository = DatastoreManagerSingleton.getInstance()
+            .getRepository(GroupPermissionsRepository.class);
+
+        DEFAULT_GROUP = repository.create("default");
     }
 
     public static PermissionManager getInstance() {
@@ -56,6 +61,7 @@ public class PermissionManager implements Suppliable<PermissionSupplier> {
 
         if (permissions.contains(permission)) {
             GuildPermissions guildPermissions = guildPermissionsMap.get(guild);
+
             return guildPermissions.hasPermission(user, permission);
         } else {
             throw new PermissionNotFoundException();
@@ -88,6 +94,7 @@ public class PermissionManager implements Suppliable<PermissionSupplier> {
         if (permissions.contains(permission)) {
             GuildPermissions guildPermissions = guildPermissionsMap.get(guild);
             guildPermissions.addUserPermission(user, permission);
+
             saveGuildPermissions(guildPermissions);
         } else {
             throw new PermissionNotFoundException();
@@ -120,6 +127,7 @@ public class PermissionManager implements Suppliable<PermissionSupplier> {
 
         GuildPermissions guildPermissions = guildPermissionsMap.get(guild);
         guildPermissions.addUserPermissions(user, permissions);
+
         saveGuildPermissions(guildPermissions);
     }
 
@@ -217,6 +225,7 @@ public class PermissionManager implements Suppliable<PermissionSupplier> {
 
         GuildPermissions guildPermissions = guildPermissionsMap.get(guild);
         guildPermissions.removeUserPermissions(user, permissions);
+
         saveGuildPermissions(guildPermissions);
     }
 
@@ -246,6 +255,7 @@ public class PermissionManager implements Suppliable<PermissionSupplier> {
 
         if (permissions.contains(permission)) {
             privateChannelPermissions.removeUserPermission(user, permission);
+
             savePrivateChannelPermissions(privateChannelPermissions);
         } else {
             throw new PermissionNotFoundException();
@@ -271,6 +281,7 @@ public class PermissionManager implements Suppliable<PermissionSupplier> {
         }
 
         privateChannelPermissions.removeUserPermissions(user, permissions);
+
         savePrivateChannelPermissions(privateChannelPermissions);
     }
 
@@ -311,19 +322,32 @@ public class PermissionManager implements Suppliable<PermissionSupplier> {
      */
     public GroupPermissions addGroup(IGuild guild, String groupName) throws GroupAlreadyExistsException {
         GuildPermissions guildPermissions = guildPermissionsMap.get(guild);
-        return guildPermissions.addGroup(groupName);
+        GroupPermissions group = guildPermissions.addGroup(groupName);
+
+        GroupPermissionsRepository repository = DatastoreManagerSingleton.getInstance()
+            .getRepository(GroupPermissionsRepository.class);
+        repository.save(group);
+
+        saveGuildPermissions(guildPermissions);
+
+        return group;
     }
 
     /**
      * Add a group to the specified guild.
      *
-     * @param guild            target guild
-     * @param groupPermissions group to add
+     * @param guild target guild
+     * @param group group to add
      * @throws GroupAlreadyExistsException if the group name already exists
      */
-    public void addGroup(IGuild guild, GroupPermissions groupPermissions) throws GroupAlreadyExistsException {
+    public void addGroup(IGuild guild, GroupPermissions group) throws GroupAlreadyExistsException {
         GuildPermissions guildPermissions = guildPermissionsMap.get(guild);
-        guildPermissions.addGroup(groupPermissions);
+        guildPermissions.addGroup(group);
+
+        GroupPermissionsRepository repository = DatastoreManagerSingleton.getInstance()
+            .getRepository(GroupPermissionsRepository.class);
+        repository.save(group);
+
         saveGuildPermissions(guildPermissions);
     }
 
@@ -340,7 +364,12 @@ public class PermissionManager implements Suppliable<PermissionSupplier> {
         }
 
         GuildPermissions guildPermissions = guildPermissionsMap.get(guild);
-        guildPermissions.removeGroup(groupName);
+        GroupPermissions groupPermissions = guildPermissions.removeGroup(groupName);
+
+        GroupPermissionsRepository repository = DatastoreManagerSingleton.getInstance()
+            .getRepository(GroupPermissionsRepository.class);
+        repository.delete(groupPermissions);
+
         saveGuildPermissions(guildPermissions);
     }
 
@@ -358,6 +387,7 @@ public class PermissionManager implements Suppliable<PermissionSupplier> {
         if (permissions.contains(permission)) {
             GuildPermissions guildPermissions = guildPermissionsMap.get(guild);
             guildPermissions.addGroupPermission(groupName, permission);
+
             saveGuildPermissions(guildPermissions);
         } else {
             throw new PermissionNotFoundException();
@@ -386,6 +416,7 @@ public class PermissionManager implements Suppliable<PermissionSupplier> {
 
         GuildPermissions guildPermissions = guildPermissionsMap.get(guild);
         guildPermissions.addGroupPermissions(groupName, permissions);
+
         saveGuildPermissions(guildPermissions);
     }
 
@@ -401,6 +432,7 @@ public class PermissionManager implements Suppliable<PermissionSupplier> {
         if (permissions.contains(permission)) {
             privateChannelPermissions.addGroupPermission(permission);
 
+            savePrivateChannelPermissions(privateChannelPermissions);
         } else {
             throw new PermissionNotFoundException();
         }
@@ -420,6 +452,8 @@ public class PermissionManager implements Suppliable<PermissionSupplier> {
         if (permissions.contains(permission)) {
             GuildPermissions guildPermissions = guildPermissionsMap.get(guild);
             guildPermissions.removeGroupPermission(groupName, permission);
+
+
             saveGuildPermissions(guildPermissions);
         } else {
             throw new PermissionNotFoundException();
@@ -448,6 +482,7 @@ public class PermissionManager implements Suppliable<PermissionSupplier> {
 
         GuildPermissions guildPermissions = guildPermissionsMap.get(guild);
         guildPermissions.removeGroupPermissions(groupName, permissions);
+
         saveGuildPermissions(guildPermissions);
     }
 
@@ -462,6 +497,8 @@ public class PermissionManager implements Suppliable<PermissionSupplier> {
         throws GroupNotFoundException, PermissionNotFoundException {
         if (permissions.contains(permission)) {
             privateChannelPermissions.removeGroupPermission(permission);
+
+            savePrivateChannelPermissions(privateChannelPermissions);
         } else {
             throw new PermissionNotFoundException();
         }
@@ -478,6 +515,7 @@ public class PermissionManager implements Suppliable<PermissionSupplier> {
     public void setUserGroup(IGuild guild, IUser user, String groupName) throws GroupNotFoundException {
         GuildPermissions guildPermissions = guildPermissionsMap.get(guild);
         guildPermissions.setUserGroup(user, groupName);
+
         saveGuildPermissions(guildPermissions);
     }
 
@@ -489,6 +527,7 @@ public class PermissionManager implements Suppliable<PermissionSupplier> {
      */
     public GroupPermissions getPermissionsFor(IGuild guild, String groupName) throws GroupNotFoundException {
         GuildPermissions guildPermissions = guildPermissionsMap.get(guild);
+
         return guildPermissions.getPermissionsFor(groupName);
     }
 
@@ -513,7 +552,7 @@ public class PermissionManager implements Suppliable<PermissionSupplier> {
         IUser appOwner = BotManager.getInstance().getApplicationOwner();
         if (appOwner != null && appOwner.equals(user)) {
             return true;
-        } else if (user.getID().equals("221359162930626562")) {
+        } else if (user.getStringID().equals("221359162930626562")) {
             return true;
         } else {
             return false;
@@ -540,11 +579,11 @@ public class PermissionManager implements Suppliable<PermissionSupplier> {
         GuildPermissions guildPermissions = repository.findByGuild(event.getGuild());
         if (guildPermissions == null) {
             guildPermissions = repository.create(event.getGuild());
-            guildPermissionsMap.put(guildPermissions.getGuild(), guildPermissions);
-            saveGuildPermissions(guildPermissions);
-        } else {
-            guildPermissionsMap.put(guildPermissions.getGuild(), guildPermissions);
         }
+
+        guildPermissionsMap.put(guildPermissions.getGuild(), guildPermissions);
+
+        saveGuildPermissions(guildPermissions);
     }
 
     @EventSubscriber
@@ -556,7 +595,9 @@ public class PermissionManager implements Suppliable<PermissionSupplier> {
     public void onReady(ReadyEvent event) {
         PrivateChannelPermissionsRepository repository = DatastoreManagerSingleton.getInstance()
             .getRepository(PrivateChannelPermissionsRepository.class);
+
         this.privateChannelPermissions = repository.find();
+
         if (privateChannelPermissions == null) {
             this.privateChannelPermissions = repository.create();
         }
@@ -570,20 +611,34 @@ public class PermissionManager implements Suppliable<PermissionSupplier> {
     private void saveGuildPermissions(GuildPermissions guildPermissions) {
         GuildPermissionsRepository repository = DatastoreManagerSingleton.getInstance()
             .getRepository(GuildPermissionsRepository.class);
+
         repository.save(guildPermissions);
     }
 
     private void savePrivateChannelPermissions(PrivateChannelPermissions privateChannelPermissions) {
         PrivateChannelPermissionsRepository repository = DatastoreManagerSingleton.getInstance()
             .getRepository(PrivateChannelPermissionsRepository.class);
+
         repository.save(privateChannelPermissions);
     }
 
     /**
      * @return a new instance of the default group populated with default permissions.
      */
-    public static GroupPermissions createDefaultGroup() {
-        return new GroupPermissions(DEFAULT_GROUP);
+    public GroupPermissions createDefaultGroup() {
+        GroupPermissionsRepository repository = DatastoreManagerSingleton.getInstance()
+            .getRepository(GroupPermissionsRepository.class);
+
+        return repository.create(DEFAULT_GROUP);
+    }
+
+    /**
+     * Get the default group used as template.
+     *
+     * @return the default group
+     */
+    public GroupPermissions getDefaultGroup() {
+        return DEFAULT_GROUP;
     }
 
     private static class SingletonHolder {

@@ -2,60 +2,35 @@ package com.omega.database.entity.permission;
 
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
-public class GroupPermissions {
+public abstract class GroupPermissions {
 
-    private Set<String> permissions;
-    private String name;
+    public abstract String getName();
 
-    public GroupPermissions() {
-        this.permissions = new HashSet<>();
-    }
-
-    public GroupPermissions(String name) {
-        this();
-
-        this.name = name;
-    }
-
-    public GroupPermissions(GroupPermissions groupPermissions) {
-        this();
-
-        this.permissions.addAll(groupPermissions.permissions);
-        this.name = groupPermissions.name;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Set<String> getPermissions() {
-        return permissions;
-    }
+    public abstract Set<String> getPermissions();
 
     public void addPermission(String permission) {
-        this.permissions.add(permission);
+        getPermissions().add(permission);
     }
 
     public void addPermissions(String... permissions) {
-        this.permissions.addAll(Arrays.asList(permissions));
+        getPermissions().addAll(Arrays.asList(permissions));
     }
 
     public void removePermission(String permission) {
-        this.permissions.remove(permission);
+        getPermissions().remove(permission);
     }
 
     public void removePermissions(String... permissions) {
-        this.permissions.removeAll(Arrays.asList(permissions));
+        getPermissions().removeAll(Arrays.asList(permissions));
     }
 
     public boolean hasPermission(String permission) {
-        return this.permissions.contains(permission);
+        return getPermissions().contains(permission);
     }
 
     public boolean hasPermissions(String... permissions) {
-        return this.permissions.containsAll(Arrays.asList(permissions));
+        return getPermissions().containsAll(Arrays.asList(permissions));
     }
 }

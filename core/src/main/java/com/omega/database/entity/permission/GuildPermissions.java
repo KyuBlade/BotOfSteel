@@ -1,6 +1,8 @@
 package com.omega.database.entity.permission;
 
-import com.omega.PermissionManager;
+import com.omega.database.DatastoreManagerSingleton;
+import com.omega.database.repository.GroupPermissionsRepository;
+import com.omega.database.repository.UserPermissionsRepository;
 import com.omega.exception.GroupAlreadyExistsException;
 import com.omega.exception.GroupNotFoundException;
 import sx.blah.discord.handle.obj.IGuild;
@@ -10,39 +12,42 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
-public abstract class GuildPermissions {
+public abstract class GuildPermissions<T extends UserPermissions, S extends GroupPermissions> {
 
     public enum Fields {
-        id, guild, userPermissions, groupPermissions
+        id, guild, userPermissionsMap, groupPermissionsMap
     }
 
     public abstract Object getId();
 
     public abstract IGuild getGuild();
 
-    public abstract Map<IUser, UserPermissions> getUserPermissionsMap();
+    public abstract Map<IUser, T> getUserPermissionsMap();
 
-    public abstract Map<String, GroupPermissions> getGroupPermissionsMap();
+    public abstract Map<String, S> getGroupPermissionsMap();
 
     protected GuildPermissions() {
     }
 
-    public Collection<UserPermissions> getUserPermissions() {
-        Map<IUser, UserPermissions> userPermissionsMap = getUserPermissionsMap();
+    public Collection<T> getUserPermissions() {
+        Map<IUser, T> userPermissionsMap = getUserPermissionsMap();
+
         return Collections.unmodifiableCollection(userPermissionsMap.values());
     }
 
-    public Collection<GroupPermissions> getGroupPermissions() {
-        Map<String, GroupPermissions> groupPermissionsMap = getGroupPermissionsMap();
+    public Collection<S> getGroupPermissions() {
+        Map<String, S> groupPermissionsMap = getGroupPermissionsMap();
+
         return Collections.unmodifiableCollection(groupPermissionsMap.values());
     }
 
-    public UserPermissions getPermissionsFor(IUser user) {
+    public T getPermissionsFor(IUser user) {
         return getUserPermissionsMap().get(user);
     }
 
-    public GroupPermissions getPermissionsFor(String groupName) throws GroupNotFoundException {
-        Map<String, GroupPermissions> groupPermissionsMap = getGroupPermissionsMap();
+    public S getPermissionsFor(String groupName) throws GroupNotFoundException {
+        Map<String, S> groupPermissionsMap = getGroupPermissionsMap();
+
         if (groupPermissionsMap.containsKey(groupName)) {
             return groupPermissionsMap.get(groupName);
         } else {
@@ -70,35 +75,54 @@ public abstract class GuildPermissions {
         userPermissions.removePermissions(permissions);
     }
 
-    private UserPermissions getOrCreatePermissions(IUser user) {
-        Map<IUser, UserPermissions> userPermissionsMap = getUserPermissionsMap();
-        UserPermissions userPermissions;
+    @SuppressWarnings("unchecked")
+    private T getOrCreatePermissions(IUser user) {
+        UserPermissionsRepository repository = DatastoreManagerSingleton.getInstance()
+            .getRepository(UserPermissionsRepository.class);
+
+        Map<IUser, T> userPermissionsMap = getUserPermissionsMap();
+        T userPermissions;
+
         if (userPermissionsMap.containsKey(user)) {
             userPermissions = userPermissionsMap.get(user);
         } else {
-            userPermissions = new UserPermissions(user, PermissionManager.createDefaultGroup());
+            userPermissions = (T) repository.create(user, getDefaultGroup());
             userPermissionsMap.put(user, userPermissions);
         }
 
         return userPermissions;
     }
 
+    public S getDefaultGroup() {
+        return getGroupPermissionsMap().get("default");
+    }
+
+    @SuppressWarnings("unchecked")
     public void setUserGroup(IUser user, String groupName) throws GroupNotFoundException {
-        Map<IUser, UserPermissions> userPermissionsMap = getUserPermissionsMap();
-        GroupPermissions groupPermissions = getPermissionsFor(groupName);
-        UserPermissions userPermissions = getPermissionsFor(user);
+        UserPermissionsRepository repository = DatastoreManagerSingleton.getInstance()
+            .getRepository(UserPermissionsRepository.class);
+
+        Map<IUser, T> userPermissionsMap = getUserPermissionsMap();
+        T userPermissions = getPermissionsFor(user);
+        S groupPermissions = getPermissionsFor(groupName);
+
         if (userPermissions == null) {
-            userPermissions = new UserPermissions(user, groupPermissions);
+            userPermissions = (T) repository.create(user, groupPermissions);
             userPermissionsMap.put(user, userPermissions);
         } else {
             userPermissions.setGroup(groupPermissions);
         }
     }
 
-    public GroupPermissions addGroup(String groupName) throws GroupAlreadyExistsException {
-        Map<String, GroupPermissions> groupPermissionsMap = getGroupPermissionsMap();
+    @SuppressWarnings("unchecked")
+    public S addGroup(String groupName) throws GroupAlreadyExistsException {
+        Map<String, S> groupPermissionsMap = getGroupPermissionsMap();
+
         if (!groupPermissionsMap.containsKey(groupName)) {
-            GroupPermissions group = new GroupPermissions(groupName);
+            GroupPermissionsRepository repository = DatastoreManagerSingleton.getInstance()
+                .getRepository(GroupPermissionsRepository.class);
+
+            S group = (S) repository.create(groupName);
             groupPermissionsMap.put(groupName, group);
 
             return group;
@@ -107,8 +131,9 @@ public abstract class GuildPermissions {
         }
     }
 
-    public void addGroup(GroupPermissions groupPermissions) throws GroupAlreadyExistsException {
-        Map<String, GroupPermissions> groupPermissionsMap = getGroupPermissionsMap();
+    public void addGroup(S groupPermissions) throws GroupAlreadyExistsException {
+        Map<String, S> groupPermissionsMap = getGroupPermissionsMap();
+
         if (!groupPermissionsMap.containsKey(groupPermissions.getName())) {
             groupPermissionsMap.put(groupPermissions.getName(), groupPermissions);
         } else {
@@ -116,19 +141,28 @@ public abstract class GuildPermissions {
         }
     }
 
-    public void removeGroup(String groupName) throws GroupNotFoundException {
-        Map<String, GroupPermissions> groupPermissionsMap = getGroupPermissionsMap();
+    public GroupPermissions removeGroup(String groupName) throws GroupNotFoundException {
+        Map<String, S> groupPermissionsMap = getGroupPermissionsMap();
+
         if (groupPermissionsMap.containsKey(groupName)) {
-            groupPermissionsMap.remove(groupName);
+            getUserPermissions()
+                .forEach(user -> {
+                    if (user.getGroup().getName().equals(groupName)) {
+                        user.setGroup(getDefaultGroup());
+                    }
+                });
+
+            return groupPermissionsMap.remove(groupName);
         } else {
             throw new GroupNotFoundException();
         }
     }
 
     public void addGroupPermission(String groupName, String permission) throws GroupNotFoundException {
-        Map<String, GroupPermissions> groupPermissionsMap = getGroupPermissionsMap();
+        Map<String, S> groupPermissionsMap = getGroupPermissionsMap();
+
         if (groupPermissionsMap.containsKey(groupName)) {
-            GroupPermissions groupPermissions = groupPermissionsMap.get(groupName);
+            S groupPermissions = groupPermissionsMap.get(groupName);
             groupPermissions.addPermission(permission);
         } else {
             throw new GroupNotFoundException();
@@ -136,9 +170,10 @@ public abstract class GuildPermissions {
     }
 
     public void addGroupPermissions(String groupName, String... permissions) throws GroupNotFoundException {
-        Map<String, GroupPermissions> groupPermissionsMap = getGroupPermissionsMap();
+        Map<String, S> groupPermissionsMap = getGroupPermissionsMap();
+
         if (groupPermissionsMap.containsKey(groupName)) {
-            GroupPermissions groupPermissions = groupPermissionsMap.get(groupName);
+            S groupPermissions = groupPermissionsMap.get(groupName);
             groupPermissions.addPermissions(permissions);
         } else {
             throw new GroupNotFoundException();
@@ -146,9 +181,10 @@ public abstract class GuildPermissions {
     }
 
     public void removeGroupPermission(String groupName, String permission) throws GroupNotFoundException {
-        Map<String, GroupPermissions> groupPermissionsMap = getGroupPermissionsMap();
+        Map<String, S> groupPermissionsMap = getGroupPermissionsMap();
+
         if (groupPermissionsMap.containsKey(groupName)) {
-            GroupPermissions groupPermissions = groupPermissionsMap.get(groupName);
+            S groupPermissions = groupPermissionsMap.get(groupName);
             groupPermissions.removePermission(permission);
         } else {
             throw new GroupNotFoundException();
@@ -156,9 +192,10 @@ public abstract class GuildPermissions {
     }
 
     public void removeGroupPermissions(String groupName, String... permissions) throws GroupNotFoundException {
-        Map<String, GroupPermissions> groupPermissionsMap = getGroupPermissionsMap();
+        Map<String, S> groupPermissionsMap = getGroupPermissionsMap();
+
         if (groupPermissionsMap.containsKey(groupName)) {
-            GroupPermissions groupPermissions = groupPermissionsMap.get(groupName);
+            S groupPermissions = groupPermissionsMap.get(groupName);
             groupPermissions.removePermissions(permissions);
         } else {
             throw new GroupNotFoundException();
@@ -166,15 +203,15 @@ public abstract class GuildPermissions {
     }
 
     public boolean hasPermission(IUser user, String permission) {
-        Map<IUser, UserPermissions> userPermissionsMap = getUserPermissionsMap();
-        Map<String, GroupPermissions> groupPermissionsMap = getGroupPermissionsMap();
+        Map<IUser, T> userPermissionsMap = getUserPermissionsMap();
+        Map<String, S> groupPermissionsMap = getGroupPermissionsMap();
+
         if (userPermissionsMap.containsKey(user)) {
-            UserPermissions userPermissions = userPermissionsMap.get(user);
+            T userPermissions = userPermissionsMap.get(user);
+
             return userPermissions.hasPermission(permission);
         } else {
-            groupPermissionsMap.get("default").hasPermission(permission);
+            return groupPermissionsMap.get("default").hasPermission(permission);
         }
-
-        return false;
     }
 }

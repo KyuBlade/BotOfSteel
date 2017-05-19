@@ -42,7 +42,7 @@ public class MorphiaDBTest {
     @Before
     public void setUp() throws IOException, ClassNotFoundException, NoSuchFieldException, InstantiationException, IllegalAccessException {
         mongodExe = starter.prepare(new MongodConfigBuilder()
-            .version(Version.Main.PRODUCTION)
+            .version(Version.Main.DEVELOPMENT)
             .net(new Net("localhost", PORT, Network.localhostIsIPv6()))
             .cmdOptions(new MongoCmdOptionsBuilder()
                 .syncDelay(10)

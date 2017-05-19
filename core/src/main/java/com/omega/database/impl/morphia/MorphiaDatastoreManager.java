@@ -5,10 +5,7 @@ import com.omega.database.impl.morphia.converter.ChannelTypeConverter;
 import com.omega.database.impl.morphia.converter.GuildTypeConverter;
 import com.omega.database.impl.morphia.converter.RoleTypeConverter;
 import com.omega.database.impl.morphia.converter.UserTypeConverter;
-import com.omega.database.impl.morphia.repository.MorphiaBotPropertiesRepository;
-import com.omega.database.impl.morphia.repository.MorphiaGuildPropertiesRepository;
-import com.omega.database.impl.morphia.repository.MorphiaGuildPermissionsRepository;
-import com.omega.database.impl.morphia.repository.MorphiaPrivateChannelPermissionsRepository;
+import com.omega.database.impl.morphia.repository.*;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
 import org.mongodb.morphia.converters.Converters;
@@ -31,6 +28,8 @@ public class MorphiaDatastoreManager extends DatastoreManager {
         addRepositories(
             new MorphiaGuildPropertiesRepository(datastore),
             new MorphiaGuildPermissionsRepository(datastore),
+            new MorphiaGroupPermissionsRepository(datastore),
+            new MorphiaUserPermissionsRepository(datastore),
             new MorphiaPrivateChannelPermissionsRepository(datastore),
             new MorphiaBotPropertiesRepository(datastore)
         );

@@ -84,7 +84,7 @@ public class PermissionTest {
             }
         });
 
-        permMgr.addGroup(guild, PermissionManager.createDefaultGroup());
+        permMgr.addGroup(guild, PermissionManager.getInstance().createDefaultGroup());
     }
 
     @Test
