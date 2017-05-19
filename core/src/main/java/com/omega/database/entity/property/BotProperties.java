@@ -1,7 +1,6 @@
 package com.omega.database.entity.property;
 
 import com.omega.BotManager;
-import com.omega.database.DatastoreManagerSingleton;
 import com.omega.database.repository.BotPropertiesRepository;
 import com.omega.guild.property.PropertyChangeTask;
 import com.omega.guild.property.PropertyDefinition;
@@ -19,6 +18,10 @@ public abstract class BotProperties extends Properties {
 
     private static final Map<String, PropertyDefinition> PROPERTY_DEFINITIONS = new HashMap<>();
 
+    protected BotProperties() {
+        super(BotPropertiesRepository.class);
+    }
+
     public abstract Object getId();
 
     @Override
@@ -30,13 +33,6 @@ public abstract class BotProperties extends Properties {
     @Override
     protected void executePropertyChangeTask(PropertyChangeTask task, Property property, boolean init) {
         task.execute(BotManager.getInstance(), property, init);
-    }
-
-    @Override
-    public void save() {
-        BotPropertiesRepository repository = DatastoreManagerSingleton.getInstance()
-            .getRepository(BotPropertiesRepository.class);
-        repository.save(this);
     }
 
     /**

@@ -1,5 +1,7 @@
 package com.omega.database.entity.property;
 
+import com.omega.database.DatastoreManagerSingleton;
+import com.omega.database.repository.PropertyRepository;
 import com.omega.exception.PropertyNotFoundException;
 import com.omega.guild.property.PropertyChangeTask;
 import com.omega.guild.property.PropertyDefinition;
@@ -12,13 +14,24 @@ public abstract class Properties {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Properties.class);
 
+    private final Class<? extends PropertyRepository> repositoryType;
+
+    protected Properties(Class<? extends PropertyRepository> repositoryType) {
+        this.repositoryType = repositoryType;
+    }
+
     public abstract Map<String, Property> getProperties();
 
     public abstract Map<String, PropertyDefinition> getPropertyDefinitions();
 
     protected abstract void executePropertyChangeTask(PropertyChangeTask task, Property property, boolean init);
 
-    public abstract void save();
+    @SuppressWarnings("unchecked")
+    public void save() {
+        PropertyRepository repository = DatastoreManagerSingleton.getInstance()
+            .getRepository(repositoryType);
+        repository.save(this);
+    }
 
     public void initLoad() {
         getProperties().forEach((propertyName, property) -> {
@@ -26,7 +39,11 @@ public abstract class Properties {
                 if (propertyDefinition != null) {
                     PropertyChangeTask task = propertyDefinition.getTask();
                     if (task != null) {
-                        executePropertyChangeTask(task, property, false);
+                        try {
+                            executePropertyChangeTask(task, property, false);
+                        } catch (Exception e) {
+                            LOGGER.warn("Exception occurred while executing property change task for property {}", propertyName, e);
+                        }
                     }
                 } else {
                     LOGGER.debug("Property {} not found", propertyName);

@@ -27,6 +27,8 @@ public class MorphiaGuildProperties extends GuildProperties {
     private Map<String, Property> properties;
 
     public MorphiaGuildProperties() {
+        super();
+
         this.properties = new HashMap<>();
     }
 

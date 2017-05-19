@@ -10,6 +10,9 @@ public class MusicVolumeGuildPropertyChangeTask implements GuildPropertyChangeTa
     @Override
     public void execute(GuildContext context, LongProperty property, boolean init) {
         GuildAudioPlayer audioPlayer = (GuildAudioPlayer) context.getModuleComponent(MusicModule.AUDIO_PLAYER_COMPONENT);
-        audioPlayer.setVolume(property.getValue().intValue());
+        audioPlayer.setVolume(
+            property.getValue()
+                .intValue()
+        );
     }
 }

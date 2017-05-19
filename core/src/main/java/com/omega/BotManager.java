@@ -2,13 +2,16 @@ package com.omega;
 
 import com.omega.command.CommandManager;
 import com.omega.command.CoreCommandSupplier;
+import com.omega.database.DatastoreManagerSingleton;
 import com.omega.database.entity.permission.CorePermissionSupplier;
 import com.omega.database.entity.property.BotProperties;
 import com.omega.database.entity.property.GuildProperties;
+import com.omega.database.repository.BotPropertiesRepository;
 import com.omega.guild.property.CoreGuildPropertySupplier;
 import com.omega.listener.MessageListener;
 import com.omega.listener.StateListener;
 import com.omega.property.CoreBotPropertySupplier;
+import com.omega.setup.BotSetup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sx.blah.discord.api.ClientBuilder;
@@ -23,6 +26,7 @@ public class BotManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BotManager.class);
 
+    private boolean init;
     private BotProperties botProperties;
     private ClientBuilder clientBuilder;
     private IDiscordClient client;
@@ -36,10 +40,23 @@ public class BotManager {
     }
 
     public void init() throws Exception {
+        if (init) {
+            LOGGER.info("BotManager already initialized");
+            return;
+        }
+
         BotProperties.supply(new CoreBotPropertySupplier());
-        BotSetup botSetup = new BotSetup();
-        botSetup.setup();
-        this.botProperties = botSetup.getBotProperties();
+
+        BotPropertiesRepository repository = DatastoreManagerSingleton.getInstance()
+            .getRepository(BotPropertiesRepository.class);
+
+        this.botProperties = repository.get();
+        if (this.botProperties == null) {
+            BotSetup botSetup = new BotSetup();
+            botSetup.setup();
+
+            this.botProperties = botSetup.getBotProperties();
+        }
 
         CommandManager.getInstance().supply(new CoreCommandSupplier());
         GuildProperties.supply(new CoreGuildPropertySupplier());
@@ -49,30 +66,33 @@ public class BotManager {
         clientBuilder.withToken(botProperties.getProperty(CoreBotPropertySupplier.BOT_TOKEN, String.class))
             .withShards(botProperties.getProperty(CoreBotPropertySupplier.SHARD_COUNT, Integer.class));
         this.client = clientBuilder.build();
+
+        EventDispatcher dispatcher = client.getDispatcher();
+        dispatcher.registerListener(PermissionManager.getInstance());
+        dispatcher.registerListener(new StateListener());
+        dispatcher.registerListener(new MessageListener(client));
+        dispatcher.registerListener(CommandManager.getInstance());
+        dispatcher.registerListener(this);
+
+        init = true;
     }
 
     public void connect() {
         try {
             client.login();
-            EventDispatcher dispatcher = client.getDispatcher();
-            dispatcher.registerListener(PermissionManager.getInstance());
-            dispatcher.registerListener(new StateListener());
-            dispatcher.registerListener(new MessageListener(client));
-            dispatcher.registerListener(CommandManager.getInstance());
-            dispatcher.registerListener(this);
         } catch (DiscordException e) {
             LOGGER.error("Unable to connect the bot", e);
         }
     }
 
     @EventSubscriber
-    public void postConnect(ReadyEvent event) {
+    public void onReady(ReadyEvent event) {
         try {
             this.applicationOwner = getClient().getApplicationOwner();
             LOGGER.debug("Application owner set : {}", applicationOwner.getName());
         } catch (DiscordException e) {
             LOGGER.warn("Unable to get application owner, retrying");
-            postConnect(event);
+            onReady(event);
         }
     }
 

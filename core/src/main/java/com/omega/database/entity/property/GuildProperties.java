@@ -1,6 +1,5 @@
 package com.omega.database.entity.property;
 
-import com.omega.database.DatastoreManagerSingleton;
 import com.omega.database.repository.GuildPropertiesRepository;
 import com.omega.guild.GuildContext;
 import com.omega.guild.property.PropertyChangeTask;
@@ -21,6 +20,7 @@ public abstract class GuildProperties extends Properties {
     private static final Map<String, PropertyDefinition> PROPERTY_DEFINITIONS = new HashMap<>();
 
     public GuildProperties() {
+        super(GuildPropertiesRepository.class);
     }
 
     public abstract Object getId();
@@ -42,12 +42,6 @@ public abstract class GuildProperties extends Properties {
         setGuildContext(guildContext);
 
         initDefault();
-    }
-
-    public void save() {
-        GuildPropertiesRepository propertiesRepository = DatastoreManagerSingleton.getInstance()
-            .getRepository(GuildPropertiesRepository.class);
-        propertiesRepository.save(this);
     }
 
     @SuppressWarnings("unchecked")
