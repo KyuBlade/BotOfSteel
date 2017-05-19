@@ -3,7 +3,7 @@ package com.omega.database.entity;
 public abstract class AudioTrack {
 
     public enum Fields {
-        id, title, author, source, length;
+        id, title, author, source, length
     }
 
     public AudioTrack() {

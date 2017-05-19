@@ -15,7 +15,7 @@ public class ChannelTypeConverter extends TypeConverter implements SimpleValueCo
 
     @Override
     public Object decode(Class<?> targetClass, Object fromDBObject, MappedField optionalExtraInfo) {
-        return BotManager.getInstance().getClient().getChannelByID((String) fromDBObject);
+        return BotManager.getInstance().getClient().getChannelByID((long) fromDBObject);
     }
 
     @Override
@@ -24,6 +24,6 @@ public class ChannelTypeConverter extends TypeConverter implements SimpleValueCo
             return null;
         }
 
-        return ((IChannel) value).getID();
+        return ((IChannel) value).getLongID();
     }
 }

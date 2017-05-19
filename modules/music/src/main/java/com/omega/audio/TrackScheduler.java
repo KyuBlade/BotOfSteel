@@ -38,7 +38,7 @@ public class TrackScheduler extends AudioEventAdapter {
     /**
      * Add track(s) to the tail of the queue.
      *
-     * @param track
+     * @param track track to add to queue
      */
     public void queue(AudioTrack track) {
         queue(track, false);
@@ -70,13 +70,11 @@ public class TrackScheduler extends AudioEventAdapter {
     }
 
     /**
-     * @param playlist
-     * @param addHead
+     * @param playlist audio playlist to add to queue
+     * @param addHead add at start or end of the queue
      */
     public void queue(AudioPlaylist playlist, boolean addHead) {
-        playlist.getTracks().forEach(track -> {
-            queue(track, addHead);
-        });
+        playlist.getTracks().forEach(track -> queue(track, addHead));
     }
 
     /**

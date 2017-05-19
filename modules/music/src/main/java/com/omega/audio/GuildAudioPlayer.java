@@ -138,7 +138,7 @@ public class GuildAudioPlayer implements GuildModuleComponent {
      * Clear the queue, add the playlist to it and start to play.
      *
      * @param playlistName playlist to play
-     * @throws PlaylistNotFoundException
+     * @throws PlaylistNotFoundException if playlist don't exist
      */
     public void playPlaylist(String playlistName) throws PlaylistNotFoundException {
         PlaylistRepository playlistRepository = DatastoreManagerSingleton.getInstance().getRepository(PlaylistRepository.class);
@@ -257,7 +257,7 @@ public class GuildAudioPlayer implements GuildModuleComponent {
      * @param guild        The guild where this playlist was created
      * @param user         The author of the playlist
      * @return The created playlist or null
-     * @throws PlaylistAlreadyExists
+     * @throws PlaylistAlreadyExists if a playlist with this name already exist
      */
     public Playlist createPlaylist(String playlistName, Playlist.Privacy privacy, IGuild guild, IUser user) throws PlaylistAlreadyExists {
         PlaylistRepository playlistRepository = DatastoreManagerSingleton.getInstance().getRepository(PlaylistRepository.class);
@@ -277,8 +277,8 @@ public class GuildAudioPlayer implements GuildModuleComponent {
      * Sets the bitrate to the max and disallow users to talk.
      *
      * @param voiceChannel voice channel to set-up
-     * @throws DiscordException
-     * @throws MissingPermissionsException
+     * @throws DiscordException if discord error
+     * @throws MissingPermissionsException if MANAGE_CHANNEL or MANAGE_PERMISSIONS is missing
      */
     public void setMusicChannel(IVoiceChannel voiceChannel) throws DiscordException, MissingPermissionsException {
         IUser botUser = voiceChannel.getClient().getOurUser();
@@ -288,20 +288,20 @@ public class GuildAudioPlayer implements GuildModuleComponent {
         ));
 
         // Remove all role permission overrides
-        voiceChannel.getRoleOverrides().forEach((roleId, permissionOverride) -> {
+        voiceChannel.getRoleOverridesLong().forEach((roleId, permissionOverride) -> {
             final IRole role = guild.getRoleByID(roleId);
 
             RequestBuffer.request(() -> {
                     try {
                         voiceChannel.removePermissionsOverride(role);
-                    } catch (MissingPermissionsException e) {
+                    } catch (MissingPermissionsException ignored) {
                     }
                 }
             );
         });
 
         // Remove all user permission overrides
-        voiceChannel.getUserOverrides().forEach((userId, permissionOverride) -> {
+        voiceChannel.getUserOverridesLong().forEach((userId, permissionOverride) -> {
             final IUser user = guild.getUserByID(userId);
 
             RequestBuffer.request(() ->

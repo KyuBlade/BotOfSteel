@@ -24,6 +24,6 @@ public class ChannelProperty implements Property<IChannel> {
             return "null";
         }
 
-        return "Channel(" + value.getName() + ")<" + value.getID() + ">";
+        return "Channel(" + value.getName() + ")<" + value.getLongID() + ">";
     }
 }

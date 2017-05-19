@@ -31,14 +31,8 @@ public class PermissionOverride {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj instanceof String) {
-            return obj.equals(permission);
-        }
+        return obj != null && obj instanceof String && obj.equals(permission);
 
-        return false;
     }
 
     @Override

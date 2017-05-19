@@ -21,9 +21,7 @@ public class MessageWrapper {
         if (message != null) {
             message.edit(content);
         } else {
-            editOperation = () -> {
-                message.edit(content);
-            };
+            editOperation = () -> message.edit(content);
         }
     }
 
@@ -31,9 +29,7 @@ public class MessageWrapper {
         if (message != null) {
             message.edit(embed);
         } else {
-            editOperation = () -> {
-                message.edit(embed);
-            };
+            editOperation = () -> message.edit(embed);
         }
     }
 

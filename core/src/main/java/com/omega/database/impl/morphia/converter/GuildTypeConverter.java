@@ -18,7 +18,7 @@ public class GuildTypeConverter extends TypeConverter implements SimpleValueConv
         if (fromDBObject == null) {
             return null;
         }
-        return BotManager.getInstance().getClient().getGuildByID((String) fromDBObject);
+        return BotManager.getInstance().getClient().getGuildByID((long) fromDBObject);
     }
 
     @Override
@@ -27,6 +27,6 @@ public class GuildTypeConverter extends TypeConverter implements SimpleValueConv
             return null;
         }
 
-        return ((IGuild) value).getID();
+        return ((IGuild) value).getLongID();
     }
 }

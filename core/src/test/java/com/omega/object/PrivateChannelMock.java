@@ -74,6 +74,7 @@ public class PrivateChannelMock implements IPrivateChannel {
         return null;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public MessageHistory getMessageHistoryFrom(String s) {
         return null;
@@ -84,6 +85,7 @@ public class PrivateChannelMock implements IPrivateChannel {
         return null;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public MessageHistory getMessageHistoryFrom(String s, int i) {
         return null;
@@ -94,6 +96,7 @@ public class PrivateChannelMock implements IPrivateChannel {
         return null;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public MessageHistory getMessageHistoryTo(String s) {
         return null;
@@ -104,6 +107,7 @@ public class PrivateChannelMock implements IPrivateChannel {
         return null;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public MessageHistory getMessageHistoryTo(String s, int i) {
         return null;
@@ -114,6 +118,7 @@ public class PrivateChannelMock implements IPrivateChannel {
         return null;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public MessageHistory getMessageHistoryIn(String s, String s1) {
         return null;
@@ -124,6 +129,7 @@ public class PrivateChannelMock implements IPrivateChannel {
         return null;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public MessageHistory getMessageHistoryIn(String s, String s1, int i) {
         return null;
@@ -159,6 +165,7 @@ public class PrivateChannelMock implements IPrivateChannel {
         return 0;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public IMessage getMessageByID(String s) {
         return null;
@@ -344,6 +351,7 @@ public class PrivateChannelMock implements IPrivateChannel {
 
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public Map<String, PermissionOverride> getUserOverrides() {
         return null;
@@ -354,6 +362,7 @@ public class PrivateChannelMock implements IPrivateChannel {
         return null;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public Map<String, PermissionOverride> getRoleOverrides() {
         return null;
@@ -429,6 +438,7 @@ public class PrivateChannelMock implements IPrivateChannel {
         return null;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public IWebhook getWebhookByID(String s) {
         return null;
@@ -464,6 +474,7 @@ public class PrivateChannelMock implements IPrivateChannel {
         return false;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public String getID() {
         return id;
@@ -495,10 +506,12 @@ public class PrivateChannelMock implements IPrivateChannel {
     }
 
     public int hashCode() {
-        return Objects.hash(new Object[]{this.id});
+        return Objects.hash(this.id);
     }
 
     public boolean equals(Object other) {
-        return other == null ? false : this.getClass().isAssignableFrom(other.getClass()) && ((IPrivateChannel) other).getID().equals(this.getID());
+        return other != null &&
+            (this.getClass().isAssignableFrom(other.getClass()) &&
+                ((IPrivateChannel) other).getLongID() == this.getLongID());
     }
 }

@@ -227,9 +227,7 @@ public class MessageUtils {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         StringBuilder stringBuilder = new StringBuilder();
 
-        missingPermissions.forEach(permission -> {
-            stringBuilder.append(permission.name()).append('\n');
-        });
+        missingPermissions.forEach(permission -> stringBuilder.append(permission.name()).append('\n'));
 
         IUser botUser = channel.getClient().getOurUser();
         embedBuilder
@@ -247,7 +245,7 @@ public class MessageUtils {
     }
 
     public static MessageWrapper sendErrorMessage(IChannel channel, String title, String description) {
-        return sendErrorMessage(channel, title, description, null);
+        return sendErrorMessage(channel, title, description, (IEmbed.IEmbedField) null);
     }
 
     public static MessageWrapper sendErrorMessage(IChannel channel, String title, String description, IEmbed.IEmbedField... fields) {

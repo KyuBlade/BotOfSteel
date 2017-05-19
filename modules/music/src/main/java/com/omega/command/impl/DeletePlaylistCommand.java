@@ -43,7 +43,7 @@ public class DeletePlaylistCommand extends AbstractCommand {
                     LOGGER.warn("Playlist {} doesn't have a guild bound to it", playlist.getName());
 
                     sendErrorMessage("No guild bound to the playlist");
-                } else if (guild.getOwnerID().equals(by.getID())) { // Requested by the owner of the playlist
+                } else if (guild.getOwnerLongID() == by.getLongID()) { // Requested by the owner of the playlist
                     repository.delete(playlist);
 
                     sendStateMessage("Deleted playlist named " + playlist.getName());

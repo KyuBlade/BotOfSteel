@@ -50,7 +50,7 @@ public class GetVoiceChannelInfoCommand extends AbstractCommand {
 
         String invitesCount = "N/A";
         try {
-            invitesCount = String.valueOf(voiceChannel.getInvites().size());
+            invitesCount = String.valueOf(voiceChannel.getExtendedInvites().size());
         } catch (NullPointerException e) {
             invitesCount = "Need to fix NPE";
         } catch (DiscordException e) {

@@ -53,11 +53,8 @@ public class StringUtils {
      * @return true if boolean, false otherwise
      */
     public static boolean isBoolean(String value) {
-        if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")) {
-            return true;
-        }
+        return value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false");
 
-        return false;
     }
 
     /**
@@ -69,12 +66,12 @@ public class StringUtils {
     public static Object parse(String value) {
         try {
             return Long.valueOf(value);
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException ignored) {
         }
 
         try {
             return Double.valueOf(value);
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException ignored) {
         }
 
         if (value.equalsIgnoreCase("true")) {

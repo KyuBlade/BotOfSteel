@@ -31,7 +31,7 @@ public class CommandParser {
             Matcher matcher = MENTION_PATTERN.matcher(arg);
             if (matcher.find()) {
                 String prefix = matcher.group("prefix");
-                String id = matcher.group("id");
+                long id = Long.valueOf(matcher.group("id"));
 
                 switch (prefix) {
                     case "@!":

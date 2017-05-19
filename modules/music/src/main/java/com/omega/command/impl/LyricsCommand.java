@@ -51,7 +51,7 @@ public class LyricsCommand extends AbstractCommand {
             while (!messageWrapper.isSent()) {
                 try {
                     Thread.sleep(50L);
-                } catch (InterruptedException e) {
+                } catch (InterruptedException ignored) {
                 }
             }
 
@@ -96,11 +96,8 @@ public class LyricsCommand extends AbstractCommand {
                 finalEntryList = entries.stream().filter(entry -> {
                     Element child = entry.select(":nth-child(1)").first();
                     boolean cover = child.text().contains("originally by");
-                    if (cover) {
-                        return false;
-                    }
 
-                    return true;
+                    return !cover;
                 }).collect(Collectors.toList());
             }
 

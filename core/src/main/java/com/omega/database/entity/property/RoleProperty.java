@@ -24,6 +24,6 @@ public class RoleProperty implements Property<IRole> {
             return null;
         }
 
-        return "Role(" + value.getName() + ")<" + value.getID() + ">";
+        return "Role(" + value.getName() + ")<" + value.getLongID() + ">";
     }
 }

@@ -83,6 +83,7 @@ public class UserMock implements IUser {
         return null;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public Map<String, IVoiceState> getVoiceStates() {
         return null;
@@ -118,6 +119,7 @@ public class UserMock implements IUser {
 
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public String getID() {
         return id;
@@ -144,10 +146,12 @@ public class UserMock implements IUser {
     }
 
     public int hashCode() {
-        return Objects.hash(new Object[]{this.id});
+        return Objects.hash(this.id);
     }
 
     public boolean equals(Object other) {
-        return other == null ? false : this.getClass().isAssignableFrom(other.getClass()) && ((IUser) other).getID().equals(this.getID());
+        return other != null &&
+            this.getClass().isAssignableFrom(other.getClass()) &&
+                ((IUser) other).getLongID() == this.getLongID();
     }
 }

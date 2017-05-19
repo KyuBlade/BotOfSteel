@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class GuildManager {
 
-    private final Map<String, GuildContext> guilds = new HashMap<>();
+    private final Map<Long, GuildContext> guilds = new HashMap<>();
 
     private GuildManager() {
     }
@@ -22,11 +22,11 @@ public class GuildManager {
             return null;
         }
 
-        if (guilds.containsKey(guild.getID())) {
-            return guilds.get(guild.getID());
+        if (guilds.containsKey(guild.getLongID())) {
+            return guilds.get(guild.getLongID());
         } else {
             GuildContext context = new GuildContext(guild);
-            guilds.put(guild.getID(), context);
+            guilds.put(guild.getLongID(), context);
 
             return context;
         }

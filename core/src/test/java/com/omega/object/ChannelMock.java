@@ -29,6 +29,7 @@ public class ChannelMock implements IChannel {
         return null;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public MessageList getMessages() {
         return null;
@@ -74,6 +75,7 @@ public class ChannelMock implements IChannel {
         return null;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public MessageHistory getMessageHistoryFrom(String s) {
         return null;
@@ -84,6 +86,7 @@ public class ChannelMock implements IChannel {
         return null;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public MessageHistory getMessageHistoryFrom(String s, int i) {
         return null;
@@ -94,6 +97,7 @@ public class ChannelMock implements IChannel {
         return null;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public MessageHistory getMessageHistoryTo(String s) {
         return null;
@@ -104,6 +108,7 @@ public class ChannelMock implements IChannel {
         return null;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public MessageHistory getMessageHistoryTo(String s, int i) {
         return null;
@@ -114,6 +119,7 @@ public class ChannelMock implements IChannel {
         return null;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public MessageHistory getMessageHistoryIn(String s, String s1) {
         return null;
@@ -124,6 +130,7 @@ public class ChannelMock implements IChannel {
         return null;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public MessageHistory getMessageHistoryIn(String s, String s1, int i) {
         return null;
@@ -159,6 +166,7 @@ public class ChannelMock implements IChannel {
         return 0;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public IMessage getMessageByID(String s) {
         return null;
@@ -344,6 +352,7 @@ public class ChannelMock implements IChannel {
 
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public Map<String, PermissionOverride> getUserOverrides() {
         return null;
@@ -354,6 +363,7 @@ public class ChannelMock implements IChannel {
         return null;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public Map<String, PermissionOverride> getRoleOverrides() {
         return null;
@@ -429,6 +439,7 @@ public class ChannelMock implements IChannel {
         return null;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public IWebhook getWebhookByID(String s) {
         return null;
@@ -464,6 +475,7 @@ public class ChannelMock implements IChannel {
         return false;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public String getID() {
         return id;
@@ -490,10 +502,12 @@ public class ChannelMock implements IChannel {
     }
 
     public int hashCode() {
-        return Objects.hash(new Object[]{this.id});
+        return Objects.hash(this.id);
     }
 
     public boolean equals(Object other) {
-        return other == null ? false : this.getClass().isAssignableFrom(other.getClass()) && ((IChannel) other).getID().equals(this.getID());
+        return other != null &&
+            (this.getClass().isAssignableFrom(other.getClass()) &&
+                ((IChannel) other).getLongID() == this.getLongID());
     }
 }

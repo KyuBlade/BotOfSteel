@@ -49,7 +49,7 @@ public class PermissionTest {
         permMgr.onGuildCreate(new GuildCreateEvent(guild));
     }
 
-    @SuppressWarnings("ConstantConditions")
+    @SuppressWarnings({"ConstantConditions", "unchecked"})
     @Before
     public void reset() throws GroupNotFoundException, GroupAlreadyExistsException {
         GuildPermissions guildPermissions = permMgr.getPermissionsFor(guild);
@@ -80,7 +80,7 @@ public class PermissionTest {
             } catch (GroupNotFoundException e) {
                 e.printStackTrace();
                 Assert.assertTrue(false);
-            } catch (UnremovableGroupException e) {
+            } catch (UnremovableGroupException ignored) {
             }
         });
 

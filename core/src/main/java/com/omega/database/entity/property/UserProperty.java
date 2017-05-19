@@ -24,6 +24,6 @@ public class UserProperty implements Property<IUser> {
             return null;
         }
 
-        return "User(" + value.getName() + ")<" + value.getID() + ">";
+        return "User(" + value.getName() + ")<" + value.getLongID() + ">";
     }
 }

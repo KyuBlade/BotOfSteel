@@ -2,7 +2,6 @@ package com.omega.command.impl;
 
 import com.omega.command.*;
 import com.omega.database.entity.permission.CorePermissionSupplier;
-import com.omega.database.entity.property.GuildProperties;
 import com.omega.database.entity.property.*;
 import com.omega.exception.PropertyNotFoundException;
 import com.omega.guild.GuildContext;

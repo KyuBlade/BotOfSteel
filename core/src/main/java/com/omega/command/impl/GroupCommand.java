@@ -24,6 +24,7 @@ public class GroupCommand extends AbstractCommand {
         super(by, message);
     }
 
+    @SuppressWarnings("unchecked")
     @Permission(permission = CorePermissionSupplier.COMMAND_GROUP)
     @Signature(help = "Get all groups of this guild")
     public void groupCommand() {
@@ -35,9 +36,7 @@ public class GroupCommand extends AbstractCommand {
             .append(guildPermissions.getGuild().getName())
             .append(" :**\n\n");
 
-        groupPermissionsList.forEach(groupPermissions -> {
-            stringBuilder.append(groupPermissions.getName()).append('\n');
-        });
+        groupPermissionsList.forEach(groupPermissions -> stringBuilder.append(groupPermissions.getName()).append('\n'));
 
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.withDescription(stringBuilder.toString());

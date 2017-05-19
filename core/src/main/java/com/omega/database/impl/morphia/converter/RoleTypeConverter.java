@@ -19,7 +19,7 @@ public class RoleTypeConverter extends TypeConverter implements SimpleValueConve
             return null;
         }
 
-        return BotManager.getInstance().getClient().getRoleByID((String) fromDBObject);
+        return BotManager.getInstance().getClient().getRoleByID((long) fromDBObject);
     }
 
     @Override
@@ -28,6 +28,6 @@ public class RoleTypeConverter extends TypeConverter implements SimpleValueConve
             return null;
         }
 
-        return ((IRole) value).getID();
+        return ((IRole) value).getLongID();
     }
 }

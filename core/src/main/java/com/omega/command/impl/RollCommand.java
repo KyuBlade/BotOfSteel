@@ -22,7 +22,7 @@ public class RollCommand extends AbstractCommand {
     @Permission(permission = CorePermissionSupplier.COMMAND_ROLL)
     @Signature(help = "Get a random number after x rolls. Format : %count%d%range% or %count%D%range%")
     public void rollCommand(@Parameter(name = "rollLiteral") String rollLiteral) {
-        String[] split = rollLiteral.split("d|D");
+        String[] split = rollLiteral.split("[dD]");
         if (split.length < 2) {
             sendErrorMessage("Roll", "Malformed literal");
         } else {

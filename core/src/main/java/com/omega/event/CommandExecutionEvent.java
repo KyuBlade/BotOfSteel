@@ -32,10 +32,6 @@ public class CommandExecutionEvent extends Event {
         return message;
     }
 
-    public boolean isCommand(String command) {
-        return command.equalsIgnoreCase(command);
-    }
-
     public IUser getBy() {
         return by;
     }

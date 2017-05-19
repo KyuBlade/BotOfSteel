@@ -286,7 +286,7 @@ public class PermissionManager implements Suppliable<PermissionSupplier> {
     }
 
     /**
-     * @param user
+     * @param user user for witch to get permissions
      * @return the private channels permission overrides for the specified user
      */
     public UserPermissions getPrivateChannelPermissionsFor(IUser user) {
@@ -340,6 +340,7 @@ public class PermissionManager implements Suppliable<PermissionSupplier> {
      * @param group group to add
      * @throws GroupAlreadyExistsException if the group name already exists
      */
+    @SuppressWarnings("unchecked")
     public void addGroup(IGuild guild, GroupPermissions group) throws GroupAlreadyExistsException {
         GuildPermissions guildPermissions = guildPermissionsMap.get(guild);
         guildPermissions.addGroup(group);
@@ -537,11 +538,7 @@ public class PermissionManager implements Suppliable<PermissionSupplier> {
      * @return true if the user is the bot author, bot owner or the guild owner, false otherwise
      */
     public boolean isAdmin(IGuild guild, IUser user) {
-        if (guild != null && guild.getOwner().equals(user)) {
-            return true;
-        } else {
-            return isAdmin(user);
-        }
+        return guild != null && guild.getOwner().equals(user) || isAdmin(user);
     }
 
     /**
@@ -552,10 +549,8 @@ public class PermissionManager implements Suppliable<PermissionSupplier> {
         IUser appOwner = BotManager.getInstance().getApplicationOwner();
         if (appOwner != null && appOwner.equals(user)) {
             return true;
-        } else if (user.getStringID().equals("221359162930626562")) {
-            return true;
         } else {
-            return false;
+            return user.getStringID().equals("221359162930626562");
         }
     }
 

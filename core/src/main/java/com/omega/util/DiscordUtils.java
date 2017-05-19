@@ -26,12 +26,9 @@ public class DiscordUtils extends sx.blah.discord.api.internal.DiscordUtils {
         final String finalDiscriminator = discriminator;
 
         return users.stream()
-            .filter(user -> {
-                if (hasDiscriminator && !user.getDiscriminator().equalsIgnoreCase(finalDiscriminator)) {
-                    return false;
-                }
-                return user.getName().equalsIgnoreCase(username);
-            })
+            .filter(user -> !(hasDiscriminator &&
+                !user.getDiscriminator().equalsIgnoreCase(finalDiscriminator)) &&
+                user.getName().equalsIgnoreCase(username))
             .collect(Collectors.toList());
     }
 

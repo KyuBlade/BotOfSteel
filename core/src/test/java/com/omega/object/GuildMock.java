@@ -21,6 +21,7 @@ public class GuildMock implements IGuild {
         this.id = id;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public String getOwnerID() {
         return "221359162930626562";
@@ -51,6 +52,7 @@ public class GuildMock implements IGuild {
         return null;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public IChannel getChannelByID(String s) {
         return null;
@@ -66,6 +68,7 @@ public class GuildMock implements IGuild {
         return null;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public IUser getUserByID(String s) {
         return null;
@@ -116,6 +119,7 @@ public class GuildMock implements IGuild {
         return null;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public IRole getRoleByID(String s) {
         return null;
@@ -136,6 +140,7 @@ public class GuildMock implements IGuild {
         return null;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public IVoiceChannel getVoiceChannelByID(String s) {
         return null;
@@ -181,6 +186,7 @@ public class GuildMock implements IGuild {
 
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void banUser(String s) throws DiscordException, RateLimitException, MissingPermissionsException {
 
@@ -191,6 +197,7 @@ public class GuildMock implements IGuild {
 
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void banUser(String s, int i) throws DiscordException, RateLimitException, MissingPermissionsException {
 
@@ -201,6 +208,7 @@ public class GuildMock implements IGuild {
 
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void pardonUser(String s) throws DiscordException, RateLimitException, MissingPermissionsException {
 
@@ -356,6 +364,7 @@ public class GuildMock implements IGuild {
         return null;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public IMessage getMessageByID(String s) {
         return null;
@@ -371,6 +380,7 @@ public class GuildMock implements IGuild {
         return null;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public IEmoji getEmojiByID(String s) {
         return null;
@@ -386,6 +396,7 @@ public class GuildMock implements IGuild {
         return null;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public IWebhook getWebhookByID(String s) {
         return null;
@@ -411,6 +422,7 @@ public class GuildMock implements IGuild {
         return 0;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public String getID() {
         return id;
@@ -437,10 +449,12 @@ public class GuildMock implements IGuild {
     }
 
     public int hashCode() {
-        return Objects.hash(new Object[]{this.id});
+        return Objects.hash(this.id);
     }
 
     public boolean equals(Object other) {
-        return other == null ? false : this.getClass().isAssignableFrom(other.getClass()) && ((IGuild) other).getID().equals(this.getID());
+        return other != null &&
+            (this.getClass().isAssignableFrom(other.getClass()) &&
+                ((IGuild) other).getLongID() == this.getLongID());
     }
 }

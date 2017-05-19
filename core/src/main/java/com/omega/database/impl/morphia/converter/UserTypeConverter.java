@@ -15,19 +15,19 @@ public class UserTypeConverter extends TypeConverter implements SimpleValueConve
 
     @Override
     public Object decode(Class<?> targetClass, Object fromDBObject, MappedField optionalExtraInfo) {
-        if(fromDBObject == null) {
+        if (fromDBObject == null) {
             return null;
         }
 
-        return BotManager.getInstance().getClient().getUserByID((String) fromDBObject);
+        return BotManager.getInstance().getClient().getUserByID((long) fromDBObject);
     }
 
     @Override
     public Object encode(Object value, MappedField optionalExtraInfo) {
-        if(value == null) {
+        if (value == null) {
             return null;
         }
 
-        return ((IUser) value).getID();
+        return ((IUser) value).getLongID();
     }
 }
