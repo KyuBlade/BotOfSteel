@@ -145,6 +145,36 @@ public class MessageUtils {
     }
 
     /**
+     * Send a private message with an embed object and file.
+     *
+     * @param target user to message
+     * @param embed  the embed object to send
+     * @param file   file to attach
+     * @return a message wrapper object that will queue operations on the message until it is sent
+     */
+    public static MessageWrapper sendPrivateMessage(IUser target, EmbedObject embed, File file) {
+        if (target == null) {
+            throw new NullPointerException("target must not be null");
+        }
+        final MessageWrapper messageWrapper = new MessageWrapper();
+
+        RequestBuffer.request(() -> {
+            try {
+                IMessage message = target.getOrCreatePMChannel().sendFile(embed, file);
+                messageWrapper.setMessage(message);
+            } catch (MissingPermissionsException e) {
+                LOGGER.info("Permissions needed to send private message", e);
+            } catch (DiscordException e) {
+                LOGGER.warn("Unable to send message", e);
+            } catch (FileNotFoundException e) {
+                LOGGER.warn("Unable to send file {} to user {} (not found)", file.getAbsolutePath(), target.getName());
+            }
+        });
+
+        return messageWrapper;
+    }
+
+    /**
      * Send a message in a channel.
      *
      * @param channel channel to send to
@@ -212,6 +242,37 @@ public class MessageUtils {
         return sendMessage(channel, "", embed);
     }
 
+    /**
+     * Send a message with an embed object and file.
+     *
+     * @param channel channel to send to
+     * @param embed   the embed object to send
+     * @param file    file to attach
+     * @return a message wrapper object that will queue operations on the message until it is sent
+     */
+    public static MessageWrapper sendMessage(IChannel channel, EmbedObject embed, File file) {
+        if (channel == null) {
+            throw new NullPointerException("channel must not be null");
+        }
+        final MessageWrapper messageWrapper = new MessageWrapper();
+
+        RequestBuffer.request(() -> {
+            try {
+                IMessage message = channel.sendFile(embed, file);
+                messageWrapper.setMessage(message);
+            } catch (MissingPermissionsException e) {
+                LOGGER.info("Permissions needed to send private message", e);
+            } catch (DiscordException e) {
+                LOGGER.warn("Unable to send message", e);
+            } catch (FileNotFoundException e) {
+                LOGGER.warn("Unable to send file {} to channel {} of guild {} (not found)",
+                    file.getAbsolutePath(), channel.getName(), channel.getGuild().getName());
+            }
+        });
+
+        return messageWrapper;
+    }
+
     public static void sendMissingPermissionsMessage(IChannel channel, EnumSet<Permissions> missingPermissions) {
         sendMissingPermissionsMessage(channel, null, missingPermissions);
     }
@@ -259,7 +320,7 @@ public class MessageUtils {
         if (fields != null) {
             Arrays.stream(fields).forEachOrdered(embedBuilder::appendField);
         }
-        
+
         return sendMessage(channel, embedBuilder.build());
     }
 

@@ -10,6 +10,7 @@ import sx.blah.discord.handle.obj.*;
 import sx.blah.discord.util.EmbedBuilder;
 
 import java.awt.*;
+import java.io.File;
 import java.util.EnumSet;
 
 public abstract class AbstractCommand {
@@ -90,23 +91,33 @@ public abstract class AbstractCommand {
     }
 
     public MessageWrapper sendStateMessage(EmbedObject embedObject, Color color, boolean isPrivate) {
-        embedObject.footer = new EmbedObject.FooterObject(
-            String.format("Requested by @%s#%s", by.getName(), by.getDiscriminator()),
-            by.getAvatarURL(),
-            null
-        );
+        return sendStateMessage(embedObject, null, color, isPrivate);
+    }
 
+    public MessageWrapper sendStateMessage(EmbedObject embedObject, File file, Color color, boolean isPrivate) {
         embedObject.color = DiscordUtils.getColorInteger(color);
 
-        if (embedObject.author == null) {
-            IUser botUser = by.getClient().getOurUser();
-            embedObject.author = new EmbedObject.AuthorObject(
-                botUser.getName(), null, botUser.getAvatarURL(), null
-            );
-        }
-
         if (stateMessage == null) {
-            if (isPrivate) {
+            embedObject.footer = new EmbedObject.FooterObject(
+                String.format("Requested by @%s#%s", by.getName(), by.getDiscriminator()),
+                by.getAvatarURL(),
+                null
+            );
+
+            if (embedObject.author == null) {
+                IUser botUser = by.getClient().getOurUser();
+                embedObject.author = new EmbedObject.AuthorObject(
+                    botUser.getName(), null, botUser.getAvatarURL(), null
+                );
+            }
+
+            if (file != null) {
+                if (isPrivate) {
+                    MessageUtils.sendPrivateMessage(by, embedObject, file);
+                } else {
+                    MessageUtils.sendMessage(channel, embedObject, file);
+                }
+            } else if (isPrivate) {
                 this.stateMessage = MessageUtils.sendPrivateMessage(by, embedObject);
             } else {
                 this.stateMessage = MessageUtils.sendMessage(channel, embedObject);
@@ -161,5 +172,14 @@ public abstract class AbstractCommand {
 
     public MessageWrapper sendPrivateStateMessage(EmbedObject embedObject, Color color) {
         return sendStateMessage(embedObject, color, false);
+    }
+
+    public MessageWrapper sendPrivateMessage(String description, File file) {
+        return sendStateMessage(
+            new EmbedBuilder()
+                .withDescription(description)
+                .build(),
+            file, Color.green, true
+        );
     }
 }
