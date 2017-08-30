@@ -1,0 +1,61 @@
+package com.omega.core.database.entity.property;
+
+import com.omega.core.BotManager;
+import com.omega.core.database.repository.BotPropertiesRepository;
+import com.omega.core.guild.property.PropertyChangeTask;
+import com.omega.core.guild.property.PropertyDefinition;
+import com.omega.core.guild.property.PropertySupplier;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
+public abstract class BotProperties extends Properties {
+
+    public enum Fields {
+        id, properties
+    }
+
+    private static final Map<String, PropertyDefinition> PROPERTY_DEFINITIONS = new HashMap<>();
+
+    protected BotProperties() {
+        super(BotPropertiesRepository.class);
+    }
+
+    public abstract Object getId();
+
+    @Override
+    public Map<String, PropertyDefinition> getPropertyDefinitions() {
+        return PROPERTY_DEFINITIONS;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    protected void executePropertyChangeTask(PropertyChangeTask task, Property property, boolean init) {
+        task.execute(BotManager.getInstance(), property, init);
+    }
+
+    /**
+     * Add available property definitions.
+     *
+     * @param supplier property definition supplier with properties to add
+     */
+    public static void supply(PropertySupplier supplier) {
+        PropertyDefinition[] propertyDefinitions = supplier.supply();
+        Arrays.stream(propertyDefinitions).forEach(propertyDefinition ->
+            PROPERTY_DEFINITIONS.put(propertyDefinition.getPropertyKey(), propertyDefinition)
+        );
+    }
+
+    /**
+     * Remove property previously added by a supplier.
+     *
+     * @param supplier property definition supplier with properties to remove
+     */
+    public static void unsupply(PropertySupplier supplier) {
+        PropertyDefinition[] propertyDefinitions = supplier.supply();
+        Arrays.stream(propertyDefinitions).forEach(propertyDefinition ->
+            PROPERTY_DEFINITIONS.remove(propertyDefinition.getPropertyKey())
+        );
+    }
+}
