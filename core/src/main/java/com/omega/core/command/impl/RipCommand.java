@@ -26,7 +26,7 @@ public class RipCommand extends AbstractCommand {
     @Signature(help = "Print the list of banned users")
     public void ripCommand() {
         if (!message.getChannel().isPrivate()) {
-            final EmbedBuilder embedBuilder = new EmbedBuilder();
+            final EmbedBuilder embedBuilder = new EmbedBuilder().setLenient(true);
 
             RequestBuffer.request(() -> {
                 try {
@@ -35,19 +35,21 @@ public class RipCommand extends AbstractCommand {
                     if (bannedUsers.isEmpty()) {
                         embedBuilder.withDescription("No one got banned on this server");
                     } else {
-                        StringBuilder stringBuilder = new StringBuilder();
+                        StringBuilder stringBuilder = new StringBuilder("**Rest In Peace**\n\n");
 
-                        for (int i = 0; i < bannedUsers.size(); i++) {
+                        for (int i = 0; i < bannedUsers.size() && stringBuilder.length() < EmbedBuilder.DESCRIPTION_CONTENT_LIMIT; i++) {
                             IUser bannedUser = bannedUsers.get(i);
 
-                            stringBuilder.append(":skull_crossbones: ").append(bannedUser).append(" :skull_crossbones:");
+                            stringBuilder.append(":skull_crossbones: ")
+                                .append(bannedUser.getName())
+                                .append(" :skull_crossbones:");
 
                             if (i < bannedUsers.size()) {
                                 stringBuilder.append('\n');
                             }
                         }
 
-                        embedBuilder.appendField("Rest In Peace", stringBuilder.toString(), false);
+                        embedBuilder.withDescription(stringBuilder.toString());
                     }
 
                     sendStateMessage(embedBuilder.build());

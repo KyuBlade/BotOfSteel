@@ -288,7 +288,7 @@ public class GuildAudioPlayer implements GuildModuleComponent {
         ));
 
         // Remove all role permission overrides
-        voiceChannel.getRoleOverridesLong().forEach((roleId, permissionOverride) -> {
+        voiceChannel.getRoleOverrides().forEach((roleId, permissionOverride) -> {
             final IRole role = guild.getRoleByID(roleId);
 
             RequestBuffer.request(() -> {
@@ -301,7 +301,7 @@ public class GuildAudioPlayer implements GuildModuleComponent {
         });
 
         // Remove all user permission overrides
-        voiceChannel.getUserOverridesLong().forEach((userId, permissionOverride) -> {
+        voiceChannel.getUserOverrides().forEach((userId, permissionOverride) -> {
             final IUser user = guild.getUserByID(userId);
 
             RequestBuffer.request(() ->

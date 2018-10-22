@@ -10,10 +10,9 @@ import sx.blah.discord.util.cache.LongMap;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 public class ChannelMock implements IChannel {
@@ -29,12 +28,6 @@ public class ChannelMock implements IChannel {
         return null;
     }
 
-    @SuppressWarnings("deprecation")
-    @Override
-    public MessageList getMessages() {
-        return null;
-    }
-
     @Override
     public MessageHistory getMessageHistory() {
         return null;
@@ -46,38 +39,12 @@ public class ChannelMock implements IChannel {
     }
 
     @Override
-    public MessageHistory getMessageHistoryFrom(LocalDateTime localDateTime) {
+    public MessageHistory getMessageHistoryFrom(Instant startDate) {
         return null;
     }
 
     @Override
-    public MessageHistory getMessageHistoryFrom(LocalDateTime localDateTime, int i) {
-        return null;
-    }
-
-    @Override
-    public MessageHistory getMessageHistoryTo(LocalDateTime localDateTime) {
-        return null;
-    }
-
-    @Override
-    public MessageHistory getMessageHistoryTo(LocalDateTime localDateTime, int i) {
-        return null;
-    }
-
-    @Override
-    public MessageHistory getMessageHistoryIn(LocalDateTime localDateTime, LocalDateTime localDateTime1) {
-        return null;
-    }
-
-    @Override
-    public MessageHistory getMessageHistoryIn(LocalDateTime localDateTime, LocalDateTime localDateTime1, int i) {
-        return null;
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    public MessageHistory getMessageHistoryFrom(String s) {
+    public MessageHistory getMessageHistoryFrom(Instant startDate, int maxMessageCount) {
         return null;
     }
 
@@ -86,20 +53,18 @@ public class ChannelMock implements IChannel {
         return null;
     }
 
-    @SuppressWarnings("deprecation")
-    @Override
-    public MessageHistory getMessageHistoryFrom(String s, int i) {
-        return null;
-    }
-
     @Override
     public MessageHistory getMessageHistoryFrom(long id, int maxMessageCount) {
         return null;
     }
 
-    @SuppressWarnings("deprecation")
     @Override
-    public MessageHistory getMessageHistoryTo(String s) {
+    public MessageHistory getMessageHistoryTo(Instant endDate) {
+        return null;
+    }
+
+    @Override
+    public MessageHistory getMessageHistoryTo(Instant endDate, int maxMessageCount) {
         return null;
     }
 
@@ -108,31 +73,23 @@ public class ChannelMock implements IChannel {
         return null;
     }
 
-    @SuppressWarnings("deprecation")
-    @Override
-    public MessageHistory getMessageHistoryTo(String s, int i) {
-        return null;
-    }
-
     @Override
     public MessageHistory getMessageHistoryTo(long id, int maxMessageCount) {
         return null;
     }
 
-    @SuppressWarnings("deprecation")
     @Override
-    public MessageHistory getMessageHistoryIn(String s, String s1) {
+    public MessageHistory getMessageHistoryIn(Instant startDate, Instant endDate) {
+        return null;
+    }
+
+    @Override
+    public MessageHistory getMessageHistoryIn(Instant startDate, Instant endDate, int maxMessageCount) {
         return null;
     }
 
     @Override
     public MessageHistory getMessageHistoryIn(long beginID, long endID) {
-        return null;
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    public MessageHistory getMessageHistoryIn(String s, String s1, int i) {
         return null;
     }
 
@@ -166,14 +123,13 @@ public class ChannelMock implements IChannel {
         return 0;
     }
 
-    @SuppressWarnings("deprecation")
     @Override
-    public IMessage getMessageByID(String s) {
+    public IMessage getMessageByID(long messageID) {
         return null;
     }
 
     @Override
-    public IMessage getMessageByID(long messageID) {
+    public IMessage fetchMessage(long messageID) {
         return null;
     }
 
@@ -357,25 +313,13 @@ public class ChannelMock implements IChannel {
 
     }
 
-    @SuppressWarnings("deprecation")
     @Override
-    public Map<String, PermissionOverride> getUserOverrides() {
+    public LongMap<PermissionOverride> getUserOverrides() {
         return null;
     }
 
     @Override
-    public LongMap<PermissionOverride> getUserOverridesLong() {
-        return null;
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    public Map<String, PermissionOverride> getRoleOverrides() {
-        return null;
-    }
-
-    @Override
-    public LongMap<PermissionOverride> getRoleOverridesLong() {
+    public LongMap<PermissionOverride> getRoleOverrides() {
         return null;
     }
 
@@ -410,11 +354,6 @@ public class ChannelMock implements IChannel {
     }
 
     @Override
-    public List<IInvite> getInvites() throws DiscordException, RateLimitException, MissingPermissionsException {
-        return null;
-    }
-
-    @Override
     public List<IExtendedInvite> getExtendedInvites() {
         return null;
     }
@@ -441,12 +380,6 @@ public class ChannelMock implements IChannel {
 
     @Override
     public List<IWebhook> getWebhooks() {
-        return null;
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    public IWebhook getWebhookByID(String s) {
         return null;
     }
 
@@ -480,10 +413,14 @@ public class ChannelMock implements IChannel {
         return false;
     }
 
-    @SuppressWarnings("deprecation")
     @Override
-    public String getID() {
-        return id;
+    public void changeCategory(ICategory category) {
+
+    }
+
+    @Override
+    public ICategory getCategory() {
+        return null;
     }
 
     @Override
@@ -503,11 +440,6 @@ public class ChannelMock implements IChannel {
 
     @Override
     public IShard getShard() {
-        return null;
-    }
-
-    @Override
-    public LocalDateTime getCreationDate() {
         return null;
     }
 

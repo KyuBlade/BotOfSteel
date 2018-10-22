@@ -8,7 +8,7 @@ import sx.blah.discord.handle.audit.AuditLog;
 import sx.blah.discord.handle.obj.*;
 import sx.blah.discord.util.*;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 
@@ -18,12 +18,6 @@ public class GuildMock implements IGuild {
 
     public GuildMock(String id) {
         this.id = id;
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    public String getOwnerID() {
-        return "221359162930626562";
     }
 
     @Override
@@ -51,12 +45,6 @@ public class GuildMock implements IGuild {
         return null;
     }
 
-    @SuppressWarnings("deprecation")
-    @Override
-    public IChannel getChannelByID(String s) {
-        return null;
-    }
-
     @Override
     public IChannel getChannelByID(long id) {
         return null;
@@ -64,12 +52,6 @@ public class GuildMock implements IGuild {
 
     @Override
     public List<IUser> getUsers() {
-        return null;
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    public IUser getUserByID(String s) {
         return null;
     }
 
@@ -118,12 +100,6 @@ public class GuildMock implements IGuild {
         return null;
     }
 
-    @SuppressWarnings("deprecation")
-    @Override
-    public IRole getRoleByID(String s) {
-        return null;
-    }
-
     @Override
     public IRole getRoleByID(long id) {
         return null;
@@ -136,12 +112,6 @@ public class GuildMock implements IGuild {
 
     @Override
     public List<IVoiceChannel> getVoiceChannels() {
-        return null;
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    public IVoiceChannel getVoiceChannelByID(String s) {
         return null;
     }
 
@@ -200,20 +170,8 @@ public class GuildMock implements IGuild {
 
     }
 
-    @SuppressWarnings("deprecation")
-    @Override
-    public void banUser(String s) throws DiscordException, RateLimitException, MissingPermissionsException {
-
-    }
-
     @Override
     public void banUser(long userID) {
-
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    public void banUser(String s, int i) throws DiscordException, RateLimitException, MissingPermissionsException {
 
     }
 
@@ -229,12 +187,6 @@ public class GuildMock implements IGuild {
 
     @Override
     public void banUser(long userID, String reason, int deleteMessagesForDays) {
-
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    public void pardonUser(String s) throws DiscordException, RateLimitException, MissingPermissionsException {
 
     }
 
@@ -309,16 +261,6 @@ public class GuildMock implements IGuild {
     }
 
     @Override
-    public void deleteGuild() throws DiscordException, RateLimitException, MissingPermissionsException {
-
-    }
-
-    @Override
-    public void leaveGuild() throws DiscordException, RateLimitException {
-
-    }
-
-    @Override
     public void leave() throws DiscordException, RateLimitException {
 
     }
@@ -349,17 +291,7 @@ public class GuildMock implements IGuild {
     }
 
     @Override
-    public IChannel getGeneralChannel() {
-        return null;
-    }
-
-    @Override
     public IChannel getDefaultChannel() {
-        return null;
-    }
-
-    @Override
-    public List<IInvite> getInvites() throws DiscordException, RateLimitException, MissingPermissionsException {
         return null;
     }
 
@@ -394,13 +326,7 @@ public class GuildMock implements IGuild {
     }
 
     @Override
-    public LocalDateTime getJoinTimeForUser(IUser iUser) throws DiscordException {
-        return null;
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    public IMessage getMessageByID(String s) {
+    public Instant getJoinTimeForUser(IUser user) {
         return null;
     }
 
@@ -414,12 +340,6 @@ public class GuildMock implements IGuild {
         return null;
     }
 
-    @SuppressWarnings("deprecation")
-    @Override
-    public IEmoji getEmojiByID(String s) {
-        return null;
-    }
-
     @Override
     public IEmoji getEmojiByID(long id) {
         return null;
@@ -430,9 +350,8 @@ public class GuildMock implements IGuild {
         return null;
     }
 
-    @SuppressWarnings("deprecation")
     @Override
-    public IWebhook getWebhookByID(String s) {
+    public IEmoji createEmoji(String name, Image image, IRole[] roles) {
         return null;
     }
 
@@ -476,10 +395,29 @@ public class GuildMock implements IGuild {
         return null;
     }
 
-    @SuppressWarnings("deprecation")
     @Override
-    public String getID() {
-        return id;
+    public ICategory createCategory(String name) {
+        return null;
+    }
+
+    @Override
+    public List<ICategory> getCategories() {
+        return null;
+    }
+
+    @Override
+    public ICategory getCategoryByID(long id) {
+        return null;
+    }
+
+    @Override
+    public List<ICategory> getCategoriesByName(String name) {
+        return null;
+    }
+
+    @Override
+    public IChannel getSystemChannel() {
+        return null;
     }
 
     @Override
@@ -499,11 +437,6 @@ public class GuildMock implements IGuild {
 
     @Override
     public IShard getShard() {
-        return null;
-    }
-
-    @Override
-    public LocalDateTime getCreationDate() {
         return null;
     }
 

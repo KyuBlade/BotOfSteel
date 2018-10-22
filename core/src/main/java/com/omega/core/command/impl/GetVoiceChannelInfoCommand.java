@@ -42,7 +42,6 @@ public class GetVoiceChannelInfoCommand extends AbstractCommand {
         StringBuilder builder = new StringBuilder();
         builder.append(MessageBuilder.Styles.CODE_WITH_LANG.getMarkdown())
             .append("Name : ").append(voiceChannel.getName()).append('\n')
-            .append("Topic : ").append(voiceChannel.getTopic()).append('\n')
             .append("Creation date : ").append(voiceChannel.getCreationDate().toString()).append('\n')
             .append("User limits : ").append(voiceChannel.getUserLimit()).append('\n')
             .append("Connected users : ").append(voiceChannel.getConnectedUsers().size()).append('\n')

@@ -107,7 +107,7 @@ public class MusicModule extends Module {
 
     @Override
     public String getMinimumDiscord4JVersion() {
-        return "2.8.1";
+        return "2.10.1";
     }
 
     @EventSubscriber

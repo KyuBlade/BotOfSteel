@@ -8,9 +8,10 @@ import sx.blah.discord.util.MissingPermissionsException;
 import sx.blah.discord.util.RateLimitException;
 import sx.blah.discord.util.cache.LongMap;
 
+import java.awt.*;
+import java.time.Instant;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 public class UserMock implements IUser {
@@ -42,11 +43,6 @@ public class UserMock implements IUser {
     }
 
     @Override
-    public Status getStatus() {
-        return null;
-    }
-
-    @Override
     public String getDisplayName(IGuild iGuild) {
         return null;
     }
@@ -72,6 +68,11 @@ public class UserMock implements IUser {
     }
 
     @Override
+    public Color getColorForGuild(IGuild guild) {
+        return null;
+    }
+
+    @Override
     public EnumSet<Permissions> getPermissionsForGuild(IGuild iGuild) {
         return null;
     }
@@ -86,14 +87,8 @@ public class UserMock implements IUser {
         return null;
     }
 
-    @SuppressWarnings("deprecation")
     @Override
-    public Map<String, IVoiceState> getVoiceStates() {
-        return null;
-    }
-
-    @Override
-    public LongMap<IVoiceState> getVoiceStatesLong() {
+    public LongMap<IVoiceState> getVoiceStates() {
         return null;
     }
 
@@ -122,15 +117,19 @@ public class UserMock implements IUser {
 
     }
 
-    @SuppressWarnings("deprecation")
     @Override
-    public String getID() {
-        return id;
+    public boolean hasRole(IRole role) {
+        return false;
     }
 
     @Override
     public long getLongID() {
         return Long.valueOf(id);
+    }
+
+    @Override
+    public String getStringID() {
+        return null;
     }
 
     @Override
@@ -140,6 +139,11 @@ public class UserMock implements IUser {
 
     @Override
     public IShard getShard() {
+        return null;
+    }
+
+    @Override
+    public Instant getCreationDate() {
         return null;
     }
 

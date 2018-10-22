@@ -6,12 +6,15 @@ import sx.blah.discord.handle.obj.IMessage;
 import sx.blah.discord.handle.obj.IUser;
 import sx.blah.discord.util.EmbedBuilder;
 
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
 @CommandInfo(name = "userinfo", aliases = "ui")
 public class UserInfoCommand extends AbstractCommand {
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm:ss");
+    private static final DateTimeFormatter DATE_FORMATTER =
+        DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm:ss")
+            .withZone(ZoneId.systemDefault());
 
     public UserInfoCommand(IUser by, IMessage message) {
         super(by, message);
@@ -28,8 +31,8 @@ public class UserInfoCommand extends AbstractCommand {
             .appendField("Avatar", user.getAvatarURL(), true)
             .appendField("Name", user.getName(), true)
             .appendField("Presence", user.getPresence().toString(), true)
-            .appendField("Creation date", user.getCreationDate().format(DATE_FORMATTER), true)
-            .appendField("Guild join date", guild.getJoinTimeForUser(user).format(DATE_FORMATTER), true);
+            .appendField("Creation date", DATE_FORMATTER.format(user.getCreationDate()), true)
+            .appendField("Guild join date", DATE_FORMATTER.format(guild.getJoinTimeForUser(user)), true);
 
         sendPrivateStateMessage(embedBuilder.build());
     }
